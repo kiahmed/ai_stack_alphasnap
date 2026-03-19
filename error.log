@@ -1,0 +1,166 @@
+TIMESTAMP                    TEXT_PAYLOAD
+2026-03-19T11:35:09.535068Z      await cls.raise_error_async(status_code, response_json, response)
+                               File "/code/.venv/lib/python3.11/site-packages/google/genai/errors.py", line 238, in raise_error_async
+                                 raise ClientError(status_code, response_json, response)
+                             google.genai.errors.ClientError: 499 CANCELLED. {'error': {'code': 499, 'message': 'The operation was cancelled.', 'status': 'CANCELLED'}}
+2026-03-19T11:35:07.045622Z      return self.__get_result()
+                                        ^^^^^^^^^^^^^^^^^^^
+                               File "/usr/local/lib/python3.11/concurrent/futures/_base.py", line 401, in __get_result
+                                 raise self._exception
+                               File "/code/.venv/lib/python3.11/site-packages/tenacity/asyncio/__init__.py", line 116, in __call__
+                                 result = await fn(*args, **kwargs)
+                                          ^^^^^^^^^^^^^^^^^^^^^^^^^
+                               File "/code/.venv/lib/python3.11/site-packages/google/genai/_api_client.py", line 1361, in _async_request_once
+                                 await errors.APIError.raise_for_async_response(client_response)
+                               File "/code/.venv/lib/python3.11/site-packages/google/genai/errors.py", line 216, in raise_for_async_response
+2026-03-19T11:35:04.898780Z      raise retry_exc.reraise()
+                                       ^^^^^^^^^^^^^^^^^^^
+                               File "/code/.venv/lib/python3.11/site-packages/tenacity/__init__.py", line 184, in reraise
+                                 raise self.last_attempt.result()
+                                       ^^^^^^^^^^^^^^^^^^^^^^^^^^
+                               File "/usr/local/lib/python3.11/concurrent/futures/_base.py", line 449, in result
+2026-03-19T11:35:03.153385Z      return call(*args, **kwargs)
+                                        ^^^^^^^^^^^^^^^^^^^^^
+                               File "/code/.venv/lib/python3.11/site-packages/tenacity/__init__.py", line 413, in exc_check
+2026-03-19T11:34:59.932615Z               ^^^^^^^^^^^^^^^^^^^^^^^^^
+                               File "/code/.venv/lib/python3.11/site-packages/tenacity/_utils.py", line 111, in inner
+2026-03-19T11:34:58.456164Z      do = await self.iter(retry_state=retry_state)
+                                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                               File "/code/.venv/lib/python3.11/site-packages/tenacity/asyncio/__init__.py", line 157, in iter
+                                 result = await action(retry_state)
+2026-03-19T11:34:56.040257Z      result = await self._async_request(
+                                          ^^^^^^^^^^^^^^^^^^^^^^^^^^
+                               File "/code/.venv/lib/python3.11/site-packages/google/genai/_api_client.py", line 1381, in _async_request
+                                 return await self._async_retry(  # type: ignore[no-any-return]
+                                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                               File "/code/.venv/lib/python3.11/site-packages/tenacity/asyncio/__init__.py", line 112, in __call__
+2026-03-19T11:34:54.832563Z      response = await self._api_client.async_request(
+                                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                               File "/code/.venv/lib/python3.11/site-packages/google/genai/_api_client.py", line 1448, in async_request
+2026-03-19T11:34:47.047226Z      return await self._generate_content(
+                                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                               File "/code/.venv/lib/python3.11/site-packages/google/genai/models.py", line 6485, in _generate_content
+2026-03-19T11:34:34.431515Z      response = await self.api_client.aio.models.generate_content(
+                                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                               File "/code/.venv/lib/python3.11/site-packages/google/genai/models.py", line 7718, in generate_content
+2026-03-19T11:34:30.807055Z    File "/code/.venv/lib/python3.11/site-packages/google/adk/models/google_llm.py", line 245, in generate_content_async
+2026-03-19T11:34:29.062618Z      raise ce
+2026-03-19T11:34:23.290916Z      raise model_error
+                               File "/code/.venv/lib/python3.11/site-packages/google/adk/flows/llm_flows/base_llm_flow.py", line 376, in _run_and_handle_error
+                                 async for llm_response in agen:
+                               File "/code/.venv/lib/python3.11/site-packages/google/adk/models/google_llm.py", line 266, in generate_content_async
+2026-03-19T11:34:21.948892Z      async for event in agen:
+                               File "/code/.venv/lib/python3.11/site-packages/google/adk/flows/llm_flows/base_llm_flow.py", line 1175, in _call_llm_with_tracing
+                                 async for llm_response in agen:
+                               File "/code/.venv/lib/python3.11/site-packages/google/adk/flows/llm_flows/base_llm_flow.py", line 1251, in _run_and_handle_error
+                                 async for response in agen:
+                               File "/code/.venv/lib/python3.11/site-packages/google/adk/flows/llm_flows/base_llm_flow.py", line 395, in _run_and_handle_error
+2026-03-19T11:34:18.862206Z      async for event in agen:
+                               File "/code/.venv/lib/python3.11/site-packages/google/adk/flows/llm_flows/base_llm_flow.py", line 758, in run_async
+                                 async for event in agen:
+                               File "/code/.venv/lib/python3.11/site-packages/google/adk/flows/llm_flows/base_llm_flow.py", line 835, in _run_one_step_async
+                                 async for llm_response in agen:
+                               File "/code/.venv/lib/python3.11/site-packages/google/adk/flows/llm_flows/base_llm_flow.py", line 1192, in _call_llm_async
+2026-03-19T11:34:17.653640Z      async for event in agen:
+                               File "/code/.venv/lib/python3.11/site-packages/google/adk/agents/llm_agent.py", line 479, in _run_async_impl
+2026-03-19T11:34:16.043293Z      async for event in agen:
+                               File "/code/.venv/lib/python3.11/site-packages/google/adk/agents/base_agent.py", line 303, in run_async
+2026-03-19T11:34:14.700623Z    File "/code/.venv/lib/python3.11/site-packages/google/adk/runners.py", line 606, in execute
+2026-03-19T11:34:13.627563Z    File "/code/.venv/lib/python3.11/site-packages/google/adk/runners.py", line 853, in _exec_with_plugin
+                                 async for event in agen:
+2026-03-19T11:34:11.748057Z      async for event in agen:
+                               File "/code/.venv/lib/python3.11/site-packages/google/adk/runners.py", line 617, in _run_with_trace
+                                 async for event in agen:
+2026-03-19T11:34:10.137702Z      async for event in agen:
+                               File "/code/.venv/lib/python3.11/site-packages/google/adk/runners.py", line 632, in run_async
+2026-03-19T11:34:08.661713Z      return future.result()
+                                        ^^^^^^^^^^^^^^^
+                               File "/code/.venv/lib/python3.11/site-packages/google/adk/runners.py", line 479, in _invoke_run_async
+2026-03-19T11:34:05.977265Z      return runner.run(main)
+                                        ^^^^^^^^^^^^^^^^
+                               File "/usr/local/lib/python3.11/asyncio/runners.py", line 118, in run
+                                 return self._loop.run_until_complete(task)
+                                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                               File "/usr/local/lib/python3.11/asyncio/base_events.py", line 654, in run_until_complete
+2026-03-19T11:34:04.097359Z      self._target(*self._args, **self._kwargs)
+                               File "/code/.venv/lib/python3.11/site-packages/google/adk/runners.py", line 486, in _asyncio_thread_main
+                                 asyncio.run(_invoke_run_async())
+                               File "/usr/local/lib/python3.11/asyncio/runners.py", line 190, in run
+2026-03-19T11:34:02.219110Z      self.run()
+                               File "/usr/local/lib/python3.11/threading.py", line 982, in run
+2026-03-19T11:33:57.655579Z  Traceback (most recent call last):
+                               File "/usr/local/lib/python3.11/threading.py", line 1045, in _bootstrap_inner
+2026-03-19T11:33:56.534795Z  Exception in thread Thread-10 (_asyncio_thread_main):
+2026-03-19T11:23:33.898118Z  [5]       WARNING:  Tools at indices [0] are not compatible with automatic function calling (AFC). AFC is disabled. If AFC is intended, please include python callables in the tool list, and do not include function declaration and MCP server in the tool list.
+2026-03-19T11:20:29.660957Z  [5]       WARNING:  Tools at indices [0] are not compatible with automatic function calling (AFC). AFC is disabled. If AFC is intended, please include python callables in the tool list, and do not include function declaration and MCP server in the tool list.
+2026-03-19T11:20:24.227669Z  [5]       WARNING:  Tools at indices [0] are not compatible with automatic function calling (AFC). AFC is disabled. If AFC is intended, please include python callables in the tool list, and do not include function declaration and MCP server in the tool list.
+2026-03-19T11:20:19.494876Z  [5]       WARNING:  Tools at indices [0] are not compatible with automatic function calling (AFC). AFC is disabled. If AFC is intended, please include python callables in the tool list, and do not include function declaration and MCP server in the tool list.
+2026-03-19T11:20:19.465615Z  [5]       WARNING:  Tools at indices [0] are not compatible with automatic function calling (AFC). AFC is disabled. If AFC is intended, please include python callables in the tool list, and do not include function declaration and MCP server in the tool list.
+2026-03-19T11:20:15.850190Z  [5]       WARNING:  Tools at indices [0] are not compatible with automatic function calling (AFC). AFC is disabled. If AFC is intended, please include python callables in the tool list, and do not include function declaration and MCP server in the tool list.
+2026-03-19T11:19:27.599282Z  [5]       WARNING:  Tools at indices [0] are not compatible with automatic function calling (AFC). AFC is disabled. If AFC is intended, please include python callables in the tool list, and do not include function declaration and MCP server in the tool list.
+2026-03-19T11:19:20.908201Z  [5]       WARNING:  Tools at indices [0] are not compatible with automatic function calling (AFC). AFC is disabled. If AFC is intended, please include python callables in the tool list, and do not include function declaration and MCP server in the tool list.
+2026-03-19T11:19:12.721245Z  [5]       WARNING:  Tools at indices [0] are not compatible with automatic function calling (AFC). AFC is disabled. If AFC is intended, please include python callables in the tool list, and do not include function declaration and MCP server in the tool list.
+2026-03-19T11:17:13.314517Z  [5]       WARNING:  Tools at indices [0] are not compatible with automatic function calling (AFC). AFC is disabled. If AFC is intended, please include python callables in the tool list, and do not include function declaration and MCP server in the tool list.
+2026-03-19T11:17:09.975162Z  [5]       WARNING:  Tools at indices [0] are not compatible with automatic function calling (AFC). AFC is disabled. If AFC is intended, please include python callables in the tool list, and do not include function declaration and MCP server in the tool list.
+2026-03-19T11:17:02.661469Z  [5]       WARNING:  Tools at indices [0] are not compatible with automatic function calling (AFC). AFC is disabled. If AFC is intended, please include python callables in the tool list, and do not include function declaration and MCP server in the tool list.
+2026-03-19T11:17:02.627546Z  [5]       WARNING:  Tools at indices [0] are not compatible with automatic function calling (AFC). AFC is disabled. If AFC is intended, please include python callables in the tool list, and do not include function declaration and MCP server in the tool list.
+2026-03-19T11:16:54.962426Z  [5]       WARNING:  Tools at indices [0] are not compatible with automatic function calling (AFC). AFC is disabled. If AFC is intended, please include python callables in the tool list, and do not include function declaration and MCP server in the tool list.
+2026-03-19T11:16:13.709895Z  [2944]    INFO:     Application startup complete.
+2026-03-19T11:16:13.707062Z  [2944]    INFO:     Waiting for application startup.
+2026-03-19T11:16:13.706795Z  [2944]    INFO:     Started server process [2944]
+2026-03-19T11:16:13.584497Z  ✅ Active: Strategic_Minerals_Scout | Category: Strategic Minerals | Sector: Strategic Minerals and Rare Earth Elements
+2026-03-19T11:16:13.584414Z  ✅ Active: Power_Energy_Scout | Category: Power & Energy | Sector: Power Generation and Energy Storage
+2026-03-19T11:16:13.584360Z  ✅ Active: Space_Defense_Scout | Category: Space & Defense | Sector: Space Exploration and Defense Technology
+2026-03-19T11:16:13.584301Z  ✅ Active: AI_Stack_Scout | Category: AI Stack | Sector: AI Stack (Compute, Foundation Models, Fine-tuning, and Application Layer)
+2026-03-19T11:16:13.584240Z  ✅ Active: Crypto_Scout | Category: Crypto | Sector: Crypto and Blockchain
+2026-03-19T11:16:13.584158Z  ✅ Active: Robotics_Scout | Category: Robotics | Sector: Physical AI and Embodied Robotics
+2026-03-19T11:16:13.584004Z  --- Initializing Market Scouts ---
+2026-03-19T11:16:12.811093Z  [2940]    INFO:     Application startup complete.
+2026-03-19T11:16:12.809522Z  [2940]    INFO:     Waiting for application startup.
+2026-03-19T11:16:12.809376Z  [2940]    INFO:     Started server process [2940]
+2026-03-19T11:16:12.692783Z  ✅ Active: Strategic_Minerals_Scout | Category: Strategic Minerals | Sector: Strategic Minerals and Rare Earth Elements
+2026-03-19T11:16:12.692718Z  ✅ Active: Power_Energy_Scout | Category: Power & Energy | Sector: Power Generation and Energy Storage
+2026-03-19T11:16:12.692655Z  ✅ Active: Space_Defense_Scout | Category: Space & Defense | Sector: Space Exploration and Defense Technology
+2026-03-19T11:16:12.692587Z  ✅ Active: AI_Stack_Scout | Category: AI Stack | Sector: AI Stack (Compute, Foundation Models, Fine-tuning, and Application Layer)
+2026-03-19T11:16:12.692582Z  ✅ Active: Crypto_Scout | Category: Crypto | Sector: Crypto and Blockchain
+2026-03-19T11:16:12.692570Z  ✅ Active: Robotics_Scout | Category: Robotics | Sector: Physical AI and Embodied Robotics
+2026-03-19T11:16:12.692283Z  --- Initializing Market Scouts ---
+2026-03-19T11:16:11.844191Z  [2941]    INFO:     Application startup complete.
+2026-03-19T11:16:11.840890Z  [2941]    INFO:     Waiting for application startup.
+2026-03-19T11:16:11.840779Z  [2941]    INFO:     Started server process [2941]
+2026-03-19T11:16:11.761448Z  [2936]    INFO:     Application startup complete.
+2026-03-19T11:16:11.759444Z  [2936]    INFO:     Waiting for application startup.
+2026-03-19T11:16:11.758759Z  [2936]    INFO:     Started server process [2936]
+2026-03-19T11:16:11.681467Z  ✅ Active: Strategic_Minerals_Scout | Category: Strategic Minerals | Sector: Strategic Minerals and Rare Earth Elements
+2026-03-19T11:16:11.681257Z  ✅ Active: Power_Energy_Scout | Category: Power & Energy | Sector: Power Generation and Energy Storage
+2026-03-19T11:16:11.681205Z  ✅ Active: Space_Defense_Scout | Category: Space & Defense | Sector: Space Exploration and Defense Technology
+2026-03-19T11:16:11.681157Z  ✅ Active: AI_Stack_Scout | Category: AI Stack | Sector: AI Stack (Compute, Foundation Models, Fine-tuning, and Application Layer)
+2026-03-19T11:16:11.681077Z  ✅ Active: Crypto_Scout | Category: Crypto | Sector: Crypto and Blockchain
+2026-03-19T11:16:11.680829Z  ✅ Active: Robotics_Scout | Category: Robotics | Sector: Physical AI and Embodied Robotics
+2026-03-19T11:16:11.680679Z  --- Initializing Market Scouts ---
+2026-03-19T11:16:11.643421Z  ✅ Active: Strategic_Minerals_Scout | Category: Strategic Minerals | Sector: Strategic Minerals and Rare Earth Elements
+2026-03-19T11:16:11.643344Z  ✅ Active: Power_Energy_Scout | Category: Power & Energy | Sector: Power Generation and Energy Storage
+2026-03-19T11:16:11.643275Z  ✅ Active: Space_Defense_Scout | Category: Space & Defense | Sector: Space Exploration and Defense Technology
+2026-03-19T11:16:11.643220Z  ✅ Active: AI_Stack_Scout | Category: AI Stack | Sector: AI Stack (Compute, Foundation Models, Fine-tuning, and Application Layer)
+2026-03-19T11:16:11.643164Z  ✅ Active: Crypto_Scout | Category: Crypto | Sector: Crypto and Blockchain
+2026-03-19T11:16:11.643111Z  ✅ Active: Robotics_Scout | Category: Robotics | Sector: Physical AI and Embodied Robotics
+2026-03-19T11:16:11.642961Z  --- Initializing Market Scouts ---
+2026-03-19T11:16:11.555991Z  [2938]    INFO:     Application startup complete.
+2026-03-19T11:16:11.552802Z  [2938]    INFO:     Waiting for application startup.
+2026-03-19T11:16:11.552686Z  [2938]    INFO:     Started server process [2938]
+2026-03-19T11:16:11.546092Z  [2935]    INFO:     Application startup complete.
+2026-03-19T11:16:11.544659Z  [2935]    INFO:     Waiting for application startup.
+2026-03-19T11:16:11.544512Z  [2935]    INFO:     Started server process [2935]
+2026-03-19T11:16:11.540973Z  [2937]    INFO:     Application startup complete.
+2026-03-19T11:16:11.538219Z  [2937]    INFO:     Waiting for application startup.
+2026-03-19T11:16:11.538064Z  [2937]    INFO:     Started server process [2937]
+2026-03-19T11:16:11.442233Z  [2939]    INFO:     Application startup complete.
+2026-03-19T11:16:11.440503Z  [2939]    INFO:     Waiting for application startup.
+2026-03-19T11:16:11.440359Z  [2939]    INFO:     Started server process [2939]
+2026-03-19T11:16:11.284152Z  ✅ Active: Strategic_Minerals_Scout | Category: Strategic Minerals | Sector: Strategic Minerals and Rare Earth Elements
+2026-03-19T11:16:11.284083Z  ✅ Active: Power_Energy_Scout | Category: Power & Energy | Sector: Power Generation and Energy Storage
+2026-03-19T11:16:11.284007Z  ✅ Active: Space_Defense_Scout | Category: Space & Defense | Sector: Space Exploration and Defense Technology
+2026-03-19T11:16:11.283947Z  ✅ Active: AI_Stack_Scout | Category: AI Stack | Sector: AI Stack (Compute, Foundation Models, Fine-tuning, and Application Layer)
+2026-03-19T11:16:11.283887Z  ✅ Active: Crypto_Scout | Category: Crypto | Sector: Crypto and Blockchain
+2026-03-19T11:16:11.283825Z  ✅ Active: Robotics_Scout | Category: Robotics | Sector: Physical AI and Embodied Robotics
+2026-03-19T11:16:11.283686Z  --- Initializing Market Scouts ---
