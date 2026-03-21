@@ -36,6 +36,13 @@ fi
 #gcloud services list --enabled --project marketresearch-agents
 #get logging
 # gcloud logging read "resource.type=aiplatform.googleapis.com/ReasoningEngine AND resource.labels.location=us-central1" --limit=50 --project=marketresearch-agents --format="value(textPayload)"
+# Filter by LQL 
+# resource.type="aiplatform.googleapis.com/ReasoningEngine"
+# resource.labels.location="us-central1"
+# timestamp >= "2026-03-20T00:00:00Z"
+# textPayload:"ERROR"
+# severity="DEFAULT"
+
 #gcloud auth list //shows all auth users that were configured
 #gcloud config list //shows the active user and project
 #GIVE PERMISSION TO THE SERVICE ACCOUNT TO USE THE API
@@ -47,3 +54,8 @@ fi
 # gcloud scheduler jobs update http market-team-daily-sweep \
 #     --location="us-central1" \
 #     --attempt-deadline=30m
+#
+#GIVE PERMISSION TO THE SERVICE ACCOUNT TO USE THE TRACING API
+# gcloud projects add-iam-policy-binding marketresearch-agents \
+#     --member="serviceAccount:market-agent-sa@marketresearch-agents.iam.gserviceaccount.com" \
+#     --role="roles/cloudtrace.agent"

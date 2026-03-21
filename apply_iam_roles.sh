@@ -38,6 +38,11 @@ gcloud projects add-iam-policy-binding "$PROJECT_ID" \
   --member="serviceAccount:$SA_EMAIL" \
   --role="roles/serviceusage.serviceUsageConsumer" > /dev/null
 
+echo "Granting Cloud Trace Agent..."
+gcloud projects add-iam-policy-binding "$PROJECT_ID" \
+    --member="serviceAccount:$SA_EMAIL" \
+    --role="roles/cloudtrace.agent" > /dev/null
+
 echo "Restoring previous gcloud identity ($PREV_ACCOUNT)..."
 gcloud config set account "$PREV_ACCOUNT"
 

@@ -5,7 +5,7 @@ from datetime import datetime
 import asyncio
 import vertexai
 from vertexai import agent_engines
-from google.adk.agents import Agent
+from google.adk.agents import Agent, SequentialAgent
 from google.cloud import storage # Required for GCS support
 from google.genai import types
 from google.adk.tools import AgentTool, google_search, url_context
@@ -17,25 +17,12 @@ safe_google_search = google_search
 # Define the live web search tool
 #google_search_tool = google_search
 #google_search_tool = GoogleSearchTool(bypass_multi_tools_limit=True)
-# ==========================================
 # 1. DEFINE THE THINKING CONFIGURATIONS
 # ==========================================
 
-# Fast reasoning for the workers
-scout_thinking = types.GenerateContentConfig(
-    thinking_config=types.ThinkingConfig(
-        include_thoughts=False,
-        thinking_level=types.ThinkingLevel.HIGH
-    )
-)
-
-# Deep reasoning for the CIO
-cio_thinking = types.GenerateContentConfig(
-    thinking_config=types.ThinkingConfig(
-        include_thoughts=False,
-        thinking_level=types.ThinkingLevel.MEDIUM
-    )
-)
+# Standard config - Tool calling is currently incompatible with ThinkingConfig in many models
+scout_config = types.GenerateContentConfig()
+cio_config = types.GenerateContentConfig()
 
 # ==========================================
 # 2. LOAD CONFIGURATION
@@ -83,10 +70,10 @@ def _get_gcs_blob(gs_path: str):
 def _normalize_category(input_string: str) -> str:
     """Soft map varying LLM strings (e.g. 'Power Energy') to true canonical categories ('Power & Energy')."""
     valid_categories = [cfg.get("category") for cfg in config.get("scouts", {}).values() if cfg.get("category")]
-    normalized_input = input_string.lower().replace("&", "").replace("and", "").replace(" ", "")
+    normalized_input = input_string.lower().replace("&", "").replace("and", "").replace(" ", "").replace("_", "")
     
     for valid in valid_categories:
-        normalized_valid = valid.lower().replace("&", "").replace("and", "").replace(" ", "")
+        normalized_valid = valid.lower().replace("&", "").replace("and", "").replace(" ", "").replace("_", "")
         if normalized_input == normalized_valid:
             return valid
     return input_string
@@ -199,6 +186,7 @@ for scout_name, scout_cfg in config.get("scouts", {}).items():
     if scout_cfg.get("enabled", True):
         category = scout_cfg.get("category", "General")
         sector = scout_cfg.get("sector", scout_name.replace("_", " "))
+        agent_instruction = f"<persona>\nYou are the {sector} sector analyst. Your canonical category for logging is '{category}'.\n{SCOUT_BASE_PROMPT}"
         agent = Agent(
             name=scout_name,
             version=WORKER_VERSION,
@@ -208,8 +196,9 @@ for scout_name, scout_cfg in config.get("scouts", {}).items():
                 safe_google_search, 
                 url_context
             ],
-            generate_content_config=scout_thinking, 
-            instruction=f"<persona>\nYou are the {sector} sector analyst. Your canonical category for logging is '{category}'.\n{SCOUT_BASE_PROMPT}"
+            output_key=f"{scout_name}_findings",
+            generate_content_config=scout_config, 
+            instruction=agent_instruction
         )
         active_scouts[scout_name] = agent
         print(f"✅ Active: {scout_name} | Category: {category} | Sector: {sector}", flush=True)
@@ -226,20 +215,31 @@ cio_tools = [
     safe_google_search
 ]
 
-# Add active scouts as tools via the AgentTool wrapper
-for scout_agent in active_scouts.values():
-    cio_tools.append(AgentTool(agent=scout_agent))
+# Dynamically construct CIO instruction to ingest output_keys
+scout_findings_str = "=== SCOUT FINDINGS ===\n"
+for scout_name in active_scouts.keys():
+    scout_findings_str += f"{scout_name}: {{{scout_name}_findings}}\n"
+scout_findings_str += "======================\n\n"
+
+if "<task_instructions>" in CIO_INSTRUCTIONS:
+    final_instruction = CIO_INSTRUCTIONS.replace("<task_instructions>", scout_findings_str + "<task_instructions>")
+else:
+    final_instruction = scout_findings_str + CIO_INSTRUCTIONS
 
 Chief_Investment_Officer = Agent(
     name=SUPERVISOR_NAME,
     version=SUPERVISOR_VERSION,
     model=SUPERVISOR_MODEL,
     tools=cio_tools,
-    generate_content_config=cio_thinking, 
-    instruction=CIO_INSTRUCTIONS
+    generate_content_config=cio_config, 
+    instruction=final_instruction
 )
 
-app = agent_engines.AdkApp(agent=Chief_Investment_Officer)
+# 6. PIPELINE ORCHESTRATION
+sub_agents = list(active_scouts.values()) + [Chief_Investment_Officer]
+market_team = SequentialAgent(name="Market_Team", sub_agents=sub_agents)
+
+app = agent_engines.AdkApp(agent=market_team)
 
 # ==========================================
 # 5. EXECUTION BLOCK (Pre-flight checks & Run)
