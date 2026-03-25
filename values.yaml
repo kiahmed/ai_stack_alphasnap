@@ -30,7 +30,6 @@ scouts:
     sector: "Space Exploration and Defense Technology"
   Power_Energy_Scout:
     enabled: true
-    category: "Power & Energy"
     sector: "Power Generation and Energy Storage"
   Strategic_Minerals_Scout:
     enabled: true
@@ -43,59 +42,60 @@ storage:
   
   # Context window for reading findings (number of entries)
   memory_limit: 10
-  
+
+  # Max sectors to run concurrently per batch (prevents 429 on preview models)
+  batch_size: 2
+
   # Paths
   local_path: "market_findings_log.json"
   gcs_path: "gs://marketresearch-agents/market_findings_log.json"
 
 prompts:
+  # ── SCOUT: Pure search agent. No memory read. ──
   scout_base: |
     I need you to perform as a high-speed Market Intelligence Scout. Focus on identifying new developments within your assigned sector.
     </persona>
-    <task_instructions>
-    1. **READ MEMORY**: Use `read_memory_log` with your assigned canonical category (limit = 10 entries).
-    2. **TARGETED SEARCH**: Use `google_search` for catalysts from the last 24 hours only.
-       - Query specialized sources (FinTwit, Reddit, specialist blogs) alongside mainstream news for early-stage developments and M&A rumors.
-       - Focus: Isolate product launches, M&A activity, strategic partnerships, whale movements, and macro catalysts.
+    1. **START**: Call `log_progress(message="Scout starting {sector}")`.
+    2. **TARGETED SEARCH**: Use `safe_google_search` for catalysts from the last 24 hours only. Query specialized sources.
+       - Focus: Isolate high-signal launches, M&A/rumors, and whale movements.
     3. **DEEP ANALYSIS**: If a search result links to a technical report, long article, or PDF, use `url_context` for detailed takeaways.
-    4. **RUTHLESS OUTPUT**: Pass ONLY critical, high-signal findings with its published timestamp and source URLs to the CIO.
-       - **FORMAT**: Use a clearly numbered list for distinct developments (e.g., Topic 1: [Details], Topic 2: [Details]).
-       - **ATOMIZATION**: Ensure unrelated topics (e.g., an M&A deal vs. an Earnings report) are separate entries in your response.
+    4. **RUTHLESS OUTPUT**: Pass ONLY critical, high-signal findings with its published date in YYYY-MM-DD format and source URLs.
+       - **FORMAT**: Use a clearly numbered list for distinct developments.
+    5. **PROGRESS REPORT**: Call `log_progress(message="Scout {sector} complete", searches=[Number of searches], topics=[Number of topics])`. Pass findings to next agent.
     </task_instructions>
-    
-  cio_instructions: |
-    <persona>
-    You are the Chief Investment Officer (CIO) of a boutique quantitative research firm. You are uncompromising regarding data integrity, distinguishing perfectly between "confirmed news" and "market speculation." You never hallucinate technical levels; extract them from whatever internal market and options data tools you have access to."
-    </persona>
-    
+
+  # ── DATA ENGINEER: Memory baseline + semantic dedup + analysis + tickers ──
+  data_engineer_instructions: |
     <task_instructions>
-    1. **ESTABLISH BASELINE**: Call `read_memory_log(category="all", memory_limit=50)` to retrieve the latest 50 entries for each category to form a baseline.
-    2. **FILTER & ANALYZE INSIGHTS**: Evaluate each scout finding provided in this context against its baseline:
-       - **DISCARD**: Findings that carry pretty much the same information as previous logs.
+    1. **START**: Call `log_progress(message="DE starting {category}")`.
+    2. **ESTABLISH BASELINE**: Call `read_memory_log(category="{category}", memory_limit=10)` to retrieve the latest 10 entries to form a baseline.
+    3. **FILTER & ANALYZE INSIGHTS**: Evaluate each scout finding provided in this context against the baseline you retrieved in step 2:
+       - **DISCARD**: Findings that carry pretty much the same information as any entry in your baseline, or convey the same underlying message or intent.
        - **UPDATE**: Keep findings with NEW data (refined price targets, confirmed partnerships, etc.).
-       - **INVESTABLE TAKEAWAYS**: For every kept finding, extract multiple, layered takeaways:
-         - **Direct Impact**: Primary effect on the company or asset mentioned (e.g., increased revenue, valuation bump).
-         - **Indirect/Secondary Impact**: Identify "downstream" winners (e.g., hardware suppliers, cloud providers, strategic partners).
-         - **Market Dynamics**: How this shifts the competitive landscape of the sector.
-       - **SENTIMENT**: Assign a sentiment (Very Bullish/Bullish/Neutral/Bearish/Very Bearish) based on the aggregate projected impact of these takeaways.
-    3. **TICKER DATA**: If your kept findings include public tickers, search for today's technicals (institutional walls, pivots, gamma flips, and latest analyst PTs).
-    4. **NEAR-TERM GUIDANCE**: Provide a very precise "Call to Action" for each new/updated finding:
-       - **Public Tickers**: Suggest a probable "play" for 1-5 days positioning.
-       - **Private Companies**: Estimate future valuations or acquisition potential by Big Tech, possible effec on a public company.
-    5. **PERSISTENCE**: For every distinct Topic or News Item identified, call `append_to_memory_log` separately. 
-        - **CRITICAL: ONE LOG PER TOPIC**. DO NOT group multiple unrelated developments (e.g., TSLA news and NVDA news) into a single tool call. This is vital for data granularity.
-        - `findings_timestamp`: Pass the findings timestamp that you received from the scout's findings.
-        - `category`: Use the scout's canonical category.
-        - `finding`: The raw discovery (specific to this single topic).
-        - `insights_sentiment`: The layered takeaways and sentiment for this topic.
-        - `guidance_play`: Send Call to action and the near-term trade idea for this topic.
-        - `price_levels`: Ticker Data from the step 3.
-    6. **EXECUTIVE REPORT**: Generate a final synthesis in Markdown.
+       - **ANALYSIS**: Extract multiple, layered takeaways (Direct, Indirect, Market Dynamics) and assign a sentiment(Very Bullish/Bullish/Neutral/Bearish/Very Bearish). Keep it extremely concise.
+    4. **TICKER DATA**: If your kept findings include public tickers, use `safe_google_search` to find today's technicals.
+    5. **PROGRESS REPORT**: Call `log_progress(message="DE {category} complete", searches=[Number of tickers researched], topics=[Number of topics analyzed])`.
     </task_instructions>
-    
+
+  # ── STRATEGIST: Guidance + persistence + sector report ──
+  strategist_instructions: |
+    <task_instructions>
+    1. **START**: Call `log_progress(message="Strategist starting {category}")`.
+    2. **NEAR-TERM GUIDANCE**: Provide a very precise "Call to Action" for each new/updated finding:
+       - **Public Tickers**: Suggest a probable "play" for 1-5 days positioning.
+       - **Private Companies**: Estimate future valuations or acquisition potential by Big Tech, possible effect on a public company.
+    3. **PERSISTENCE**: For every distinct Topic or News Item identified, call `append_to_memory_log` separately.
+       - **CRITICAL: ONE LOG PER TOPIC**. DO NOT group multiple unrelated developments (e.g., TSLA news and NVDA news) into a single tool call. This is vital for data granularity.
+       - `findings_date`: Pass the findings date that you received for this particular finding.
+       - `category`: "{category}"
+       - `finding`: The raw discovery (specific to this single topic).
+       - `insights_sentiment`: The layered takeaways and sentiment for this topic.
+       - `guidance_play`: Send Call to action and the near-term trade idea for this topic.
+       - `price_levels`: Ticker Data from the analysis step.
+    4. **PROGRESS REPORT**: Call `log_progress(message="Strategist {category} complete", topics=[Number of topics logged])`.
+    </task_instructions>
     <output_constraints>
-    - **STRUCTURE**: One section per sector using `### [Sector Name]` headers.
-    - **TABLES**: A single consolidated Markdown table per section.
+    - **TABLES**: A single consolidated Markdown table for the {sector} sector.
     - **COLUMNS**: `| Datetime | Finding | Sentiment & Investment Takeaways | Guidance & Play | Market Data & Levels |`
     - **DATA STANDARDS**:
       - **PUBLIC**: Include Tickers, institutional levels (walls/pivots), Gamma Flips, and analyst PTs.
@@ -103,3 +103,13 @@ prompts:
       - **MACRO**: Reference relevant sector ETFs (e.g., BOTZ, ROBO, XLE).
     - **NO DATA**: If no new findings exist, state "No new developments in the last 24 hours."
     </output_constraints>
+
+  # ── LEGACY CIO INSTRUCTIONS (retained for reference, no longer used) ──
+  # cio_instructions: |
+  #   <persona>
+  #   You are the Chief Investment Officer (CIO) of a boutique quantitative research firm.
+  #   </persona>
+  #   <task_instructions>
+  #   1. ESTABLISH BASELINE ... 2. FILTER & ANALYZE ... 3. TICKER DATA ...
+  #   4. NEAR-TERM GUIDANCE ... 5. PERSISTENCE ... 6. EXECUTIVE REPORT
+  #   </task_instructions>

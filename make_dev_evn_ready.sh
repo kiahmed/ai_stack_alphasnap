@@ -59,3 +59,9 @@ fi
 # gcloud projects add-iam-policy-binding marketresearch-agents \
 #     --member="serviceAccount:market-agent-sa@marketresearch-agents.iam.gserviceaccount.com" \
 #     --role="roles/cloudtrace.agent"
+
+#COPY THE LONG TERM STORAGE FILE TO THE WORKING DIRECTORY
+#gcloud storage cp market_findings_log_lts.json gs://marketresearch-agents/market_findings_log.json
+# 
+#GIVE PERMISSION TO THE SERVICE ACCOUNT TO USE THE LOGGING API
+#gcloud projects add-iam-policy-binding marketresearch-agents --member="serviceAccount:market-agent-sa@marketresearch-agents.iam.gserviceaccount.com" --role="roles/logging.viewer"  

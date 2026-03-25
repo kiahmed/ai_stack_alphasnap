@@ -22,6 +22,24 @@ fi
 if [ "$TRIGGER_MODE" == "scheduler" ]; then
     echo "📅 Triggering via Cloud Scheduler job: $SCHEDULER_NAME..."
 
+    # ── Job State Check & Auto-Resume ──
+    echo "🔍 Checking job state for $SCHEDULER_NAME..."
+    STATE=$(gcloud scheduler jobs describe "$SCHEDULER_NAME" \
+        --location="$LOCATION" \
+        --project="$PROJECT_ID" \
+        --format="value(state)" 2>/dev/null)
+    
+    if [ "$STATE" == "PAUSED" ]; then
+        echo "⚠️ Job is PAUSED. Resuming now..."
+        gcloud scheduler jobs resume "$SCHEDULER_NAME" \
+            --location="$LOCATION" \
+            --project="$PROJECT_ID" > /dev/null
+        echo "✅ Job resumed."
+    elif [ -z "$STATE" ]; then
+        echo "❌ Error: Job '$SCHEDULER_NAME' not found in $LOCATION."
+        exit 1
+    fi
+
     OUTPUT=$(gcloud scheduler jobs run "$SCHEDULER_NAME" \
         --location="$LOCATION" \
         --project="$PROJECT_ID" 2>&1)
@@ -60,18 +78,62 @@ if [ "$TRIGGER_MODE" == "scheduler" ]; then
 # ═══════════════════════════════════════════════════
 elif [ "$TRIGGER_MODE" == "api" ]; then
     echo "🔗 Triggering via direct API call to Reasoning Engine ${ENGINE_ID}..."
+    
+    # We use a python one-liner to handle the stream, print deltas, and accumulate usage_metadata.
+    # This captures the native SequentialAgent aggregation for the entire sweep.
+    python3 - <<EOF
+import requests, json, sys
 
-    curl -X POST \
-      -H "Authorization: Bearer $(gcloud auth print-access-token)" \
-      -H "Content-Type: application/json" \
-      "https://${LOCATION}-aiplatform.googleapis.com/v1beta1/projects/${PROJECT_ID}/locations/${LOCATION}/reasoningEngines/${ENGINE_ID}:streamQuery" \
-      -d '{
-        "class_method": "stream_query",
-        "input": {
-            "user_id": "api_user",
-            "message": "Execute the daily market sweep. Run the CIO to gather findings from scouts, log them, and print the tabular report."
-        }
-      }'
+url = "https://${LOCATION}-aiplatform.googleapis.com/v1beta1/projects/${PROJECT_ID}/locations/${LOCATION}/reasoningEngines/${ENGINE_ID}:streamQuery"
+headers = {
+    "Authorization": "Bearer $(gcloud auth print-access-token)",
+    "Content-Type": "application/json"
+}
+payload = {
+    "class_method": "stream_query",
+    "input": {
+        "user_id": "api_trigger_cli",
+        "message": "Execute the daily market sweep. Gather findings from scouts, log them, and print the tabular report."
+    }
+}
+
+print("💡 Streaming results from Vertex AI...")
+total_tokens = {"input": 0, "output": 0, "total": 0}
+
+with requests.post(url, headers=headers, json=payload, stream=True) as r:
+    if r.status_code != 200:
+        print(f"❌ Error: {r.status_code}\n{r.text}")
+        sys.exit(1)
+    
+    for line in r.iter_lines():
+        if not line: continue
+        try:
+            event = json.loads(line.decode('utf-8'))
+            # SequentialAgent Aggregation: Vertex tracks the sum of all steps.
+            # We look for usage_metadata in the events.
+            if "usage_metadata" in event:
+                u = event["usage_metadata"]
+                total_tokens["input"] = u.get("promptTokenCount", 0)
+                total_tokens["output"] = u.get("candidatesTokenCount", 0)
+                total_tokens["total"] = u.get("totalTokenCount", 0)
+            
+            # Print text content if present
+            if "content" in event:
+                print(event["content"], end="", flush=True)
+            else:
+                # Print other event names (tool calls, etc)
+                pass
+        except:
+            pass
+
+print("\n" + "="*40)
+print("📈 FINAL SWEEP METRICS (Sequential Aggregation)")
+print("="*40)
+print(f"🔹 Total Input:  {total_tokens['input']:,}")
+print(f"🔹 Total Output: {total_tokens['output']:,}")
+print(f"🔹 Total Sweep Tokens: {total_tokens['total']:,}")
+print("="*40 + "\n")
+EOF
 
 else
     echo "❌ Error: Invalid TRIGGER_MODE='${TRIGGER_MODE}' in ae_config.config."
