@@ -30,6 +30,7 @@ scouts:
     sector: "Space Exploration and Defense Technology"
   Power_Energy_Scout:
     enabled: true
+    category: "Power & Energy"
     sector: "Power Generation and Energy Storage"
   Strategic_Minerals_Scout:
     enabled: true
