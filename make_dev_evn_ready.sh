@@ -34,7 +34,7 @@ fi
 #     --message-body='{"class_method": "stream_query", "input": {"user_id": "cron_scheduler", "message": "Execute the daily market sweep. Gather findings from scouts, log them, and print the tabular report."}}'
 # List enabled services for the project
 #gcloud services list --enabled --project marketresearch-agents
-#get logging
+#get logging from gcloud
 # gcloud logging read "resource.type=aiplatform.googleapis.com/ReasoningEngine AND resource.labels.location=us-central1" --limit=50 --project=marketresearch-agents --format="value(textPayload)"
 # Filter by LQL 
 # resource.type="aiplatform.googleapis.com/ReasoningEngine"
@@ -65,3 +65,4 @@ fi
 # 
 #GIVE PERMISSION TO THE SERVICE ACCOUNT TO USE THE LOGGING API
 #gcloud projects add-iam-policy-binding marketresearch-agents --member="serviceAccount:market-agent-sa@marketresearch-agents.iam.gserviceaccount.com" --role="roles/logging.viewer"  
+

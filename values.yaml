@@ -2,9 +2,9 @@ gcp:
   project_id: "marketresearch-agents"
   location: "us-central1"
   model_location: "global"
-  
+
 agents:
-  # Gemini 3.1 Pro Preview (Global endpoint required for Preview models)
+  # Gemini 3.1 Pro Preview (global endpoint, requires batch throttling for RPM quota)
   supervisor_model: "gemini-3.1-pro-preview"
   supervisor_name: "Chief_Investment_Officer"
   supervisor_version: "1.0"
