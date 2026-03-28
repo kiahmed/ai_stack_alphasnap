@@ -8,7 +8,7 @@ if [ -z "$ENGINE_ID" ] || [ "$ENGINE_ID" == '""' ]; then
     exit 1
 fi
 
-ENDPOINT_URI="https://${LOCATION}-aiplatform.googleapis.com/v1beta1/projects/${PROJECT_ID}/locations/${LOCATION}/reasoningEngines/${ENGINE_ID}:streamQuery"
+ENDPOINT_URI="https://${LOCATION}-aiplatform.googleapis.com/v1beta1/projects/${PROJECT_ID}/locations/${LOCATION}/reasoningEngines/${ENGINE_ID}:query"
 
 echo "Checking if Cloud Scheduler job '$SCHEDULER_NAME' already exists..."
 
@@ -22,7 +22,7 @@ if gcloud scheduler jobs describe "$SCHEDULER_NAME" --location="$LOCATION" > /de
         --min-backoff=5m \
         --max-backoff=20m \
         --max-retry-duration=1h \
-        --message-body='{"class_method": "stream_query", "input": {"user_id": "cron_scheduler", "message": "Execute the daily market sweep. Gather findings from scouts, log them, and print the tabular report."}}' \
+        --message-body='{"class_method": "trigger", "input": {"user_id": "cron_scheduler", "message": "Execute the daily market sweep. Gather findings from scouts, log them, and print the tabular report."}}' \
         --oauth-service-account-email="$SA_EMAIL" 2>&1)
     EXIT_CODE=$?
     ACTION="updated"
@@ -40,7 +40,7 @@ else
         --max-backoff=20m \
         --max-retry-duration=1h \
         --http-method=POST \
-        --message-body='{"class_method": "stream_query", "input": {"user_id": "cron_scheduler", "message": "Execute the daily market sweep. Gather findings from scouts, log them, and print the tabular report."}}' \
+        --message-body='{"class_method": "trigger", "input": {"user_id": "cron_scheduler", "message": "Execute the daily market sweep. Gather findings from scouts, log them, and print the tabular report."}}' \
         --oauth-service-account-email="$SA_EMAIL" \
         --headers="Content-Type=application/json" \
         --project="$PROJECT_ID" 2>&1)
