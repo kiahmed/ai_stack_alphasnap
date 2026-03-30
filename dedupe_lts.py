@@ -5,7 +5,7 @@ import math
 from collections import Counter
 
 # Configuration
-INPUT_FILE = "market_findings_log.json"
+INPUT_FILE = "market_findings_log_2.json"
 OUTPUT_FILE = "market_findings_log_deduped.json"
 SIMILARITY_THRESHOLD = 0.45  # TF-IDF cosine threshold (tuned against real corpus)
 

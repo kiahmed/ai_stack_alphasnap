@@ -3,7 +3,6 @@ from google.cloud import storage
 import json
 import yaml
 from datetime import datetime
-import asyncio
 import vertexai
 from vertexai import agent_engines
 from google.genai import types
@@ -224,14 +223,6 @@ def log_progress(message: str, searches: int = 0, topics: int = 0):
     print(f"\n[PROGRESS] {ts} | {message}{m_str}", flush=True)
     return f"Progress logged: {message}{m_str}"
 
-def batch_cooldown(seconds: int = 60):
-    """Wait between batch executions to let the API rate-limit window reset."""
-    import time
-    print(f"\n[COOLDOWN] Waiting {seconds}s between batches to avoid 429...", flush=True)
-    time.sleep(seconds)
-    print(f"[COOLDOWN] Resuming after {seconds}s pause.", flush=True)
-    return f"Cooldown complete after {seconds} seconds."
-
 # ==========================================
 # 3. AGENT BUILDING TOOLS & FACTORY
 # ==========================================
@@ -292,6 +283,25 @@ def build_sector_pipelines():
         print(f"📦 Registered sector: {sector}", flush=True)
     return sector_pipelines
 
+def _shard_exists(category: str) -> bool:
+    """Check if a sector's shard file exists (indicates the sector's strategist ran)."""
+    if USE_GCS:
+        shard_path = GCS_PATH.replace(".json", f"_{category}.json")
+        try:
+            return _get_gcs_blob(shard_path).exists()
+        except Exception:
+            return False
+    else:
+        return os.path.exists(LOCAL_PATH.replace(".json", f"_{category}.json"))
+
+def _get_pipeline_category(pipeline) -> str:
+    """Extract the category for a sector pipeline by matching its name to scouts config."""
+    scouts_cfg = config.get("scouts", {})
+    for scout_name, info in scouts_cfg.items():
+        if scout_name in pipeline.name:
+            return info.get("category", "General")
+    return "General"
+
 def merge_sector_shards() -> str:
     """Combines all sector-specific shard files into the master market_findings_log.
     Call this after all sector pipelines have completed to consolidate results."""
@@ -304,12 +314,20 @@ def merge_sector_shards() -> str:
                 shard_path = GCS_PATH.replace(".json", f"_{cat}.json")
                 blob = _get_gcs_blob(shard_path)
                 if blob.exists():
-                    new_findings.extend(json.loads(blob.download_as_text()))
+                    entries = json.loads(blob.download_as_text())
+                    print(f"[MERGE] Shard '{cat}': {len(entries)} entries", flush=True)
+                    new_findings.extend(entries)
+                else:
+                    print(f"[MERGE] Shard '{cat}': not found — skipped", flush=True)
             else:
                 shard_path = LOCAL_PATH.replace(".json", f"_{cat}.json")
                 if os.path.exists(shard_path):
                     with open(shard_path, "r") as f:
-                        new_findings.extend(json.load(f))
+                        entries = json.load(f)
+                    print(f"[MERGE] Shard '{cat}': {len(entries)} entries", flush=True)
+                    new_findings.extend(entries)
+                else:
+                    print(f"[MERGE] Shard '{cat}': not found — skipped", flush=True)
 
         # Load existing master log and append — never overwrite history
         existing = []
@@ -344,11 +362,11 @@ def merge_sector_shards() -> str:
                 shard_path = LOCAL_PATH.replace(".json", f"_{cat}.json")
                 if os.path.exists(shard_path): os.remove(shard_path)
 
-        return f"Successfully merged {len(new_findings)} new entries into master log ({len(existing)} existing + {len(new_findings)} new = {len(all_findings)} total)."
+        result = f"Successfully merged {len(new_findings)} new entries into master log ({len(existing)} existing + {len(new_findings)} new = {len(all_findings)} total)."
+        print(f"[MERGE] {result}", flush=True)
+        return result
     except Exception as e:
         return f"MERGE ERROR: {str(e)}"
-
-import uuid
 
 _market_batches_cache = None
 _merge_agent_cache = None
@@ -390,103 +408,99 @@ def get_market_batches():
     return _market_batches_cache, _merge_agent_cache
 
 class MarketSweepApp:
+    """Vertex AI Agent Engine wrapper.
+    Exposes stream_query as a sync generator — each batch gets its own
+    short-lived AdkApp so sessions stay isolated and cloudpickle works.
+    """
+
     def __init__(self):
-        self._sweep_task = None
-        self._stop_event = None
-        self._sweep_started_at = None
-        self._lock = None
-        self.batches = []
+        self.batches = None
         self.merge_agent = None
 
     def register_operations(self):
-        return {"": ["trigger", "kill", "status"]}
+        return {"stream": ["stream_query"]}
 
     def set_up(self):
-        import threading
         self.batches, self.merge_agent = get_market_batches()
-        self._stop_event = threading.Event()
-        self._lock = threading.Lock()
-        self._loop = asyncio.get_event_loop()  # capture once; reused by trigger()
 
-    def trigger(self, **kwargs):
-        from datetime import datetime
-        with self._lock:
-            if self._sweep_task and not self._sweep_task.done():
-                return {"status": "already_running"}
-            self._stop_event.clear()
+    def stream_query(self, **kwargs):
+        import time
+        user_id = kwargs.get("user_id", "scheduler")
+        message = kwargs.get("message", "Execute your daily market sweep.")
+        MAX_RETRIES = 3
 
-        user_id = kwargs.get("input", {}).get("user_id", "scheduler_async")
+        for i, batch_agent in enumerate(self.batches):
+            print(f"\n{'='*40}\n  STARTING {batch_agent.name}\n{'='*40}", flush=True)
 
-        async def _async_run():
-            try:
-                print(f"\n[TRIGGER] Async sweep started.", flush=True)
+            # Track which pipelines still need to run
+            if isinstance(batch_agent, ParallelAgent):
+                remaining = list(batch_agent.sub_agents)
+            else:
+                remaining = [batch_agent]
 
-                # 1. LOOP THROUGH BATCHES NATIVELY
-                MAX_RETRIES = 3
-                for i, batch_agent in enumerate(self.batches):
-                    if self._stop_event.is_set(): return
+            for attempt in range(1, MAX_RETRIES + 1):
+                if not remaining:
+                    break
 
-                    print(f"\n{'='*40}\n🚀 STARTING {batch_agent.name}\n{'='*40}", flush=True)
+                try:
+                    # Build the agent to run: single pipeline or parallel group
+                    if len(remaining) == 1:
+                        run_agent = remaining[0]
+                    elif attempt > 1:
+                        run_agent = ParallelAgent(name=f"{batch_agent.name}_retry_{attempt}", sub_agents=remaining)
+                    else:
+                        run_agent = batch_agent
 
-                    for attempt in range(1, MAX_RETRIES + 1):
-                        if self._stop_event.is_set(): return
-                        try:
-                            # 💥 Fresh AdkApp on every attempt — clean context even on retry
-                            app_instance = agent_engines.AdkApp(agent=batch_agent)
-                            async for event in app_instance.async_stream_query(
-                                user_id=user_id,
-                                message="Execute your daily market sweep."
-                            ):
-                                pass
-                            break  # success
+                    batch_app = agent_engines.AdkApp(agent=run_agent)
+                    for event in batch_app.stream_query(user_id=user_id, message=message):
+                        yield event
+                    remaining = []
+                    break
 
-                        except Exception as e:
-                            print(f"\n⚠️ [NETWORK GLITCH] {batch_agent.name} attempt {attempt}/{MAX_RETRIES}: {e}", flush=True)
-                            if attempt < MAX_RETRIES:
-                                print(f"⏳ Retrying in 30 seconds...", flush=True)
-                                await asyncio.sleep(30)
-                            else:
-                                print(f"❌ [FATAL] {batch_agent.name} failed after {MAX_RETRIES} attempts. Moving to next batch.", flush=True)
+                except Exception as e:
+                    err_str = str(e)
+                    print(f"\n[ERROR] {batch_agent.name} attempt {attempt}/{MAX_RETRIES}: {e}", flush=True)
 
-                    # 2. NATIVE PYTHON SLEEP (No LLM required)
-                    if i < len(self.batches) - 1:
-                        print(f"\n[COOLDOWN] Batch complete. Sleeping 60s to reset TPM limits...", flush=True)
-                        await asyncio.sleep(60)
+                    # Check which sectors completed via shard existence
+                    still_pending = []
+                    for pipeline in remaining:
+                        cat = _get_pipeline_category(pipeline)
+                        if _shard_exists(cat):
+                            print(f"[RECOVERY] {pipeline.name} ({cat}) — shard exists, skipping.", flush=True)
+                        else:
+                            still_pending.append(pipeline)
+                            print(f"[RECOVERY] {pipeline.name} ({cat}) — no shard, will retry.", flush=True)
 
-                # 3. RUN THE MERGE AGENT AT THE END
-                if not self._stop_event.is_set():
-                    print(f"\n{'='*40}\n🚀 STARTING MERGE PHASE\n{'='*40}", flush=True)
-                    merge_app = agent_engines.AdkApp(agent=self.merge_agent)
-                    async for event in merge_app.async_stream_query(
-                        user_id=user_id,
-                        message="Merge the shards."
-                    ):
-                        pass
+                    remaining = still_pending
 
-                print(f"\n[TRIGGER] Sweep fully completed.", flush=True)
-            except Exception as e:
-                print(f"\n[TRIGGER] FAILED: {e}", flush=True)
+                    if not remaining:
+                        print(f"[RECOVERY] All sectors in {batch_agent.name} completed despite error.", flush=True)
+                        break
 
-        with self._lock:
-            self._sweep_started_at = datetime.utcnow().isoformat() + "Z"
-            self._sweep_task = asyncio.run_coroutine_threadsafe(_async_run(), self._loop)
+                    if attempt < MAX_RETRIES:
+                        if "429" in err_str or "RESOURCE_EXHAUSTED" in err_str:
+                            print(f"[COOLDOWN] 429 rate limit — waiting 60s...", flush=True)
+                            time.sleep(60)
+                        elif "503" in err_str or "502" in err_str or "UNAVAILABLE" in err_str:
+                            print(f"[COOLDOWN] Server error — waiting 30s...", flush=True)
+                            time.sleep(30)
+                        else:
+                            print(f"[COOLDOWN] Unexpected error — waiting 30s...", flush=True)
+                            time.sleep(30)
+                    else:
+                        failed_names = [p.name for p in remaining]
+                        print(f"[FATAL] {batch_agent.name} failed after {MAX_RETRIES} attempts. Lost: {failed_names}", flush=True)
 
-        return {"status": "triggered"}
+            if i < len(self.batches) - 1:
+                print(f"\n[COOLDOWN] Sleeping 60s between batches...", flush=True)
+                time.sleep(60)
 
-    def kill(self, **kwargs):
-        with self._lock:
-            if not self._sweep_task or self._sweep_task.done():
-                return {"status": "no_sweep_running", "message": "Nothing to kill."}
-            self._stop_event.set()
-            started = self._sweep_started_at
-        return {"status": "kill_signal_sent",
-                "message": f"Sweep started at {started} received kill signal."}
+        print(f"\n{'='*40}\n  STARTING MERGE PHASE\n{'='*40}", flush=True)
+        merge_app = agent_engines.AdkApp(agent=self.merge_agent)
+        for event in merge_app.stream_query(user_id=user_id, message="Merge the shards."):
+            yield event
 
-    def status(self, **kwargs):
-        with self._lock:
-            if self._sweep_task and not self._sweep_task.done():
-                return {"status": "running", "started_at": self._sweep_started_at}
-            return {"status": "idle"}
+        print(f"\nSweep fully completed.", flush=True)
 
 app = MarketSweepApp()
 
@@ -511,45 +525,18 @@ if __name__ == "__main__":
 
     import time as _time
     _start = _time.time()
+
     app.set_up()
-    print(f"🚀 Initializing Master Market Sweep...\n")
+    print(f"Initializing Master Market Sweep...\n")
 
-    async def run_report():
-        # Emulate the trigger behavior locally
-        MAX_RETRIES = 3
-        for i, batch_agent in enumerate(app.batches):
-            print(f"\n{'='*40}\n🚀 STARTING {batch_agent.name}\n{'='*40}", flush=True)
+    for event in app.stream_query(
+        user_id="admin_user",
+        message="Execute the daily market sweep. Gather findings from scouts, log them, and print the tabular report."
+    ):
+        print(event)
 
-            for attempt in range(1, MAX_RETRIES + 1):
-                try:
-                    # Fresh AdkApp on every attempt — clean context even on retry
-                    app_instance = agent_engines.AdkApp(agent=batch_agent)
-                    async for event in app_instance.async_stream_query(
-                        user_id="admin_user", message="Execute your daily market sweep."
-                    ):
-                        pass
-                    break  # success — exit retry loop
-
-                except Exception as e:
-                    print(f"\n⚠️ [NETWORK GLITCH] {batch_agent.name} attempt {attempt}/{MAX_RETRIES}: {e}", flush=True)
-                    if attempt < MAX_RETRIES:
-                        print(f"⏳ Retrying in 30 seconds...", flush=True)
-                        await asyncio.sleep(30)
-                    else:
-                        print(f"❌ [FATAL] {batch_agent.name} failed after {MAX_RETRIES} attempts. Moving to next batch.", flush=True)
-
-            if i < len(app.batches) - 1:
-                print(f"\n[COOLDOWN] Batch complete. Sleeping 60s to reset TPM limits...", flush=True)
-                await asyncio.sleep(60)
-
-        print(f"\n{'='*40}\n🚀 STARTING MERGE PHASE\n{'='*40}", flush=True)
-        merge_app = agent_engines.AdkApp(agent=app.merge_agent)
-        async for event in merge_app.async_stream_query(user_id="admin_user", message="Merge."):
-            pass
-
-        elapsed = _time.time() - _start
-        print(f"\n{'='*40}")
-        print(f"✅ SWEEP COMPLETE — Total time: {int(elapsed // 3600)}h {int((elapsed % 3600) // 60)}m {int(elapsed % 60)}s")
-        print(f"{'='*40}\n", flush=True)
-
-    asyncio.run(run_report())
+    elapsed = _time.time() - _start
+    print(f"\n{'='*40}")
+    print(f"SWEEP COMPLETE — Total time: {int(elapsed // 3600)}h {int((elapsed % 3600) // 60)}m {int(elapsed % 60)}s")
+    print(f"Token Usage — Input: {TOKEN_METRICS['input']:,} | Output: {TOKEN_METRICS['output']:,} | Total: {TOKEN_METRICS['total']:,}")
+    print(f"{'='*40}\n")
