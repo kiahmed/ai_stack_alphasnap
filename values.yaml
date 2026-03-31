@@ -54,7 +54,7 @@ storage:
   memory_limit: 10
 
   # Max sectors to run concurrently per batch (prevents 429 on preview models)
-  batch_size: 2
+  batch_size: 3
 
   # Paths
   local_path: "market_findings_log.json"
