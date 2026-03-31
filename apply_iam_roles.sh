@@ -43,6 +43,16 @@ gcloud projects add-iam-policy-binding "$PROJECT_ID" \
     --member="serviceAccount:$SA_EMAIL" \
     --role="roles/cloudtrace.agent" > /dev/null
 
+echo "Granting Cloud Functions Developer..."
+gcloud projects add-iam-policy-binding "$PROJECT_ID" \
+    --member="serviceAccount:$SA_EMAIL" \
+    --role="roles/cloudfunctions.developer" > /dev/null
+
+echo "Granting Cloud Run Admin..."
+gcloud projects add-iam-policy-binding "$PROJECT_ID" \
+    --member="serviceAccount:$SA_EMAIL" \
+    --role="roles/run.admin" > /dev/null
+
 echo "Restoring previous gcloud identity ($PREV_ACCOUNT)..."
 gcloud config set account "$PREV_ACCOUNT"
 

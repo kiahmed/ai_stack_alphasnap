@@ -36,6 +36,11 @@ fi
 #gcloud services list --enabled --project marketresearch-agents
 #get logging from gcloud
 # gcloud logging read "resource.type=aiplatform.googleapis.com/ReasoningEngine AND resource.labels.location=us-central1" --limit=50 --project=marketresearch-agents --format="value(textPayload)"
+# gcloud logging read "resource.type=aiplatform.googleapis.com/ReasoningEngine AND resource.labels.location=us-central1 AND resource.labels.reasoning_engine_id="3968674576073752576" AND timestamp>="2026-03-30T00:00:00Z"' --limit=5000 --project=marketresearch-agents --format="value(textPayload)" > output.log
+#Get individual TOKEN_USAGE entries from yesterday
+# gcloud logging read 'resource.type="aiplatform.googleapis.com/ReasoningEngine" AND resource.labels.location="us-central1" AND      
+#   timestamp>="2026-03-29T00:00:00Z" AND timestamp<"2026-03-30T00:00:00Z" AND textPayload:"TOKEN_USAGE"' --limit=500                  
+#   --project=marketresearch-agents --format="value(textPayload,resource.labels.reasoning_engine_id)" 2>&1 | head -60 
 # Filter by LQL 
 # resource.type="aiplatform.googleapis.com/ReasoningEngine"
 # resource.labels.location="us-central1"

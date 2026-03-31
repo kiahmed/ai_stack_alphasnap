@@ -1,4 +1,7 @@
 import os
+import re
+import math
+from collections import Counter
 from google.cloud import storage
 import json
 import yaml
@@ -193,6 +196,168 @@ def append_to_memory_log(findings_date: str, category: str, finding: str, insigh
             json.dump(data, f, indent=4)
         return f"Logged finding for {category} to local shard: {local_sector_path}"
 
+# ==========================================
+# 3. DETERMINISTIC DEDUP ENGINE (TF-IDF + Entity Overlap)
+# ==========================================
+DEDUP_CFG = config.get("dedup", {})
+TFIDF_THRESHOLD = DEDUP_CFG.get("tfidf_threshold", 0.45)
+ENTITY_THRESHOLD = DEDUP_CFG.get("entity_threshold", 0.6)
+NOVELTY_MIN = DEDUP_CFG.get("novelty_min_entities", 2)
+
+# Common uppercase words to exclude from ticker detection
+_STOP_UPPER = {
+    'THE', 'AND', 'FOR', 'BUT', 'NOT', 'YOU', 'ALL', 'CAN', 'HER', 'WAS',
+    'ONE', 'OUR', 'OUT', 'ARE', 'HAS', 'HIS', 'HOW', 'ITS', 'MAY', 'NEW',
+    'NOW', 'OLD', 'SEE', 'WAY', 'WHO', 'DID', 'GET', 'HIM', 'LET', 'SAY',
+    'SHE', 'TOO', 'USE', 'CEO', 'CFO', 'CTO', 'COO', 'IPO', 'ETF', 'GDP',
+    'API', 'USA', 'USD', 'EUR', 'GBP', 'WITH', 'THIS', 'THAT', 'FROM',
+    'THEY', 'BEEN', 'HAVE', 'WILL', 'EACH', 'MAKE', 'LIKE', 'LONG', 'VERY',
+    'WHEN', 'WHAT', 'YOUR', 'SOME', 'THEM', 'THAN', 'MOST', 'ALSO', 'INTO',
+    'OVER', 'SUCH', 'JUST', 'NEAR', 'TERM', 'PER', 'VIA', 'KEY', 'PRE',
+    'PRO', 'BOTH', 'ONLY', 'SAME', 'MORE', 'LESS', 'FULL', 'HIGH', 'LOW',
+    'NEXT', 'LAST', 'WEEK', 'YEAR', 'NEWS', 'PLUS', 'DEAL'
+}
+
+def _tokenize(text):
+    return re.findall(r"[a-z0-9]+(?:'[a-z]+)?", text.lower())
+
+def _build_idf(documents):
+    n = len(documents)
+    df = Counter()
+    for doc in documents:
+        df.update(set(doc))
+    return {term: math.log((n + 1) / (count + 1)) + 1 for term, count in df.items()}
+
+def _tfidf_vector(tokens, idf):
+    tf = Counter(tokens)
+    return {term: freq * idf.get(term, 1.0) for term, freq in tf.items()}
+
+def _cosine_sim(vec_a, vec_b):
+    common = set(vec_a.keys()) & set(vec_b.keys())
+    dot = sum(vec_a[k] * vec_b[k] for k in common)
+    mag_a = math.sqrt(sum(v * v for v in vec_a.values()))
+    mag_b = math.sqrt(sum(v * v for v in vec_b.values()))
+    if mag_a == 0 or mag_b == 0:
+        return 0.0
+    return dot / (mag_a * mag_b)
+
+def _tfidf_similarity(a, b, idf):
+    vec_a = _tfidf_vector(_tokenize(a), idf)
+    vec_b = _tfidf_vector(_tokenize(b), idf)
+    return _cosine_sim(vec_a, vec_b)
+
+def _extract_entities(text):
+    entities = set()
+    # Dollar amounts: $40B, $30 billion, $500M
+    for m in re.findall(r'\$[\d,.]+\s*[BMKTbmkt](?:illion|rillion)?', text):
+        entities.add(m.strip().upper())
+    # Percentages and multipliers
+    entities.update(re.findall(r'[\d,.]+%', text))
+    entities.update(re.findall(r'[\d,.]+[xX]\b', text))
+    # Explicit $TICKER format
+    entities.update(re.findall(r'\$([A-Z]{1,5})\b', text))
+    # Uppercase 2-5 char words (likely tickers), exclude stopwords
+    for t in re.findall(r'\b([A-Z]{2,5})\b', text):
+        if t not in _STOP_UPPER:
+            entities.add(t)
+    # Multi-word capitalized names (company/product names)
+    entities.update(re.findall(r'[A-Z][a-z]+(?:\s+[A-Z][a-z]+)+', text))
+    return entities
+
+def _entity_overlap(entities_a, entities_b):
+    if not entities_a or not entities_b:
+        return 0.0
+    intersection = entities_a & entities_b
+    smaller = min(len(entities_a), len(entities_b))
+    return len(intersection) / smaller
+
+def dedup_findings(scout_findings_json: str, category: str) -> str:
+    """Deterministic dedup: compares scout findings against the memory baseline.
+    Removes duplicates unless the scout finding contains significant new data (new development).
+    Args:
+        scout_findings_json: A JSON array of finding strings from the scout, e.g. '["finding 1", "finding 2"]'.
+        category: The sector category to check against (e.g. 'Robotics', 'AI Stack').
+    Returns:
+        JSON array of unique/updated findings that passed dedup.
+    """
+    category = _normalize_category(category)
+
+    # Parse scout findings
+    try:
+        scout_findings = json.loads(scout_findings_json)
+        if not isinstance(scout_findings, list):
+            scout_findings = [str(scout_findings)]
+    except json.JSONDecodeError:
+        scout_findings = [scout_findings_json]
+
+    # Load baseline from master log (same source as read_memory_log)
+    baseline_entries = []
+    mem_limit = config.get("storage", {}).get("memory_limit", 10)
+    if USE_GCS:
+        try:
+            blob = _get_gcs_blob(GCS_PATH)
+            if blob.exists():
+                data = json.loads(blob.download_as_text())
+                baseline_entries = [e for e in data if e.get("category", "").lower() == category.lower()]
+                baseline_entries = baseline_entries[-mem_limit:]
+        except Exception:
+            pass
+    else:
+        if os.path.exists(LOCAL_PATH):
+            try:
+                with open(LOCAL_PATH, "r") as f:
+                    data = json.load(f)
+                baseline_entries = [e for e in data if e.get("category", "").lower() == category.lower()]
+                baseline_entries = baseline_entries[-mem_limit:]
+            except Exception:
+                pass
+
+    baseline_texts = [e.get("finding", "") for e in baseline_entries]
+
+    if not baseline_texts:
+        print(f"[DEDUP] {category}: No baseline — all {len(scout_findings)} findings pass through.", flush=True)
+        return json.dumps(scout_findings, indent=2)
+
+    # Build IDF corpus from baseline + scout findings
+    all_texts = baseline_texts + scout_findings
+    corpus_tokens = [_tokenize(t) for t in all_texts]
+    idf = _build_idf(corpus_tokens)
+
+    # Pre-extract entities for baseline
+    baseline_entity_sets = [_extract_entities(t) for t in baseline_texts]
+
+    unique_findings = []
+
+    for finding in scout_findings:
+        finding_entities = _extract_entities(finding)
+        is_duplicate = False
+
+        for i, base_text in enumerate(baseline_texts):
+            tfidf_score = _tfidf_similarity(finding, base_text, idf)
+            ent_score = _entity_overlap(finding_entities, baseline_entity_sets[i])
+
+            if tfidf_score >= TFIDF_THRESHOLD or ent_score >= ENTITY_THRESHOLD:
+                # Check novelty: does the scout finding carry new data?
+                novel_entities = finding_entities - baseline_entity_sets[i]
+                if len(novel_entities) >= NOVELTY_MIN:
+                    # New development on same topic — keep it
+                    continue
+
+                is_duplicate = True
+                print(f"[DEDUP] {category} | DUPLICATE (tfidf={tfidf_score:.2f}, entity={ent_score:.2f})", flush=True)
+                print(f"  baseline : {base_text[:140]}", flush=True)
+                print(f"  scout    : {finding[:140]}", flush=True)
+                break
+
+        if not is_duplicate:
+            unique_findings.append(finding)
+
+    kept = len(unique_findings)
+    dropped = len(scout_findings) - kept
+    print(f"[DEDUP] {category}: {kept} unique, {dropped} duplicates removed (from {len(scout_findings)} scout findings vs {len(baseline_texts)} baseline).", flush=True)
+
+    return json.dumps(unique_findings, indent=2)
+
 # Global accumulation for local execution
 TOKEN_METRICS = {"input": 0, "output": 0, "total": 0}
 
@@ -259,7 +424,7 @@ def build_sector_pipelines():
             name=f"{scout_name}_DE",
             model=WORKER_MODEL,
             generate_content_config=worker_config,
-            tools=[read_memory_log, safe_google_search, log_progress],
+            tools=[dedup_findings, safe_google_search, log_progress],
             output_key=f"{scout_name}_analyzed",
             instruction=f"<persona>\nYou are the Data Engineer for {sector}.\nREQUIRED DATA: {{{scout_name}_findings}}\n\n" + DE_INSTRUCTIONS.replace("{category}", category).replace("{sector}", sector),
             after_model_callback=_log_token_usage
@@ -301,6 +466,47 @@ def _get_pipeline_category(pipeline) -> str:
         if scout_name in pipeline.name:
             return info.get("category", "General")
     return "General"
+
+def _rebuild_pipeline(pipeline) -> "SequentialAgent":
+    """Build a fresh copy of a sector pipeline (new Agent objects, no parent binding).
+    ADK Pydantic enforces single-parent — reusing agents in a new ParallelAgent fails."""
+    scouts_cfg = config.get("scouts", {})
+    for scout_name, info in scouts_cfg.items():
+        if scout_name in pipeline.name:
+            category = info.get("category", "General")
+            sector = info.get("sector", "Market")
+            scout = Agent(
+                name=scout_name,
+                model=WORKER_MODEL,
+                generate_content_config=worker_config,
+                tools=[safe_google_search, url_context, log_progress],
+                output_key=f"{scout_name}_findings",
+                instruction=SCOUT_BASE_PROMPT.replace("{sector}", sector),
+                after_model_callback=_log_token_usage
+            )
+            data_engineer = Agent(
+                name=f"{scout_name}_DE",
+                model=WORKER_MODEL,
+                generate_content_config=worker_config,
+                tools=[dedup_findings, safe_google_search, log_progress],
+                output_key=f"{scout_name}_analyzed",
+                instruction=f"<persona>\nYou are the Data Engineer for {sector}.\nREQUIRED DATA: {{{scout_name}_findings}}\n\n" + DE_INSTRUCTIONS.replace("{category}", category).replace("{sector}", sector),
+                after_model_callback=_log_token_usage
+            )
+            strategist = Agent(
+                name=f"{scout_name}_Strategist",
+                model=SUPERVISOR_MODEL,
+                generate_content_config=strategist_config,
+                tools=[append_to_memory_log, safe_google_search, log_progress],
+                output_key=f"{scout_name}_report",
+                instruction=f"<persona>\nYou are the Strategist for {sector}.\nREQUIRED DATA: {{{scout_name}_analyzed}}\n\n" + ST_INSTRUCTIONS.replace("{category}", category).replace("{sector}", sector),
+                after_model_callback=_log_token_usage
+            )
+            return SequentialAgent(
+                name=f"{scout_name}_Pipeline",
+                sub_agents=[scout, data_engineer, strategist]
+            )
+    raise ValueError(f"Could not find config for pipeline: {pipeline.name}")
 
 def merge_sector_shards() -> str:
     """Combines all sector-specific shard files into the master market_findings_log.
@@ -425,6 +631,7 @@ class MarketSweepApp:
 
     def stream_query(self, **kwargs):
         import time
+        sweep_start = time.time()
         user_id = kwargs.get("user_id", "scheduler")
         message = kwargs.get("message", "Execute your daily market sweep.")
         MAX_RETRIES = 3
@@ -432,64 +639,51 @@ class MarketSweepApp:
         for i, batch_agent in enumerate(self.batches):
             print(f"\n{'='*40}\n  STARTING {batch_agent.name}\n{'='*40}", flush=True)
 
-            # Track which pipelines still need to run
+            # Track which pipelines are in this batch
             if isinstance(batch_agent, ParallelAgent):
-                remaining = list(batch_agent.sub_agents)
+                pipelines_in_batch = list(batch_agent.sub_agents)
             else:
-                remaining = [batch_agent]
+                pipelines_in_batch = [batch_agent]
 
-            for attempt in range(1, MAX_RETRIES + 1):
-                if not remaining:
-                    break
+            # --- Attempt 1: run the batch as-is (parallel if multiple) ---
+            try:
+                batch_app = agent_engines.AdkApp(agent=batch_agent)
+                for event in batch_app.stream_query(user_id=user_id, message=message):
+                    yield event
+            except Exception as e:
+                print(f"\n[ERROR] {batch_agent.name}: {e}", flush=True)
 
-                try:
-                    # Build the agent to run: single pipeline or parallel group
-                    if len(remaining) == 1:
-                        run_agent = remaining[0]
-                    elif attempt > 1:
-                        run_agent = ParallelAgent(name=f"{batch_agent.name}_retry_{attempt}", sub_agents=remaining)
-                    else:
-                        run_agent = batch_agent
+            # --- Check which sectors actually produced shards ---
+            # ADK ParallelAgent swallows 429s in background threads,
+            # so the generator can complete "normally" with missing sectors.
+            failed_sectors = []
+            for pipeline in pipelines_in_batch:
+                cat = _get_pipeline_category(pipeline)
+                if _shard_exists(cat):
+                    print(f"[CHECK] {pipeline.name} ({cat}) — shard OK.", flush=True)
+                else:
+                    failed_sectors.append(pipeline)
+                    print(f"[CHECK] {pipeline.name} ({cat}) — no shard.", flush=True)
 
-                    batch_app = agent_engines.AdkApp(agent=run_agent)
-                    for event in batch_app.stream_query(user_id=user_id, message=message):
-                        yield event
-                    remaining = []
-                    break
+            # --- Retry failed sectors individually (avoids parent-binding & repeated 429) ---
+            for pipeline in failed_sectors:
+                cat = _get_pipeline_category(pipeline)
+                for attempt in range(2, MAX_RETRIES + 1):
+                    print(f"\n[RETRY] {cat} — attempt {attempt}/{MAX_RETRIES}, waiting 60s...", flush=True)
+                    time.sleep(60)
+                    try:
+                        fresh = _rebuild_pipeline(pipeline)
+                        retry_app = agent_engines.AdkApp(agent=fresh)
+                        for event in retry_app.stream_query(user_id=user_id, message=message):
+                            yield event
+                    except Exception as e:
+                        print(f"[ERROR] {cat} retry {attempt}/{MAX_RETRIES}: {e}", flush=True)
 
-                except Exception as e:
-                    err_str = str(e)
-                    print(f"\n[ERROR] {batch_agent.name} attempt {attempt}/{MAX_RETRIES}: {e}", flush=True)
-
-                    # Check which sectors completed via shard existence
-                    still_pending = []
-                    for pipeline in remaining:
-                        cat = _get_pipeline_category(pipeline)
-                        if _shard_exists(cat):
-                            print(f"[RECOVERY] {pipeline.name} ({cat}) — shard exists, skipping.", flush=True)
-                        else:
-                            still_pending.append(pipeline)
-                            print(f"[RECOVERY] {pipeline.name} ({cat}) — no shard, will retry.", flush=True)
-
-                    remaining = still_pending
-
-                    if not remaining:
-                        print(f"[RECOVERY] All sectors in {batch_agent.name} completed despite error.", flush=True)
+                    if _shard_exists(cat):
+                        print(f"[RETRY] {cat} — succeeded on attempt {attempt}.", flush=True)
                         break
-
-                    if attempt < MAX_RETRIES:
-                        if "429" in err_str or "RESOURCE_EXHAUSTED" in err_str:
-                            print(f"[COOLDOWN] 429 rate limit — waiting 60s...", flush=True)
-                            time.sleep(60)
-                        elif "503" in err_str or "502" in err_str or "UNAVAILABLE" in err_str:
-                            print(f"[COOLDOWN] Server error — waiting 30s...", flush=True)
-                            time.sleep(30)
-                        else:
-                            print(f"[COOLDOWN] Unexpected error — waiting 30s...", flush=True)
-                            time.sleep(30)
-                    else:
-                        failed_names = [p.name for p in remaining]
-                        print(f"[FATAL] {batch_agent.name} failed after {MAX_RETRIES} attempts. Lost: {failed_names}", flush=True)
+                else:
+                    print(f"[FATAL] {cat} — failed after {MAX_RETRIES} attempts.", flush=True)
 
             if i < len(self.batches) - 1:
                 print(f"\n[COOLDOWN] Sleeping 60s between batches...", flush=True)
@@ -500,7 +694,11 @@ class MarketSweepApp:
         for event in merge_app.stream_query(user_id=user_id, message="Merge the shards."):
             yield event
 
-        print(f"\nSweep fully completed.", flush=True)
+        elapsed = time.time() - sweep_start
+        print(f"\n{'='*40}", flush=True)
+        print(f"SWEEP COMPLETE — Total time: {int(elapsed // 3600)}h {int((elapsed % 3600) // 60)}m {int(elapsed % 60)}s", flush=True)
+        print(f"Token Usage — Input: {TOKEN_METRICS['input']:,} | Output: {TOKEN_METRICS['output']:,} | Total: {TOKEN_METRICS['total']:,}", flush=True)
+        print(f"{'='*40}\n", flush=True)
 
 app = MarketSweepApp()
 
@@ -523,9 +721,6 @@ if __name__ == "__main__":
     if not check_auth():
         exit(1)
 
-    import time as _time
-    _start = _time.time()
-
     app.set_up()
     print(f"Initializing Master Market Sweep...\n")
 
@@ -534,9 +729,3 @@ if __name__ == "__main__":
         message="Execute the daily market sweep. Gather findings from scouts, log them, and print the tabular report."
     ):
         print(event)
-
-    elapsed = _time.time() - _start
-    print(f"\n{'='*40}")
-    print(f"SWEEP COMPLETE — Total time: {int(elapsed // 3600)}h {int((elapsed % 3600) // 60)}m {int(elapsed % 60)}s")
-    print(f"Token Usage — Input: {TOKEN_METRICS['input']:,} | Output: {TOKEN_METRICS['output']:,} | Total: {TOKEN_METRICS['total']:,}")
-    print(f"{'='*40}\n")

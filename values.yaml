@@ -23,7 +23,7 @@ scouts:
   AI_Stack_Scout:
     enabled: true
     category: "AI Stack"
-    sector: "AI Stack (Compute, Foundation Models, Fine-tuning, and Application Layer)"
+    sector: "AI Stack"
   Space_Defense_Scout:
     enabled: true
     category: "Space & Defense"
@@ -37,6 +37,15 @@ scouts:
     category: "Strategic Minerals"
     sector: "Strategic Minerals and Rare Earth Elements"
   
+dedup:
+  # TF-IDF cosine similarity — catches surface-level dupes (same words/phrasing)
+  tfidf_threshold: 0.45
+  # Entity overlap — catches same-story-different-words dupes (tickers, amounts, company names)
+  entity_threshold: 0.6
+  # Minimum NEW entities in scout finding to classify as "update" rather than "duplicate"
+  # Prevents discarding new developments on the same topic (e.g. updated price, confirmed deal)
+  novelty_min_entities: 2
+
 storage:
   # TOGGLE: set to true for GCS, false for local
   use_gcs: true
@@ -65,17 +74,18 @@ prompts:
     5. **PROGRESS REPORT**: Call `log_progress(message="Scout {sector} complete", searches=[Number of searches], topics=[Number of topics])`. Pass findings to next agent.
     </task_instructions>
 
-  # ── DATA ENGINEER: Memory baseline + semantic dedup + analysis + tickers ──
+  # ── DATA ENGINEER: Deterministic dedup + analysis + tickers ──
   data_engineer_instructions: |
     <task_instructions>
     1. **START**: Call `log_progress(message="DE starting {category}")`.
-    2. **ESTABLISH BASELINE**: Call `read_memory_log(category="{category}", memory_limit=10)` to retrieve the latest 10 entries to form a baseline.
-    3. **FILTER & ANALYZE INSIGHTS**: Evaluate each scout finding provided in this context against the baseline you retrieved in step 2:
-       - **DISCARD**: Findings that carry pretty much the same information as any entry in your baseline, or convey the same underlying message or intent.
-       - **UPDATE**: Keep findings with NEW data (refined price targets, confirmed partnerships, etc.).
-       - **ANALYSIS**: Extract multiple, layered takeaways (Direct, Indirect, Market Dynamics) and assign a sentiment(Very Bullish/Bullish/Neutral/Bearish/Very Bearish). Keep it extremely concise.
-    4. **TICKER DATA**: If your kept findings include public tickers, use `safe_google_search` to find today's technicals.
-    5. **PROGRESS REPORT**: Call `log_progress(message="DE {category} complete", searches=[Number of tickers researched], topics=[Number of topics analyzed])`.
+    2. **EXTRACT FINDINGS**: From the scout data in your context, extract each distinct finding as a separate string.
+    3. **DEDUP**: Call `dedup_findings(scout_findings_json='["finding 1 text", "finding 2 text", ...]', category="{category}")`.
+       - The tool compares each finding against the memory baseline and returns only unique or updated findings as a JSON array.
+       - If the returned array is empty, skip to step 5 — there is nothing new.
+    4. **ANALYZE** the filtered findings only:
+       - **ANALYSIS**: Extract multiple, layered takeaways (Direct, Indirect, Market Dynamics) and assign a sentiment (Very Bullish/Bullish/Neutral/Bearish/Very Bearish). Keep it extremely concise.
+       - **TICKER DATA**: If findings include public tickers, use `safe_google_search` to find today's technicals.
+    5. **PROGRESS REPORT**: Call `log_progress(message="DE {category} complete", searches=[Number of tickers researched], topics=[Number of unique topics after dedup])`.
     </task_instructions>
 
   # ── STRATEGIST: Guidance + persistence + sector report ──
