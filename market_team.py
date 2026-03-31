@@ -165,36 +165,46 @@ def append_to_memory_log(findings_date: str, category: str, finding: str, insigh
     }
     print(f"\n### [Saving to Memory] Category: {category}", flush=True)
     print(f"```json\n{json.dumps(entry, indent=2)}\n```\n", flush=True)
-    
-    data = []
-    
+
     if USE_GCS:
-        # Use sector-specific filename to prevent race conditions during parallel runs
         sector_path = GCS_PATH.replace(".json", f"_{category}.json")
         try:
             blob = _get_gcs_blob(sector_path)
-            # For sector snippets, we just overwrite/append to that specific sector's shard
-            # This is safe because only one agent is ever writing to its own category's shard
-            sharded_data = []
+            shard_data = {"deduped": [], "enriched": []}
             if blob.exists():
-                sharded_data = json.loads(blob.download_as_text())
-            sharded_data.append(entry)
-            blob.upload_from_string(json.dumps(sharded_data, indent=4), content_type='application/json')
-            return f"Logged finding for {category} to GCS shard: {sector_path}"
+                raw = json.loads(blob.download_as_text())
+                if isinstance(raw, dict) and "deduped" in raw:
+                    shard_data = raw
+                else:
+                    # Legacy flat list — migrate
+                    shard_data["enriched"] = raw
+            shard_data["enriched"].append(entry)
+            blob.upload_from_string(json.dumps(shard_data, indent=4), content_type='application/json')
+            enriched_n = len(shard_data["enriched"])
+            deduped_n = len(shard_data["deduped"])
+            print(f"[ENRICH] {category}: {enriched_n}/{deduped_n} findings enriched.", flush=True)
+            return f"Logged finding for {category} to GCS shard ({enriched_n}/{deduped_n} enriched): {sector_path}"
         except Exception as e:
             return f"Error writing to GCS Shard: {str(e)}"
     else:
-        # Local mirror
         local_sector_path = LOCAL_PATH.replace(".json", f"_{category}.json")
-        data = []
+        shard_data = {"deduped": [], "enriched": []}
         if os.path.exists(local_sector_path):
             with open(local_sector_path, "r") as f:
-                try: data = json.load(f)
+                try:
+                    raw = json.load(f)
+                    if isinstance(raw, dict) and "deduped" in raw:
+                        shard_data = raw
+                    else:
+                        shard_data["enriched"] = raw
                 except: pass
-        data.append(entry)
+        shard_data["enriched"].append(entry)
         with open(local_sector_path, "w") as f:
-            json.dump(data, f, indent=4)
-        return f"Logged finding for {category} to local shard: {local_sector_path}"
+            json.dump(shard_data, f, indent=4)
+        enriched_n = len(shard_data["enriched"])
+        deduped_n = len(shard_data["deduped"])
+        print(f"[ENRICH] {category}: {enriched_n}/{deduped_n} findings enriched.", flush=True)
+        return f"Logged finding for {category} to local shard ({enriched_n}/{deduped_n} enriched): {local_sector_path}"
 
 # ==========================================
 # 3. DETERMINISTIC DEDUP ENGINE (TF-IDF + Entity Overlap)
@@ -356,6 +366,22 @@ def dedup_findings(scout_findings_json: str, category: str) -> str:
     dropped = len(scout_findings) - kept
     print(f"[DEDUP] {category}: {kept} unique, {dropped} duplicates removed (from {len(scout_findings)} scout findings vs {len(baseline_texts)} baseline).", flush=True)
 
+    # Persist deduped manifest to the sector shard — source of truth for the Strategist
+    shard_data = {"deduped": unique_findings, "enriched": []}
+    if USE_GCS:
+        shard_path = GCS_PATH.replace(".json", f"_{category}.json")
+        try:
+            blob = _get_gcs_blob(shard_path)
+            blob.upload_from_string(json.dumps(shard_data, indent=4), content_type='application/json')
+            print(f"[DEDUP] Wrote {kept} deduped findings to shard: {shard_path}", flush=True)
+        except Exception as e:
+            print(f"[DEDUP] WARNING: Failed to write shard manifest: {e}", flush=True)
+    else:
+        shard_path = LOCAL_PATH.replace(".json", f"_{category}.json")
+        with open(shard_path, "w") as f:
+            json.dump(shard_data, f, indent=4)
+        print(f"[DEDUP] Wrote {kept} deduped findings to shard: {shard_path}", flush=True)
+
     return json.dumps(unique_findings, indent=2)
 
 # Global accumulation for local execution
@@ -448,16 +474,55 @@ def build_sector_pipelines():
         print(f"📦 Registered sector: {sector}", flush=True)
     return sector_pipelines
 
-def _shard_exists(category: str) -> bool:
-    """Check if a sector's shard file exists (indicates the sector's strategist ran)."""
+def _shard_valid(category: str) -> bool:
+    """Check if a sector's shard is complete: enriched count matches deduped count.
+    Returns False (and deletes partial shard) if incomplete, triggering retry."""
+    shard_data = None
+    shard_path = None
+
     if USE_GCS:
         shard_path = GCS_PATH.replace(".json", f"_{category}.json")
         try:
-            return _get_gcs_blob(shard_path).exists()
+            blob = _get_gcs_blob(shard_path)
+            if not blob.exists():
+                return False
+            raw = json.loads(blob.download_as_text())
+            if isinstance(raw, dict) and "deduped" in raw:
+                shard_data = raw
+            else:
+                # Legacy flat list — treat as complete (no manifest to compare)
+                return True
         except Exception:
             return False
     else:
-        return os.path.exists(LOCAL_PATH.replace(".json", f"_{category}.json"))
+        shard_path = LOCAL_PATH.replace(".json", f"_{category}.json")
+        if not os.path.exists(shard_path):
+            return False
+        try:
+            with open(shard_path, "r") as f:
+                raw = json.load(f)
+            if isinstance(raw, dict) and "deduped" in raw:
+                shard_data = raw
+            else:
+                return True
+        except Exception:
+            return False
+
+    deduped_n = len(shard_data.get("deduped", []))
+    enriched_n = len(shard_data.get("enriched", []))
+
+    if deduped_n == 0:
+        # DE found nothing new — valid (empty sector)
+        print(f"[SHARD] {category}: dedup found 0 new findings — shard valid (empty).", flush=True)
+        return True
+
+    if enriched_n >= deduped_n:
+        print(f"[SHARD] {category}: {enriched_n}/{deduped_n} enriched — complete.", flush=True)
+        return True
+
+    # Partial write — keep shard intact for strategist-only retry
+    print(f"[SHARD] {category}: {enriched_n}/{deduped_n} enriched — INCOMPLETE, needs retry.", flush=True)
+    return False
 
 def _get_pipeline_category(pipeline) -> str:
     """Extract the category for a sector pipeline by matching its name to scouts config."""
@@ -508,32 +573,116 @@ def _rebuild_pipeline(pipeline) -> "SequentialAgent":
             )
     raise ValueError(f"Could not find config for pipeline: {pipeline.name}")
 
+def _get_unenriched_findings(category: str) -> list:
+    """Read the shard and return findings from deduped that aren't yet in enriched."""
+    shard_data = None
+    if USE_GCS:
+        shard_path = GCS_PATH.replace(".json", f"_{category}.json")
+        try:
+            blob = _get_gcs_blob(shard_path)
+            if blob.exists():
+                raw = json.loads(blob.download_as_text())
+                if isinstance(raw, dict):
+                    shard_data = raw
+        except Exception:
+            pass
+    else:
+        shard_path = LOCAL_PATH.replace(".json", f"_{category}.json")
+        if os.path.exists(shard_path):
+            try:
+                with open(shard_path, "r") as f:
+                    shard_data = json.load(f)
+            except Exception:
+                pass
+
+    if not shard_data or not isinstance(shard_data, dict):
+        return []
+
+    deduped = shard_data.get("deduped", [])
+    enriched_findings = {e.get("finding", "") for e in shard_data.get("enriched", [])}
+    return [f for f in deduped if f not in enriched_findings]
+
+
+def _build_strategist_retry(pipeline) -> "Agent":
+    """Build a standalone Strategist agent to process only unenriched findings from the shard."""
+    scouts_cfg = config.get("scouts", {})
+    ST_INSTRUCTIONS = config["prompts"]["strategist_instructions"]
+
+    for scout_name, info in scouts_cfg.items():
+        if scout_name in pipeline.name:
+            category = info.get("category", "General")
+            sector = info.get("sector", "Market")
+            unenriched = _get_unenriched_findings(category)
+
+            if not unenriched:
+                return None
+
+            findings_block = "\n".join(f"- {f}" for f in unenriched)
+            instruction = (
+                f"<persona>\nYou are the Strategist for {sector}.\n"
+                f"The following findings need analysis and logging. Process ALL of them.\n\n"
+                f"FINDINGS TO PROCESS:\n{findings_block}\n\n"
+                + ST_INSTRUCTIONS.replace("{category}", category).replace("{sector}", sector)
+            )
+
+            return Agent(
+                name=f"{scout_name}_Strategist_Retry",
+                model=SUPERVISOR_MODEL,
+                generate_content_config=strategist_config,
+                tools=[append_to_memory_log, safe_google_search, log_progress],
+                instruction=instruction,
+                after_model_callback=_log_token_usage
+            )
+    return None
+
+
 def merge_sector_shards() -> str:
     """Combines all sector-specific shard files into the master market_findings_log.
     Call this after all sector pipelines have completed to consolidate results."""
     new_findings = []
+    merge_stats = []  # Per-category stats: (category, deduped, merged)
     try:
         scouts_cfg = config.get("scouts", {})
         for scout_name, info in scouts_cfg.items():
             cat = info.get("category", "General")
+            raw = None
             if USE_GCS:
                 shard_path = GCS_PATH.replace(".json", f"_{cat}.json")
                 blob = _get_gcs_blob(shard_path)
                 if blob.exists():
-                    entries = json.loads(blob.download_as_text())
-                    print(f"[MERGE] Shard '{cat}': {len(entries)} entries", flush=True)
-                    new_findings.extend(entries)
+                    raw = json.loads(blob.download_as_text())
                 else:
                     print(f"[MERGE] Shard '{cat}': not found — skipped", flush=True)
+                    merge_stats.append((cat, 0, 0))
+                    continue
             else:
                 shard_path = LOCAL_PATH.replace(".json", f"_{cat}.json")
                 if os.path.exists(shard_path):
                     with open(shard_path, "r") as f:
-                        entries = json.load(f)
-                    print(f"[MERGE] Shard '{cat}': {len(entries)} entries", flush=True)
-                    new_findings.extend(entries)
+                        raw = json.load(f)
                 else:
                     print(f"[MERGE] Shard '{cat}': not found — skipped", flush=True)
+                    merge_stats.append((cat, 0, 0))
+                    continue
+
+            # Handle new structured format {"deduped": [...], "enriched": [...]}
+            if isinstance(raw, dict) and "deduped" in raw:
+                enriched = raw.get("enriched", [])
+                deduped = raw.get("deduped", [])
+                deduped_n = len(deduped)
+                enriched_n = len(enriched)
+                if enriched:
+                    status = "complete" if enriched_n >= deduped_n else "PARTIAL"
+                    print(f"[MERGE] Shard '{cat}': {enriched_n}/{deduped_n} enriched — {status}", flush=True)
+                    new_findings.extend(enriched)
+                else:
+                    print(f"[MERGE] Shard '{cat}': 0/{deduped_n} enriched — no data to merge", flush=True)
+                merge_stats.append((cat, deduped_n, enriched_n))
+            else:
+                # Legacy flat list format
+                print(f"[MERGE] Shard '{cat}': {len(raw)} entries (legacy format)", flush=True)
+                new_findings.extend(raw)
+                merge_stats.append((cat, len(raw), len(raw)))
 
         # Load existing master log and append — never overwrite history
         existing = []
@@ -567,6 +716,23 @@ def merge_sector_shards() -> str:
             else:
                 shard_path = LOCAL_PATH.replace(".json", f"_{cat}.json")
                 if os.path.exists(shard_path): os.remove(shard_path)
+
+        # Print per-category merge stats
+        print(f"\n{'='*40}", flush=True)
+        print(f"  MERGE STATS (per category)", flush=True)
+        print(f"{'='*40}", flush=True)
+        total_deduped = 0
+        total_merged = 0
+        for cat, deduped_n, merged_n in merge_stats:
+            flag = "" if merged_n >= deduped_n else " ⚠ INCOMPLETE"
+            print(f"  {cat:<22} deduped: {deduped_n}  merged: {merged_n}{flag}", flush=True)
+            total_deduped += deduped_n
+            total_merged += merged_n
+        print(f"  {'─'*38}", flush=True)
+        print(f"  {'TOTAL':<22} deduped: {total_deduped}  merged: {total_merged}", flush=True)
+        if total_merged < total_deduped:
+            print(f"  ⚠ {total_deduped - total_merged} findings missed due to incomplete strategist runs.", flush=True)
+        print(f"{'='*40}\n", flush=True)
 
         result = f"Successfully merged {len(new_findings)} new entries into master log ({len(existing)} existing + {len(new_findings)} new = {len(all_findings)} total)."
         print(f"[MERGE] {result}", flush=True)
@@ -653,23 +819,54 @@ class MarketSweepApp:
             except Exception as e:
                 print(f"\n[ERROR] {batch_agent.name}: {e}", flush=True)
 
-            # --- Check which sectors actually produced shards ---
+            # --- Check which sectors need retry ---
             # ADK ParallelAgent swallows 429s in background threads,
-            # so the generator can complete "normally" with missing sectors.
-            failed_sectors = []
+            # so the generator can complete "normally" with missing/partial sectors.
+            incomplete_sectors = []
+            no_shard_sectors = []
             for pipeline in pipelines_in_batch:
                 cat = _get_pipeline_category(pipeline)
-                if _shard_exists(cat):
+                if _shard_valid(cat):
                     print(f"[CHECK] {pipeline.name} ({cat}) — shard OK.", flush=True)
                 else:
-                    failed_sectors.append(pipeline)
-                    print(f"[CHECK] {pipeline.name} ({cat}) — no shard.", flush=True)
+                    # Distinguish partial shard (strategist died mid-way) vs no shard (full failure)
+                    shard_path = (GCS_PATH if USE_GCS else LOCAL_PATH).replace(".json", f"_{cat}.json")
+                    has_shard = (_get_gcs_blob(shard_path).exists() if USE_GCS else os.path.exists(shard_path))
+                    if has_shard:
+                        incomplete_sectors.append(pipeline)
+                        print(f"[CHECK] {pipeline.name} ({cat}) — partial shard, strategist retry needed.", flush=True)
+                    else:
+                        no_shard_sectors.append(pipeline)
+                        print(f"[CHECK] {pipeline.name} ({cat}) — no shard, full retry needed.", flush=True)
 
-            # --- Retry failed sectors individually (avoids parent-binding & repeated 429) ---
-            for pipeline in failed_sectors:
+            # --- Strategist-only retry for partial shards ---
+            for pipeline in incomplete_sectors:
                 cat = _get_pipeline_category(pipeline)
                 for attempt in range(2, MAX_RETRIES + 1):
-                    print(f"\n[RETRY] {cat} — attempt {attempt}/{MAX_RETRIES}, waiting 60s...", flush=True)
+                    print(f"\n[RETRY-STRATEGIST] {cat} — attempt {attempt}/{MAX_RETRIES}, waiting 60s...", flush=True)
+                    time.sleep(60)
+                    try:
+                        strategist_agent = _build_strategist_retry(pipeline)
+                        if strategist_agent is None:
+                            print(f"[RETRY-STRATEGIST] {cat} — no unenriched findings left, skipping.", flush=True)
+                            break
+                        retry_app = agent_engines.AdkApp(agent=strategist_agent)
+                        for event in retry_app.stream_query(user_id=user_id, message=f"Process the remaining unenriched findings for {cat}."):
+                            yield event
+                    except Exception as e:
+                        print(f"[ERROR] {cat} strategist retry {attempt}/{MAX_RETRIES}: {e}", flush=True)
+
+                    if _shard_valid(cat):
+                        print(f"[RETRY-STRATEGIST] {cat} — completed on attempt {attempt}.", flush=True)
+                        break
+                else:
+                    print(f"[PARTIAL] {cat} — strategist retries exhausted, merging what we have.", flush=True)
+
+            # --- Full pipeline retry for sectors with no shard at all ---
+            for pipeline in no_shard_sectors:
+                cat = _get_pipeline_category(pipeline)
+                for attempt in range(2, MAX_RETRIES + 1):
+                    print(f"\n[RETRY-FULL] {cat} — attempt {attempt}/{MAX_RETRIES}, waiting 60s...", flush=True)
                     time.sleep(60)
                     try:
                         fresh = _rebuild_pipeline(pipeline)
@@ -677,13 +874,13 @@ class MarketSweepApp:
                         for event in retry_app.stream_query(user_id=user_id, message=message):
                             yield event
                     except Exception as e:
-                        print(f"[ERROR] {cat} retry {attempt}/{MAX_RETRIES}: {e}", flush=True)
+                        print(f"[ERROR] {cat} full retry {attempt}/{MAX_RETRIES}: {e}", flush=True)
 
-                    if _shard_exists(cat):
-                        print(f"[RETRY] {cat} — succeeded on attempt {attempt}.", flush=True)
+                    if _shard_valid(cat):
+                        print(f"[RETRY-FULL] {cat} — succeeded on attempt {attempt}.", flush=True)
                         break
                 else:
-                    print(f"[FATAL] {cat} — failed after {MAX_RETRIES} attempts.", flush=True)
+                    print(f"[FATAL] {cat} — failed after {MAX_RETRIES} attempts, no data.", flush=True)
 
             if i < len(self.batches) - 1:
                 print(f"\n[COOLDOWN] Sleeping 60s between batches...", flush=True)
