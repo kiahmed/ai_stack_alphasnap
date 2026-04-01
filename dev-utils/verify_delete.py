@@ -5,7 +5,7 @@ from vertexai import agent_engines
 # Load settings from ae_config.config
 def load_config():
     dir_path = os.path.dirname(os.path.realpath(__file__))
-    config_file = os.path.join(dir_path, "ae_config.config")
+    config_file = os.path.join(dir_path, "..", "ae_config.config")
     cfg = {}
     if os.path.exists(config_file):
         with open(config_file, "r") as f:

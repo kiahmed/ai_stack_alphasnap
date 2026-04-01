@@ -258,6 +258,7 @@ def _tfidf_similarity(a, b, idf):
 
 def _extract_entities(text):
     entities = set()
+    tickers = set()
     # Dollar amounts: $40B, $30 billion, $500M
     for m in re.findall(r'\$[\d,.]+\s*[BMKTbmkt](?:illion|rillion)?', text):
         entities.add(m.strip().upper())
@@ -265,20 +266,40 @@ def _extract_entities(text):
     entities.update(re.findall(r'[\d,.]+%', text))
     entities.update(re.findall(r'[\d,.]+[xX]\b', text))
     # Explicit $TICKER format
-    entities.update(re.findall(r'\$([A-Z]{1,5})\b', text))
+    tickers.update(re.findall(r'\$([A-Z]{1,5})\b', text))
     # Uppercase 2-5 char words (likely tickers), exclude stopwords
     for t in re.findall(r'\b([A-Z]{2,5})\b', text):
         if t not in _STOP_UPPER:
-            entities.add(t)
+            tickers.add(t)
     # Multi-word capitalized names (company/product names)
     entities.update(re.findall(r'[A-Z][a-z]+(?:\s+[A-Z][a-z]+)+', text))
-    return entities
+    # All entities includes tickers (for overlap scoring), but tickers tracked separately for novelty
+    all_entities = entities | tickers
+    return all_entities, tickers
+
+def _merge_substring_entities(entities):
+    """Merge entities where one is a substring of another (e.g. 'Red Cat' and 'Red Cat Holdings')."""
+    merged = set()
+    sorted_ents = sorted(entities, key=len, reverse=True)
+    for ent in sorted_ents:
+        ent_lower = ent.lower()
+        if not any(ent_lower in existing.lower() for existing in merged):
+            merged.add(ent)
+    return merged
 
 def _entity_overlap(entities_a, entities_b):
     if not entities_a or not entities_b:
         return 0.0
-    intersection = entities_a & entities_b
-    smaller = min(len(entities_a), len(entities_b))
+    # Merge substring variants before comparing
+    merged_a = _merge_substring_entities(entities_a)
+    merged_b = _merge_substring_entities(entities_b)
+    intersection = merged_a & merged_b
+    # Also count partial matches: "Red Cat" in A matches "Red Cat Holdings" in B
+    for ea in merged_a:
+        for eb in merged_b:
+            if ea != eb and (ea.lower() in eb.lower() or eb.lower() in ea.lower()):
+                intersection.add(ea)
+    smaller = min(len(merged_a), len(merged_b))
     return len(intersection) / smaller
 
 def dedup_findings(scout_findings_json: str, category: str) -> str:
@@ -339,16 +360,17 @@ def dedup_findings(scout_findings_json: str, category: str) -> str:
     unique_findings = []
 
     for finding in scout_findings:
-        finding_entities = _extract_entities(finding)
+        finding_entities, finding_tickers = _extract_entities(finding)
         is_duplicate = False
 
         for i, base_text in enumerate(baseline_texts):
+            base_entities, base_tickers = baseline_entity_sets[i]
             tfidf_score = _tfidf_similarity(finding, base_text, idf)
-            ent_score = _entity_overlap(finding_entities, baseline_entity_sets[i])
+            ent_score = _entity_overlap(finding_entities, base_entities)
 
             if tfidf_score >= TFIDF_THRESHOLD or ent_score >= ENTITY_THRESHOLD:
-                # Check novelty: does the scout finding carry new data?
-                novel_entities = finding_entities - baseline_entity_sets[i]
+                # Check novelty: exclude tickers — they're alternate identifiers, not new info
+                novel_entities = (finding_entities - base_entities) - finding_tickers
                 if len(novel_entities) >= NOVELTY_MIN:
                     # New development on same topic — keep it
                     continue
@@ -358,6 +380,19 @@ def dedup_findings(scout_findings_json: str, category: str) -> str:
                 print(f"  baseline : {base_text[:140]}", flush=True)
                 print(f"  scout    : {finding[:140]}", flush=True)
                 break
+
+        # Intra-batch dedup: compare against already-accepted findings from this run
+        if not is_duplicate:
+            for accepted in unique_findings:
+                accepted_entities, accepted_tickers = _extract_entities(accepted)
+                tfidf_score = _tfidf_similarity(finding, accepted, idf)
+                ent_score = _entity_overlap(finding_entities, accepted_entities)
+                if tfidf_score >= TFIDF_THRESHOLD or ent_score >= ENTITY_THRESHOLD:
+                    is_duplicate = True
+                    print(f"[DEDUP] {category} | INTRA-BATCH DUPLICATE (tfidf={tfidf_score:.2f}, entity={ent_score:.2f})", flush=True)
+                    print(f"  accepted : {accepted[:140]}", flush=True)
+                    print(f"  scout    : {finding[:140]}", flush=True)
+                    break
 
         if not is_duplicate:
             unique_findings.append(finding)

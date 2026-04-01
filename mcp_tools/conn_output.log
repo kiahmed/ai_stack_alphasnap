@@ -1,0 +1,112 @@
+=======================================================
+  MCP SERVER CONNECTION TEST
+=======================================================
+
+[1] Connecting (auth + handshake)...
+    Connected.
+
+[2] Listing tools...
+    Discovered 59 tools:
+    - Stock-Quote: Get a real-time stock quote including current price, dollar and
+percent change, previous close, open
+    - Option-Expiration-Dates: List available option expiration dates for a symbol.
+
+Args:
+    symbol: Ticker symbol (e.g. NVDA, SP
+    - Analyze-Greek-Exposures: Calculate Gamma, Delta, Vanna, and Theta NET exposures for a symbol
+across multiple expiration dates
+    - Top-Volume-and-OI-Contracts: Get the highest-volume or highest-open-interest option contracts
+for a symbol.  Returns strike, side
+    - Ticker-Symbol-Lookup: Resolve a company name or partial name to its ticker symbol.
+
+Examples: 'Apple' -> AAPL, 'Google' ->
+    - Options-Chain: Get the full options chain for a specific expiration date.  Returns
+every contract (calls and puts) 
+    - Historical-Options-Chain: Get the options chain for a symbol and expiration as of a specific past date (historical snapshot).
+
+    - Historical-Strike-Quotes: Get historical quotes for a single strike: from_date to to_date (interval) or single date.
+
+Takes fr
+    - Strike-Price-Details: Get detailed contract data for a specific strike price.  Returns
+call and put contracts at that stri
+    - Gamma-Exposure-Heatmap: Generate a single Gamma Exposure (GEX) heatmap.
+NOTE: If the user wants more than one chart, use Mul
+    - Delta-Exposure-Heatmap: Generate a single Delta Exposure (DEX) heatmap.
+NOTE: If the user wants more than one chart, use Mul
+    - Vanna-Exposure-Heatmap: Generate a single Vanna Exposure (VEX) heatmap.
+NOTE: If the user wants more than one chart, use Mul
+    - Theta-Exposure-Heatmap: Generate a single Theta Exposure (TEX) heatmap.
+NOTE: If the user wants more than one chart, use Mul
+    - Net-Gamma-Exposure-Chart: Generate a single Net Gamma Exposure (NET GEX) bar chart.
+NOTE: If the user wants more than one char
+    - Net-Delta-Exposure-Chart: Generate a single Net Delta Exposure (NET DEX) bar chart.
+NOTE: If the user wants more than one char
+    - Net-Vanna-Exposure-Chart: Generate a single Net Vanna Exposure (NET VEX) bar chart.
+NOTE: If the user wants more than one char
+    - Net-Theta-Exposure-Chart: Generate a single Net Theta Exposure (NET TEX) bar chart.
+NOTE: If the user wants more than one char
+    - Top-Volume-Contracts-Chart: Generate a single highest-volume option contracts bar chart.
+NOTE: If the user wants more than one c
+    - Top-Open-Interest-Chart: Generate a single highest-open-interest option contracts bar chart.
+NOTE: If the user wants more tha
+    - All-Greek-Heatmaps: Generate all four Greek exposure heatmaps in one call:
+GEX (Gamma), DEX (Delta), VEX (Vanna), TEX (T
+    - All-Net-Exposure-Charts: Generate all four NET exposure bar charts in one call:
+NET GEX, NET DEX, NET VEX, NET TEX.
+TIP: To m
+    - Volume-and-Open-Interest-Charts: Generate both Volume and Open Interest bar charts in one call.
+TIP: To mix these with other chart ty
+    - Multi-Chart-View: Combine multiple chart types and/or symbols into a single paginated view.
+
+Pass a JSON array where e
+    - Price-Chart: Generate a single candlestick price chart with volume bars and optional visual markings.
+NOTE: If th
+    - Multi-Timeframe-Price-Overview: Generate three price charts at once: daily (3 months), weekly (1 year),
+and hourly (5 days).  Good f
+    - Chart-Vision-Analysis: Use this tool when the user asks you to read, analyze, or interpret any Atlas chart or map (e.g. GEX
+    - Price-Data-OHLCV: Get OHLCV price data as JSON — useful for reading exact values at a
+specific point on a chart, or fo
+    - Broker-Connections: List all connected brokerage accounts for the authenticated user.
+    - Account-Balances: Get cash balance, buying power, and equity for a specific brokerage account. Requires snaptrade_acco
+    - Account-Holdings: Get stock and option positions (holdings) in a specific brokerage account. Requires snaptrade_accoun
+    - All-Account-Holdings: Get positions across ALL connected brokerage accounts.
+    - Transaction-History: Get transaction history for a brokerage account. Optional start_date and end_date in YYYY-MM-DD form
+    - Account-Symbol-Lookup: Look up a ticker symbol in a brokerage account to get its universal symbol ID.
+    - Earnings-Calendar: Get the earnings calendar for a date range, optionally filtered by a single symbol.
+    - Insider-Transactions: Get insider transactions for a given stock symbol. Useful for analyzing insider buying and selling a
+    - SEC-Filings: Get recent SEC filings (10-K, 10-Q, 8-K, etc.) for a given stock symbol.
+    - Stock-Peers: Get a list of peer tickers for a given stock symbol.
+    - IPO-Calendar: Get the IPO calendar for a date range. Includes upcoming and historical IPOs.
+    - Senate-Lobbying-Data: Get US political lobbying data for a company. This covers lobbying disclosures and related activity.
+    - Financial-Metrics: Get basic financial metrics for a stock (P/E, margins, growth, etc.).
+    - USA-Spending-Data: Get USA spending data related to a company, including contracts and awards tied to the symbol.
+    - Income-Statement: Get income statement data from yfinance. Use freq='yearly' or 'quarterly'. Returns a consistent JSON
+    - Balance-Sheet: Get balance sheet data from yfinance. Use freq='yearly' or 'quarterly'. Returns {type,symbol,freq,da
+    - Cashflow-Statement: Get cashflow statement data from yfinance. Use freq='yearly' or 'quarterly'. Returns {type,symbol,fr
+    - Earnings-Dates: Get earnings dates for a stock (limit controls row count). Returns {type,symbol,limit,source,data} a
+    - EPS-Estimates: Get EPS estimates for upcoming periods. Returns {type,symbol,data} in a consistent JSON-safe format.
+    - Revenue-Estimates: Get revenue estimates for upcoming periods. Returns {type,symbol,data} in a consistent JSON-safe for
+    - EPS-Trend: Get EPS trend data. Returns {type,symbol,data} in JSON-safe format.
+    - EPS-Revisions: Get EPS revision stats (up/down changes). Returns {type,symbol,data} in JSON-safe format.
+    - Analyst-Price-Targets: Get analyst target summary (low/high/mean/median). Returns {type,symbol,data} in JSON-safe format.
+    - Analyst-Upgrades-and-Downgrades: Get recent analyst rating changes. Returns {type,symbol,data} in JSON-safe format.
+    - Dividends-and-Splits: Get historical dividends and splits. Use period (default 'max'). Returns {type,symbol,period,dividen
+    - Institutional-Holders: Get institutional holder data. Returns {type,symbol,data} in JSON-safe format.
+    - Growth-Estimates: Get analyst growth estimates across horizons. Returns {type,symbol,data} in JSON-safe format.
+    - Search: Search for information. Returns empty results as this server
+provides specialized options/stock anal
+    - Fetch-URL: Fetch content from a URL. Returns a stub response as this server
+provides specialized options/stock 
+    - Subscription-Status: Get the authenticated user's subscription tier, monthly usage,
+remaining requests, and limits. Retur
+    - Strategy-Document-Retrieval: Retrieve and process supported strategy documents.
+Before loading attachments, the server selects a 
+    - Strategy-Open: Open the user's strategy in the interactive MCP Apps UI (iframe), same pattern as visualize tools.
+-
+
+[3] Smoke-test: calling Stock-Quote for NVDA...
+    {"symbol": "NVDA", "price": 174.4, "change": "+9.23", "change_pct": "+5.59%", "previous_close": 165.17, "open": 166.97, "high": 174.62, "low": 166.96, "volume": 224747577, "timestamp_eastern": "2026-03-31T22:52:22-04:00"}
+
+=======================================================
+  CONNECTION TEST PASSED
+=======================================================

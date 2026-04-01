@@ -1,5 +1,6 @@
 #!/bin/bash
-source ae_config.config
+SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+source "$SCRIPT_DIR/../ae_config.config"
 
 if [ -z "$ENGINE_ID" ] || [ "$ENGINE_ID" == '""' ]; then
     echo "❌ Error: ENGINE_ID is not set in ae_config.config."
@@ -11,7 +12,7 @@ curl -X DELETE \
   "https://${LOCATION}-aiplatform.googleapis.com/v1beta1/projects/${PROJECT_ID}/locations/${LOCATION}/reasoningEngines/${ENGINE_ID}?force=true"
 
 # Remove ENGINE_ID from config automatically
-sed -i 's/^ENGINE_ID=.*/ENGINE_ID=""/' ae_config.config
+sed -i 's/^ENGINE_ID=.*/ENGINE_ID=""/' "$SCRIPT_DIR/../ae_config.config"
 
 # Make script executable
 chmod +x remove_ae.sh
