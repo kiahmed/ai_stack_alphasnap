@@ -1,5 +1,5 @@
 #!/bin/bash
-source ae_config.config
+source "$(dirname "$0")/../ae_config.config"
 
 # Store previous account
 PREV_ACCOUNT=$SA_EMAIL

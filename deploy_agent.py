@@ -1,5 +1,12 @@
 import os
 import yaml
+
+# Automatically set the credentials path to the new dev-utils/ folder
+# to avoid DefaultCredentialsErrors if the environment variable is stale or missing.
+svc_account_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), "dev-utils", "service_account.json")
+if os.path.exists(svc_account_path):
+    os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = svc_account_path
+
 import re
 import vertexai
 from vertexai import agent_engines # <-- UPDATED: Using native agent_engines

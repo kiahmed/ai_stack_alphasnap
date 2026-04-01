@@ -3,7 +3,7 @@ import re
 
 def update_config_file(engine_id):
     dir_path = os.path.dirname(os.path.realpath(__file__))
-    config_file = os.path.join(dir_path, "ae_config.config")
+    config_file = os.path.join(dir_path, "..", "ae_config.config")
     
     print(f"Looking for config file at: {config_file}")
     if os.path.exists(config_file):

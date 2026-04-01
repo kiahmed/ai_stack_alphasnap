@@ -39,12 +39,12 @@ scouts:
   
 dedup:
   # TF-IDF cosine similarity — catches surface-level dupes (same words/phrasing)
-  tfidf_threshold: 0.45
+  tfidf_threshold: 0.35
   # Entity overlap — catches same-story-different-words dupes (tickers, amounts, company names)
   entity_threshold: 0.6
   # Minimum NEW entities in scout finding to classify as "update" rather than "duplicate"
   # Prevents discarding new developments on the same topic (e.g. updated price, confirmed deal)
-  novelty_min_entities: 2
+  novelty_min_entities: 3
 
 storage:
   # TOGGLE: set to true for GCS, false for local

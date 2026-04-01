@@ -1,12 +1,15 @@
 
 
 # --- AUTOMATION BLOCK ---
-if [ -f "service_account.json" ]; then
+SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+SVC_ACCOUNT="$SCRIPT_DIR/service_account.json"
+
+if [ -f "$SVC_ACCOUNT" ]; then
     echo "✅ Service Account found. Setting up headless authentication..."
-    export GOOGLE_APPLICATION_CREDENTIALS=$(pwd)/service_account.json
+    export GOOGLE_APPLICATION_CREDENTIALS="$SVC_ACCOUNT"
 else
     echo "⚠️  No service_account.json found. Will try to auto create the session with an existing service account "
-    ./create_svc_accounts.sh
+    "$SCRIPT_DIR/create_svc_accounts.sh"
     echo " If still fails, wil fall back to interactive ADC (User Credentials).  If your session expires, run: gcloud auth application-default login"
 fi
 
@@ -71,3 +74,17 @@ fi
 #GIVE PERMISSION TO THE SERVICE ACCOUNT TO USE THE LOGGING API
 #gcloud projects add-iam-policy-binding marketresearch-agents --member="serviceAccount:market-agent-sa@marketresearch-agents.iam.gserviceaccount.com" --role="roles/logging.viewer"  
 
+# what are you trying to do with --agent switch? I would like to possibly use the mcp tool to get the TICKER DATA on                 
+# task_istructions 4 for DE agent to get confirmed data for the ticker for better grounding. Lets take a step by step approach write   
+# resuable function modules that uses @test_atlas_mcp.py for mcp tools usage like NET GEX, DEX, top vol, OI ect based on a supplied    
+# ticker. Make these functions transparent and mcp uses expandable so I want to replace atlas-mcp with a different underlying mcp      
+# server down the road I could just easily change it in a new config file called mcp.config that you'd create holding all mcp related  
+# configuration. move the file and mcp testing/server codes creatign a new folder called mcp. Just write those resuable module         
+# functions first to test, dont hook up with the market_team.py project yet
+
+#Get individual TOKEN_USAGE entries from yesterday
+# gcloud logging read 'resource.type="aiplatform.googleapis.com/ReasoningEngine" AND resource.labels.location="us-central1" AND      
+#   timestamp>="2026-03-31T00:00:00Z" AND timestamp<"2026-04-01T00:00:00Z" AND textPayload:"TOKEN_USAGE"' --limit=500                  
+#   --project=marketresearch-agents --format="value(textPayload,resource.labels.reasoning_engine_id)" 2>&1 | head -60 
+#get logs for a pariticular agent engine from yesterday and output to a file
+#gcloud logging read 'resource.type="aiplatform.googleapis.com/ReasoningEngine" AND resource.labels.location="us-central1" AND resource.labels.reasoning_engine_id="9172513576756183040" AND timestamp>="2026-03-31T00:00:00Z"' --limit=5000 --project=marketresearch-agents --format="value(textPayload)" > output.log

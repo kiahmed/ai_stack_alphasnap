@@ -1,5 +1,6 @@
 #!/bin/bash
-source ae_config.config
+SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+source "$SCRIPT_DIR/../ae_config.config"
 
 if [ -z "$ENGINE_ID" ] || [ "$ENGINE_ID" == '""' ]; then
     echo "❌ Error: ENGINE_ID is not set in ae_config.config."

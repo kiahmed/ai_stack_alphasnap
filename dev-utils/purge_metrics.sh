@@ -2,7 +2,7 @@
 # ---------------------------------------------------------
 # purge_metrics.sh - Cloud Logging Retention Helper
 # ---------------------------------------------------------
-source ae_config.config
+source "$(dirname "$0")/../ae_config.config"
 
 echo "🧹 Refined Purge Strategy: Targeting Cloud Logging"
 echo "--------------------------------------------------------"
