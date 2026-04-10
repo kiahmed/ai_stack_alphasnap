@@ -15,17 +15,49 @@ from market_team import app, PROJECT_ID, LOCATION
 def update_config_file(engine_id):
     dir_path = os.path.dirname(os.path.realpath(__file__))
     config_file = os.path.join(dir_path, "ae_config.config")
-    
-    if os.path.exists(config_file):
-        with open(config_file, "r") as f:
-            lines = f.readlines()
-            
+
+    if not os.path.exists(config_file):
+        print(f"⚠️ Config file not found: {config_file}")
+        return False
+
+    with open(config_file, "r") as f:
+        lines = f.readlines()
+
+    with open(config_file, "w") as f:
+        for line in lines:
+            if line.startswith("ENGINE_ID="):
+                f.write(f'ENGINE_ID="{engine_id}"\n')
+            else:
+                f.write(line)
+        f.flush()
+        os.fsync(f.fileno())
+
+    # Verify the write actually landed (WSL /mnt/c/ can silently drop writes)
+    import time
+    time.sleep(0.5)
+    with open(config_file, "r") as f:
+        content = f.read()
+    if f'ENGINE_ID="{engine_id}"' in content:
+        return True
+    else:
+        print(f"⚠️ Write verification failed — retrying...")
+        time.sleep(1)
         with open(config_file, "w") as f:
             for line in lines:
                 if line.startswith("ENGINE_ID="):
                     f.write(f'ENGINE_ID="{engine_id}"\n')
                 else:
                     f.write(line)
+            f.flush()
+            os.fsync(f.fileno())
+        time.sleep(0.5)
+        with open(config_file, "r") as f:
+            content = f.read()
+        if f'ENGINE_ID="{engine_id}"' in content:
+            return True
+        else:
+            print(f"❌ ENGINE_ID write failed after retry. Please manually set ENGINE_ID=\"{engine_id}\" in ae_config.config")
+            return False
 
 def deploy():
     # Load configuration from ae_config.config
@@ -76,8 +108,11 @@ def deploy():
     
     # Extract the ID from the end of the resource name
     new_engine_id = remote_app.resource_name.split("/")[-1]
-    update_config_file(new_engine_id)
-    print(f"📝 Automatically wrote Engine ID {new_engine_id} to ae_config.config")
+    write_ok = update_config_file(new_engine_id)
+    if write_ok:
+        print(f"📝 Verified: Engine ID {new_engine_id} written to ae_config.config")
+    else:
+        print(f"📝 Engine ID is: {new_engine_id}  (config file write could not be verified)")
 
     # --- AUTO CLEANUP OF OLD ENGINE ---
     if old_engine_id and old_engine_id != new_engine_id:

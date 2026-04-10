@@ -7,7 +7,7 @@ Pulls stats from three sources:
   3. Cloud Logging   — Vertex AI prediction logs (generateContent usage metadata)
 
 Usage:
-  python3 get_run_stats.py                    # Stats from the last 2 hours
+  python3 get_run_stats.py                    # Stats for today (default)
   python3 get_run_stats.py --hours 24         # Stats from the last 24 hours
   python3 get_run_stats.py --date 2026-03-24  # Stats for a specific date
   python3 get_run_stats.py --discover         # List all available aiplatform metrics
@@ -17,15 +17,30 @@ import argparse
 import json
 import re
 from datetime import datetime, timedelta, timezone
+from pathlib import Path
 
 from google.cloud import monitoring_v3
 from google.cloud import logging as cloud_logging
 
-# ── Configuration (from ae_config.config) ──
-PROJECT_ID = "marketresearch-agents"
-LOCATION = "us-central1"
-ENGINE_ID = "2391587873749991424"
-MODEL_ID = "gemini-3.1-pro-preview"
+
+# ── Load configuration from ae_config.config ──
+def _load_config() -> dict:
+    config_path = Path(__file__).parent.parent / "ae_config.config"
+    cfg = {}
+    with open(config_path) as f:
+        for line in f:
+            line = line.strip()
+            if not line or line.startswith("#"):
+                continue
+            m = re.match(r'^([A-Z_]+)="?([^"#]*)"?\s*(?:#.*)?$', line)
+            if m:
+                cfg[m.group(1)] = m.group(2).strip()
+    return cfg
+
+_cfg = _load_config()
+PROJECT_ID = _cfg["PROJECT_ID"]
+LOCATION   = _cfg["LOCATION"]
+ENGINE_ID  = _cfg["ENGINE_ID"]
 
 # Terminal colors
 CYAN = "\033[96m"
@@ -335,8 +350,8 @@ def get_prediction_token_usage(start_time, end_time):
 
 def parse_args():
     parser = argparse.ArgumentParser(description="AlphaSnap post-run token usage stats")
-    parser.add_argument("--hours", type=float, default=2, help="Look back N hours (default: 2)")
-    parser.add_argument("--date", type=str, help="Specific date YYYY-MM-DD (overrides --hours)")
+    parser.add_argument("--hours", type=float, default=None, help="Look back N hours")
+    parser.add_argument("--date", type=str, help="Specific date YYYY-MM-DD (default: today)")
     parser.add_argument("--discover", action="store_true", help="List all available aiplatform metrics")
     return parser.parse_args()
 
@@ -348,15 +363,16 @@ def main():
         discover_metrics()
         return
 
-    if args.date:
-        day = datetime.strptime(args.date, "%Y-%m-%d").replace(tzinfo=timezone.utc)
-        start_time = day
-        end_time = day + timedelta(days=1)
-        window_label = args.date
-    else:
+    if args.hours is not None:
         end_time = datetime.now(timezone.utc)
         start_time = end_time - timedelta(hours=args.hours)
         window_label = f"last {args.hours}h"
+    else:
+        date_str = args.date or datetime.now(timezone.utc).strftime("%Y-%m-%d")
+        day = datetime.strptime(date_str, "%Y-%m-%d").replace(tzinfo=timezone.utc)
+        start_time = day
+        end_time = min(day + timedelta(days=1), datetime.now(timezone.utc))
+        window_label = date_str
 
     print(f"\n{BOLD}{CYAN}{'='*60}")
     print(f"  AlphaSnap Run Stats — {window_label}")

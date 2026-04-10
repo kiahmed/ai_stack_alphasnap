@@ -1,213 +1,296 @@
 ========================================
-Token Usage — Input: 123,232 | Output: 16,245 | Total: 176,143
-SWEEP COMPLETE — Total time: 0h 7m 27s
+Token Usage — Input: 217,329 | Output: 36,385 | Total: 325,462
+SWEEP COMPLETE — Total time: 0h 6m 24s
 ========================================
-[TOKEN_USAGE] Shard_Merger | input=181 | output=40 | total=238
-[PROGRESS] 11:22:27 | Sector shards merged successfully. 21 new entries added.
-[TOKEN_USAGE] Shard_Merger | input=146 | output=20 | total=181
-[MERGE] Successfully merged 21 new entries into master log (653 existing + 21 new = 674 total).
+[TOKEN_USAGE] Shard_Merger | input=189 | output=19 | total=225
+[PROGRESS] 23:38:04 | Successfully merged sector shards. 515 total entries in the master log.
+[TOKEN_USAGE] Shard_Merger | input=146 | output=24 | total=222
+[MERGE] Successfully merged 28 new entries into master log (487 existing + 28 new = 515 total).
 ========================================
-  TOTAL                  deduped: 21  merged: 21
+  TOTAL                  deduped: 28  merged: 28
   ──────────────────────────────────────
-  Strategic Minerals     deduped: 3  merged: 3
-  Power & Energy         deduped: 2  merged: 2
-  Space & Defense        deduped: 2  merged: 2
-  AI Stack               deduped: 3  merged: 3
+  Strategic Minerals     deduped: 5  merged: 5
+  Power & Energy         deduped: 5  merged: 5
+  Space & Defense        deduped: 5  merged: 5
+  AI Stack               deduped: 5  merged: 5
   Crypto                 deduped: 5  merged: 5
-  Robotics               deduped: 6  merged: 6
+  Robotics               deduped: 3  merged: 3
 ========================================
   MERGE STATS (per category)
 ========================================
-[MERGE] Shard 'Strategic Minerals': 3/3 enriched — complete
-[MERGE] Shard 'Power & Energy': 2/2 enriched — complete
-[MERGE] Shard 'Space & Defense': 2/2 enriched — complete
-[MERGE] Shard 'AI Stack': 3/3 enriched — complete
+[MERGE] Shard 'Strategic Minerals': 5/5 enriched — complete
+[MERGE] Shard 'Power & Energy': 5/5 enriched — complete
+[MERGE] Shard 'Space & Defense': 5/5 enriched — complete
+[MERGE] Shard 'AI Stack': 5/5 enriched — complete
 [MERGE] Shard 'Crypto': 5/5 enriched — complete
-[MERGE] Shard 'Robotics': 6/6 enriched — complete
-[TOKEN_USAGE] Shard_Merger | input=106 | output=10 | total=552
+[MERGE] Shard 'Robotics': 3/3 enriched — complete
+[TOKEN_USAGE] Shard_Merger | input=106 | output=10 | total=590
 ========================================
   STARTING MERGE PHASE
 ========================================
-[RETRY-STRATEGIST] Space & Defense — completed on attempt 2.
-[SHARD] Space & Defense: 2/2 enriched — complete.
-[TOKEN_USAGE] Space_Defense_Scout_Strategist_Retry | input=1601 | output=556 | total=2252
-[18]      WARNING:  Tools at indices [0] are not compatible with automatic function calling (AFC). AFC is disabled. If AFC is intended, please include python callables in the tool list, and do not include function declaration and MCP server in the tool list.
-[PROGRESS] 11:22:08 | Strategist Space & Defense complete | Metrics: 2 topics
-[TOKEN_USAGE] Space_Defense_Scout_Strategist_Retry | input=1567 | output=19 | total=1613
-[18]      WARNING:  Tools at indices [0] are not compatible with automatic function calling (AFC). AFC is disabled. If AFC is intended, please include python callables in the tool list, and do not include function declaration and MCP server in the tool list.
-[ENRICH] Space & Defense: 2/2 findings enriched.
-```
-}
-  "price_levels": "LMT: Pivot support ~$600-615, Avg Analyst PT $674, High PT $793. BA: Pivot resistance ~$200, Avg PT $278. Sector ETFs: ITA, XAR."
-  "guidance_play": "Call to Action: Accumulate LMT and BA. For a 1-5 day positioning, look for LMT call spreads or long equity targeting the $640-$650 range, playing the immediate bullish sentiment from the defense capacity expansion.",
-  "insights_sentiment": "Strongly Bullish. The tripling of PAC-3 MSE seeker production capacity guarantees long-term revenue visibility and reinforces the strength of the defense industrial base. It highlights robust structural demand for missile defense systems and signals continued aggressive DOD procurement.",
-  "finding": "The Department of Defense (in partnership with major prime contractors Boeing and Lockheed Martin) announced a massive framework agreement to triple the production capacity of seekers for the Patriot Advanced Capability-3 (PAC-3) Missile Segment Enhancement (MSE). This action reflects aggressive capacity-building within the defense industrial base and is a direct execution of new acquisition transformation strategies, signaling bullish long-term procurement for missile defense systems.",
-  "category": "Space & Defense",
-  "timestamp": "April 1, 2026",
-{
-```json
-### [Saving to Memory] Category: Space & Defense
-[TOKEN_USAGE] Space_Defense_Scout_Strategist_Retry | input=1258 | output=271 | total=1535
-[18]      WARNING:  Tools at indices [0] are not compatible with automatic function calling (AFC). AFC is disabled. If AFC is intended, please include python callables in the tool list, and do not include function declaration and MCP server in the tool list.
-[ENRICH] Space & Defense: 1/2 findings enriched.
-```
-}
-  "price_levels": "BA: Current ~$199, Avg PT $278, High PT $315. LMT: Current ~$615, Avg PT $674, High PT $793. Relevant ETFs: UFO, ROKT, ITA."
-  "guidance_play": "Call to Action: Go long space sector ETFs (UFO, ROKT) and core primes (BA, LMT) riding the momentum of the launch. For a 1-5 day play, if BA breaks and holds the $200 psychological level, look for near-term momentum targeting $220.",
-  "insights_sentiment": "Highly Bullish. The Artemis 2 launch serves as a historic milestone for deep space exploration and acts as a massive validation catalyst for major primes (Boeing, Lockheed Martin) and subsystem contractors. A successful mission will likely trigger sustained retail and institutional inflows into the space economy.",
-  "finding": "NASA is scheduled to launch the highly anticipated Artemis 2 mission today. This marks the first crewed lunar mission since Apollo 17 in 1972. A crew of four astronauts will embark on a 10-day journey around the Moon aboard the Orion spacecraft, propelled by the Space Launch System (SLS) rocket. This launch represents a major catalyst for space exploration primes, subsystem contractors, and international aerospace partnerships.",
-  "category": "Space & Defense",
-  "timestamp": "April 1, 2026",
-{
-```json
-### [Saving to Memory] Category: Space & Defense
-[TOKEN_USAGE] Space_Defense_Scout_Strategist_Retry | input=916 | output=304 | total=1999
-[18]      WARNING:  Tools at indices [0] are not compatible with automatic function calling (AFC). AFC is disabled. If AFC is intended, please include python callables in the tool list, and do not include function declaration and MCP server in the tool list.
-[PROGRESS] 11:21:42 | Strategist starting Space & Defense
-[TOKEN_USAGE] Space_Defense_Scout_Strategist_Retry | input=893 | output=14 | total=1683
-[18]      WARNING:  Tools at indices [0] are not compatible with automatic function calling (AFC). AFC is disabled. If AFC is intended, please include python callables in the tool list, and do not include function declaration and MCP server in the tool list.
-[RETRY-STRATEGIST] Space & Defense — attempt 2/3, waiting 60s...
 [CHECK] Strategic_Minerals_Scout_Pipeline (Strategic Minerals) — shard OK.
-[SHARD] Strategic Minerals: 3/3 enriched — complete.
+[SHARD] Strategic Minerals: 5/5 enriched — complete.
 [CHECK] Power_Energy_Scout_Pipeline (Power & Energy) — shard OK.
-[SHARD] Power & Energy: 2/2 enriched — complete.
-[CHECK] Space_Defense_Scout_Pipeline (Space & Defense) — partial shard, strategist retry needed.
-[SHARD] Space & Defense: 0/2 enriched — INCOMPLETE, needs retry.
-[TOKEN_USAGE] Power_Energy_Scout_Strategist | input=3423 | output=527 | total=3957
+[SHARD] Power & Energy: 5/5 enriched — complete.
+[CHECK] Space_Defense_Scout_Pipeline (Space & Defense) — shard OK.
+[SHARD] Space & Defense: 5/5 enriched — complete.
+[TOKEN_USAGE] Strategic_Minerals_Scout_Strategist | input=4948 | output=881 | total=5905
 [18]      WARNING:  Tools at indices [0] are not compatible with automatic function calling (AFC). AFC is disabled. If AFC is intended, please include python callables in the tool list, and do not include function declaration and MCP server in the tool list.
-[PROGRESS] 11:20:15 | Strategist Power & Energy complete | Metrics: 2 topics
-[TOKEN_USAGE] Power_Energy_Scout_Strategist | input=3392 | output=16 | total=3414
-[18]      WARNING:  Tools at indices [0] are not compatible with automatic function calling (AFC). AFC is disabled. If AFC is intended, please include python callables in the tool list, and do not include function declaration and MCP server in the tool list.
-[ENRICH] Power & Energy: 2/2 findings enriched.
+[PROGRESS] 23:37:37 | Strategist Strategic Minerals complete | Metrics: 5 topics
+[ENRICH] Strategic Minerals: 5/5 findings enriched.
 ```
 }
-  "price_levels": "TTE, RWE, and IBE are overwhelmingly bullish to \"Strong Buy\" today, reflecting heavy investor confidence and strong upward momentum."
-  "guidance_play": "Initiate or add to long positions in TTE, RWE, and IBE for 1-5 days positioning. Capitalize on the strong upward momentum and BTM catalyst driven by AI data centers. Favorable proxy play via energy infrastructure ETFs (e.g., XLE or global utility funds).",
-  "insights_sentiment": "Very Bullish. TotalEnergies (TTE), RWE, and Iberdrola (IBE) are aggressively targeting the US market to capitalize on a projected 33 GW of Behind-the-Meter (BTM) power generation demand driven by AI data centers. Severe grid connection delays are forcing tech giants to pivot to on-site power generation, effectively turning these European utilities into critical AI infrastructure partners.",
-  "finding": "Due to unprecedented AI-driven data center energy demand and lengthy grid connection queues, a massive shift toward Behind-the-Meter (BTM) on-site power generation and energy storage is occurring. McKinsey projects up to 33 GW of new BTM generation will be deployed over the next five years. Seeking to capitalize on this, European power giants like TotalEnergies, RWE, and Iberdrola are aggressively expanding their US footprints to secure lucrative long-term power purchase agreements (PPAs) and storage contracts with major tech firms.",
+  "price_levels": "MP Materials (MP) watch $15.50 support, target $18.00 pivot. U.S. Critical Materials remains private, potential valuation markup to $200M+ upon confirmed drilling/offtake."
+  "guidance_play": "Watch for reverse mergers or IPOs for U.S. Critical Materials. Broader positive read-through for domestic REE producers like MP Materials (MP). Go long MP for 1-5 day technical bounce.",
+  "insights_sentiment": "Bullish. Derisks future production revenue for the Sheep Creek project. Strengthens independent domestic US supply chains for dysprosium, terbium, and gallium. Increases momentum for North American downstream processing integration.",
+  "finding": "REalloys Secures Domestic Offtake from Sheep Creek",
+  "category": "Strategic Minerals",
+  "timestamp": "2026-04-03",
+{
+```json
+### [Saving to Memory] Category: Strategic Minerals
+[ENRICH] Strategic Minerals: 4/5 findings enriched.
+```
+}
+  "price_levels": "Deal Size: $32M injection. TYO: 8015 monitor for institutional accumulation levels; TSXV: NMI breakout watch."
+  "guidance_play": "Consider Namibian Critical Metals (TSXV: NMI) or related African REE explorers. Go long Toyota Tsusho (TYO: 8015) as a diversified proxy for secured EV supply chains.",
+  "insights_sentiment": "Bullish. Secures direct, non-Chinese heavy rare earth deposits in Africa for Japanese industrials. Affirms Africa as a central battleground for mineral resource allocation. Continues the trend of aggressive Japanese conglomerate hedging.",
+  "finding": "Toyota Tsusho Commits $32M to Namibian Rare Earths",
+  "category": "Strategic Minerals",
+  "timestamp": "2026-04-02",
+{
+```json
+### [Saving to Memory] Category: Strategic Minerals
+[ENRICH] Strategic Minerals: 3/5 findings enriched.
+```
+}
+  "price_levels": "ASX: ARR / OTC: ARRNF - Watch for technical breakout on volume; analyst PTs likely to upgrade."
+  "guidance_play": "Accumulate ARR (ASX: ARR / OTC: ARRNF) on dips for a 1-5 day swing as pilot plant news digests. Watch for momentum follow-through on retail volume.",
+  "insights_sentiment": "Bullish. Hastens timeline to domestic commercial viability for ARR. Validates Wyoming as a tier-1 critical minerals jurisdiction. Increases speculative and strategic capital inflow into domestic miners.",
+  "finding": "American Rare Earths (ASX: ARR) Accelerates Halleck Creek Pilot Plant",
+  "category": "Strategic Minerals",
+  "timestamp": "2026-04-01",
+{
+```json
+### [Saving to Memory] Category: Strategic Minerals
+[ENRICH] Strategic Minerals: 2/5 findings enriched.
+```
+}
+  "price_levels": "Sector Macro: Monitor REMX support levels around $55-$60."
+  "guidance_play": "Position in ex-China midstream refiners and specialty chemical companies (e.g., Solvay). Broader EV supply chain play.",
+  "insights_sentiment": "Bullish. Reduces Japan's reliance on Chinese heavy rare earths for EV motors. Validates the viability of allied supply chain networks. Promotes accelerated capital into ex-China refining infrastructure.",
+  "finding": "Japan & France Heavy Rare Earths Partnership",
+  "category": "Strategic Minerals",
+  "timestamp": "2026-04-01",
+{
+```json
+### [Saving to Memory] Category: Strategic Minerals
+[ENRICH] Strategic Minerals: 1/5 findings enriched.
+```
+}
+  "price_levels": "Private acquisition: $30M upfront, $720M future investment. Broad ETF REMX: Watch $65 pivot."
+  "guidance_play": "Go long on US-aligned cobalt players and critical minerals ETFs (e.g., REMX). Expect increased M&A in Western-aligned African assets.",
+  "insights_sentiment": "Very Bullish. Locks up significant cobalt assets under US-aligned control. Heightens geopolitical competition; signals Western capital mobilization against Chinese dominance. Upward pressure on non-Chinese strategic battery metals.",
+  "finding": "US-Backed Virtus Minerals Acquires Chemaf (DRC)",
+  "category": "Strategic Minerals",
+  "timestamp": "2026-04-01",
+{
+```json
+### [Saving to Memory] Category: Strategic Minerals
+[PROGRESS] 23:37:36 | Strategist starting Strategic Minerals
+[TOKEN_USAGE] Strategic_Minerals_Scout_Strategist | input=3928 | output=818 | total=8952
+[TOKEN_USAGE] Power_Energy_Scout_Strategist | input=5492 | output=1378 | total=6974
+[TOKEN_USAGE] Space_Defense_Scout_Strategist | input=4524 | output=1048 | total=5588
+[18]      WARNING:  Tools at indices [0] are not compatible with automatic function calling (AFC). AFC is disabled. If AFC is intended, please include python callables in the tool list, and do not include function declaration and MCP server in the tool list.
+[PROGRESS] 23:37:14 | Strategist Power & Energy complete | Metrics: 5 topics
+[TOKEN_USAGE] Power_Energy_Scout_Strategist | input=5461 | output=16 | total=5531
+[18]      WARNING:  Tools at indices [0] are not compatible with automatic function calling (AFC). AFC is disabled. If AFC is intended, please include python callables in the tool list, and do not include function declaration and MCP server in the tool list.
+[ENRICH] Power & Energy: 5/5 findings enriched.
+```
+}
+  "price_levels": "NASDAQ: GRID. Price: ~$163-$166. Analyst PT Average: ~$185-$192. Technical Support: $156.99. Resistance: $169.67."
+  "guidance_play": "NASDAQ: GRID. Go long on the GRID ETF for 1-5 days near the $163 support level, targeting the immediate technical resistance at $169. AI data center power demand makes grid infrastructure the ultimate structural pick-and-shovel play.",
+  "insights_sentiment": "Very Bullish. Solidifies energy storage as the most rapidly expanding sub-sector of the global power grid. Next-generation AI data centers shift storage from an intermittent renewables-crutch to an absolute necessity.",
+  "finding": "InfoLink Global Forecast Projects Massive 2026 Storage Capacity Needs Driven By AI. Forecasts global energy storage capacity to reach 801 GWh in 2026, building off an immense 61% surge in 2025. Next-generation AI data centers are explicitly driving demand.",
   "category": "Power & Energy",
-  "timestamp": "2026-03-31",
+  "timestamp": "2026-04-03",
 {
 ```json
 ### [Saving to Memory] Category: Power & Energy
-[TOKEN_USAGE] Power_Energy_Scout_Strategist | input=3031 | output=323 | total=3371
-[TOKEN_USAGE] Space_Defense_Scout_Strategist | input=2349 | output=0 | total=2349
-[18]      WARNING:  Tools at indices [0] are not compatible with automatic function calling (AFC). AFC is disabled. If AFC is intended, please include python callables in the tool list, and do not include function declaration and MCP server in the tool list.
-[ENRICH] Power & Energy: 1/2 findings enriched.
+[ENRICH] Power & Energy: 4/5 findings enriched.
 ```
 }
-  "price_levels": "NFE technicals are overwhelmingly bearish, rated as a \"Strong Sell\", heavily oversold, falling trend channel."
-  "guidance_play": "Avoid aggressive long positions on NFE despite the positive fundamental news, as technicals remain bearish. Wait for a clear reversal signal or consolidation before initiating a position for a 1-5 day swing.",
-  "insights_sentiment": "Neutral. NFE securing the TGS LNG terminal lease anchors the fuel supply for its UTE Lins 2 power project and guarantees an estimated $50M in annual EBITDA by 2027. Fortifies NFE\u2019s strategic position in the Latin American energy grid, reducing dependency on spot market LNG. Market dynamics show heavy bearishness, pricing in structural distress.",
-  "finding": "New Fortress Energy (NFE) has secured a long-term lease for its Terminal de G\u00e1s Sul (TGS) LNG import terminal in Santa Catarina, Brazil. Operations are expected to commence in 2026, generating an estimated $50 million in annual EBITDA by 2027. The terminal will supply natural gas to power generation facilities, specifically supporting NFE's UTE Lins 2 power project.",
+  "price_levels": "Private. Estimated Valuation: ~$2.1B+ (CNY 15B+ based on Series C). Raised >$620M. Target for prospective IPO."
+  "guidance_play": "Private Company (HiTHIUM). Watch for acquisition or joint venture announcements by Big Tech or large public renewables players. Short-term bearish for legacy, lower-density battery makers; bullish for energy storage integrators like Fluence (FLNC).",
+  "insights_sentiment": "Bullish. Resolves significant fire-safety concerns through a large-scale open-door fire test, clearing the path for ultra-dense, commercial LDES deployments. Crucial for spatial constraints in utility and commercial microgrids.",
+  "finding": "HiTHIUM's 6.25MWh BESS Achieves Landmark UL Certification Post-Fire Test. HiTHIUM secured UL Solutions certification for its 6.25MWh, 4-hour Long Duration Energy Storage (LDES) system using massive 'kAh-level' proprietary cells.",
   "category": "Power & Energy",
-  "timestamp": "2026-03-31",
+  "timestamp": "2026-04-03",
 {
 ```json
 ### [Saving to Memory] Category: Power & Energy
-[TOKEN_USAGE] Power_Energy_Scout_Strategist | input=2725 | output=268 | total=3009
-[18]      WARNING:  Tools at indices [0] are not compatible with automatic function calling (AFC). AFC is disabled. If AFC is intended, please include python callables in the tool list, and do not include function declaration and MCP server in the tool list.
-[PROGRESS] 11:20:01 | Strategist starting Power & Energy
-[TOKEN_USAGE] Power_Energy_Scout_Strategist | input=2702 | output=14 | total=3459
-[TOKEN_USAGE] Strategic_Minerals_Scout_Strategist | input=3578 | output=528 | total=4757
-[18]      WARNING:  Tools at indices [0] are not compatible with automatic function calling (AFC). AFC is disabled. If AFC is intended, please include python callables in the tool list, and do not include function declaration and MCP server in the tool list.
-[TOKEN_USAGE] Power_Energy_Scout_DE | input=2059 | output=356 | total=2856
-[18]      WARNING:  Tools at indices [0] are not compatible with automatic function calling (AFC). AFC is disabled. If AFC is intended, please include python callables in the tool list, and do not include function declaration and MCP server in the tool list.
-[PROGRESS] 11:19:39 | Strategist Strategic Minerals complete | Metrics: 3 topics
-[TOKEN_USAGE] Strategic_Minerals_Scout_Strategist | input=3549 | output=15 | total=3599
-[18]      WARNING:  Tools at indices [0] are not compatible with automatic function calling (AFC). AFC is disabled. If AFC is intended, please include python callables in the tool list, and do not include function declaration and MCP server in the tool list.
-[ENRICH] Strategic Minerals: 3/3 findings enriched.
+[ENRICH] Power & Energy: 3/5 findings enriched.
 ```
 }
-  "price_levels": "Private / unlisted or currently restructuring shell."
-  "guidance_play": "Monitor for potential public listing (IPO/reverse merger) or acquisition by mid-tier uranium producers expanding US domestic portfolios. Sector ETF read-throughs: URA, URNM.",
-  "insights_sentiment": "Bullish. Extremely cost-effective entry into US uranium, pre-positioning the company to capture future DOE grants amid tight global nuclear fuel supply chains.",
-  "finding": "EagleOne Metals acquired a 100% interest in the Poison Springs Uranium Project in Utah for a $50,000 all-cash transaction.",
-  "category": "Strategic Minerals",
-  "timestamp": "2026-03-30",
+  "price_levels": "OTC: ECIFY. Price: ~$2.55. Target metrics depend on broader European utility benchmarks."
+  "guidance_play": "OTC: ECIFY. As a 1-5 day play, monitor European utility ETFs or take a speculative long position on ECIFY around the $2.55 support. The optimization deal acts as a proxy for the broader revenue potential of battery tolling at the gigawatt-hour scale.",
+  "insights_sentiment": "Bullish. Strong validation for EDF\u2019s commercial optimization capabilities as one of the largest BESS deals in the UK market. Secures critical grid stability mechanisms, proving out massive revenue potential.",
+  "finding": "Matrix Renewables and EDF Sign Major Optimisation Agreement for 1 GWh UK BESS. Matrix Renewables signed a long-term commercial optimization agreement with EDF for a 500 MW / 1,000 MWh BESS in Eccles, Scotland, set for Summer 2027 operations.",
+  "category": "Power & Energy",
+  "timestamp": "2026-04-02",
 {
 ```json
-### [Saving to Memory] Category: Strategic Minerals
-[ENRICH] Strategic Minerals: 2/3 findings enriched.
+### [Saving to Memory] Category: Power & Energy
+[ENRICH] Power & Energy: 2/5 findings enriched.
 ```
 }
-  "price_levels": "Trading as an OTC penny stock (<$0.05). Recently elevated volume."
-  "guidance_play": "Highly speculative 1-5 day play on OTC momentum. Watch for sustained volume and a possible breakout above $0.05 resistance due to aggressive asset acquisition.",
-  "insights_sentiment": "Bullish. Transforms AMLM's portfolio by adding hard-rock lithium assets in a premier Tier-1 mining jurisdiction, opening avenues for Australian JV partnerships.",
-  "finding": "American Lithium Minerals completed the acquisition of the Higginsville Project in Western Australia.",
-  "category": "Strategic Minerals",
-  "timestamp": "2026-03-31",
+  "price_levels": "NYSE: TTE. Price: ~$86-$92. Average PT: $96-$100. TD Cowen PT: $97. Value estimate: $102.28."
+  "guidance_play": "NYSE: TTE. Consider 1-5 day swing long towards $96-$97 target range, driven by Middle East crude supply premium and expanding high-margin clean energy JVs. Options play: Near-term out-of-the-money calls.",
+  "insights_sentiment": "Bullish. Validates the flow of major institutional capital (Allianz) into energy storage, reducing risk for heavy capital outlays by fossil-energy majors transitioning to power & storage. Highlights massive acceleration of BESS infrastructure in Germany.",
+  "finding": "TotalEnergies (TTE) and Allianz Global Investors Strike Joint Venture for 800MW German BESS Portfolio. TotalEnergies sold a 50% stake to Allianz Global Investors to co-develop a \u20ac500M utility-scale BESS portfolio in Germany, comprising 11 projects (789MW / 1,628MWh).",
+  "category": "Power & Energy",
+  "timestamp": "2026-04-02",
 {
 ```json
-### [Saving to Memory] Category: Strategic Minerals
-[ENRICH] Strategic Minerals: 1/3 findings enriched.
+### [Saving to Memory] Category: Power & Energy
+[ENRICH] Power & Energy: 1/5 findings enriched.
 ```
 }
-  "price_levels": "Recent trading range $6.70-$7.00. Positive technical momentum."
-  "guidance_play": "Accumulate near support at $6.70 for a potential 1-5 day momentum swing trade to target a breakout above $7.00. Monitor institutional flow on project derisking news.",
-  "insights_sentiment": "Very Bullish. Dramatically reduces capex/operational risk for Tanbreez and improves deposit economics. Accelerates Western REE diversification from China.",
-  "finding": "Critical Metals Corp entered a definitive agreement to acquire a majority share in 60\u00b0 North Greenland ApS to secure infrastructure for its Tanbreez Rare Earth Project, and reported a 40% boost in concentrate grade.",
-  "category": "Strategic Minerals",
-  "timestamp": "2026-03-31",
+  "price_levels": "NYSE: DTE. Price: ~$134-$143. Average PT: ~$146-$148. High PT: $158. BMO PT: $148, Barclays PT: $156."
+  "guidance_play": "NYSE: DTE. Accumulate shares or call options near current levels (~$134-$143) targeting the $148-$156 resistance/analyst PT range over the next 1-5 days. The recent Google data center supply contract provides an immediate structural catalyst.",
+  "insights_sentiment": "Very Bullish. Underscores the growing reliance of data centers and specific AI deployments on heavy, localized grid storage solutions in major U.S. utility footprints. Regulatory bodies are proactively accommodating immense utility-scale storage upgrades.",
+  "finding": "Michigan Public Service Commission Approves 1,332 MW of Energy Storage Projects. The MPSC approved six massive energy storage projects totaling 1,332 MW. 1,000 MW is allocated to DTE Electric Co.\u2019s capacity needs, while 332 MW is explicitly designated for a major new data center project by Green Chile Ventures.",
+  "category": "Power & Energy",
+  "timestamp": "2026-04-02",
 {
 ```json
-### [Saving to Memory] Category: Strategic Minerals
-[TOKEN_USAGE] Strategic_Minerals_Scout_Strategist | input=2982 | output=459 | total=3991
+### [Saving to Memory] Category: Power & Energy
+[TOKEN_USAGE] Power_Energy_Scout_Strategist | input=4022 | output=1249 | total=6099
 [18]      WARNING:  Tools at indices [0] are not compatible with automatic function calling (AFC). AFC is disabled. If AFC is intended, please include python callables in the tool list, and do not include function declaration and MCP server in the tool list.
-[PROGRESS] 11:19:31 | DE Power & Energy complete | Metrics: 4 searches, 2 topics
-[TOKEN_USAGE] Power_Energy_Scout_DE | input=2023 | output=18 | total=3486
+[PROGRESS] 23:37:08 | Strategist Space & Defense complete | Metrics: 5 topics
+[TOKEN_USAGE] Space_Defense_Scout_Strategist | input=4490 | output=19 | total=4570
 [18]      WARNING:  Tools at indices [0] are not compatible with automatic function calling (AFC). AFC is disabled. If AFC is intended, please include python callables in the tool list, and do not include function declaration and MCP server in the tool list.
-[TOKEN_USAGE] Space_Defense_Scout_DE | input=1841 | output=251 | total=2092
+[ENRICH] Space & Defense: 5/5 findings enriched.
+```
+}
+  "price_levels": "CSE:AETH: 0.24 CAD (Halted for Fundamental Change). Market Cap: ~4.06M CAD. 52-week High/Low: 0.10 - 0.24 CAD."
+  "guidance_play": "Speculative Buy on CSE:AETH upon trading resumption. The stock is currently halted pending fundamental change (acquisition) but presents a high-risk/high-reward entry into the rapidly expanding C-UAS micro-cap market.",
+  "insights_sentiment": "Bullish. Aether enters the highly lucrative C-UAS (counter-drone) and advanced security screening market, providing a high-growth defense tech revenue vector for the micro-cap company.",
+  "finding": "Aether Global Innovations (CSE: AETH) executed a definitive agreement to acquire 100% of Arion Defense Inc. to consolidate specialized counter-drone (C-UAS) systems into its defense portfolio.",
+  "category": "Space & Defense",
+  "timestamp": "2026-04-02",
+{
+```json
+### [Saving to Memory] Category: Space & Defense
+[ENRICH] Space & Defense: 4/5 findings enriched.
+```
+}
+  "price_levels": "LMT: $621.94 (Citigroup PT: $675, Hold/Neutral bias). BA: $205.48 (Citigroup PT lowered to $256, Buy consensus)."
+  "guidance_play": "Short-term hold on BA and LMT. Despite successful execution on the deep-space front, both BA and LMT face internal margin and delivery headwinds, requiring careful position sizing. Buy dips on LMT near $600 support.",
+  "insights_sentiment": "Very Bullish for the space economy. Validates the massive investment in the Boeing SLS and Lockheed Martin Orion platforms for deep-space human spaceflight, marking the first crewed departure from Earth orbit since 1972.",
+  "finding": "Following a successful April 1 launch via SLS, NASA confirmed Artemis II Orion spacecraft successfully completed its translunar injection burn on April 2. Four astronauts are heading to the Moon for a 10-day mission.",
+  "category": "Space & Defense",
+  "timestamp": "2026-04-02",
+{
+```json
+### [Saving to Memory] Category: Space & Defense
+[ENRICH] Space & Defense: 3/5 findings enriched.
+```
+}
+  "price_levels": "SpaceX Private Valuation: $1.25T - $1.75T (Targeting late 2026 IPO)."
+  "guidance_play": "Accumulate space-focused ETFs (e.g., ARKX, UFO) leading up to the test launch. A successful launch drastically de-risks NASA's Artemis lander timeline and allows SpaceX to begin deploying Starlink V2 heavies, boosting IPO premium.",
+  "insights_sentiment": "Very Bullish. A successful flight breaks a 6-month testing hiatus, accelerating critical paths for NASA's Artemis lunar lander and Starlink V2 heavy deployments.",
+  "finding": "Elon Musk confirmed the next Starship flight test with heavily upgraded v3 booster/ship hardware is slated for launch in 4 to 6 weeks, ending a 6-month hiatus.",
+  "category": "Space & Defense",
+  "timestamp": "2026-04-03",
+{
+```json
+### [Saving to Memory] Category: Space & Defense
+[ENRICH] Space & Defense: 2/5 findings enriched.
+```
+}
+  "price_levels": "Private Company. Prior funding includes $37M total (Series A in Mar 2024). Valuation currently undisclosed but scaling with Series C raise."
+  "guidance_play": "Monitor private funding rounds; Phantom Space is currently raising a Series C to accelerate the Daytona rocket (targeting late 2027) and the Phantom Cloud constellation. Look for M&A opportunities where larger primes acquire smaller space-data infrastructure players.",
+  "insights_sentiment": "Bullish. Phantom vertically integrates critical satellite thermal component production in-house, significantly accelerating the development timeline for its in-orbit data center constellation.",
+  "finding": "Phantom Space Corporation acquired Thermal Management Technologies (TMT) to support its 'Phantom Cloud' orbital data center constellation development.",
+  "category": "Space & Defense",
+  "timestamp": "2026-04-03",
+{
+```json
+### [Saving to Memory] Category: Space & Defense
+[ENRICH] Space & Defense: 1/5 findings enriched.
+```
+}
+  "price_levels": "SpaceX Private Valuation: $1.25T - $1.75T (Est. Pre-IPO). No direct public ticker. LMT ($621.94, PT $675), BA ($205.48, PT $256)."
+  "guidance_play": "Hold exposure in proxies, but the real play is preparing capital for SpaceX's highly anticipated 2026 IPO, expected to target a massive $1.5T to $1.75T valuation following the xAI merger. ULA partners (BA, LMT) may face continued margin pressure.",
+  "insights_sentiment": "Bullish for SpaceX, Bearish for ULA partners. Solidifies SpaceX's dominance in national security launches, maintaining intense pressure on competitors like ULA and Blue Origin to compete on cadence and price.",
+  "finding": "U.S. Space Force Space Systems Command awarded SpaceX nine National Security Space Launch Phase 3 task orders worth $739.4 million for SDA and NRO, starting Q3 2027.",
+  "category": "Space & Defense",
+  "timestamp": "2026-04-03",
+{
+```json
+### [Saving to Memory] Category: Space & Defense
+[PROGRESS] 23:37:03 | Strategist starting Space & Defense
+[TOKEN_USAGE] Space_Defense_Scout_Strategist | input=3210 | output=1081 | total=5512
 [18]      WARNING:  Tools at indices [0] are not compatible with automatic function calling (AFC). AFC is disabled. If AFC is intended, please include python callables in the tool list, and do not include function declaration and MCP server in the tool list.
-[PROGRESS] 11:19:25 | Strategist starting Strategic Minerals
-[TOKEN_USAGE] Strategic_Minerals_Scout_Strategist | input=2961 | output=13 | total=3469
+[TOKEN_USAGE] Strategic_Minerals_Scout_DE | input=3262 | output=639 | total=3914
 [18]      WARNING:  Tools at indices [0] are not compatible with automatic function calling (AFC). AFC is disabled. If AFC is intended, please include python callables in the tool list, and do not include function declaration and MCP server in the tool list.
-[PROGRESS] 11:19:21 | DE Space & Defense complete | Metrics: 2 searches, 2 topics
-[TOKEN_USAGE] Space_Defense_Scout_DE | input=1805 | output=18 | total=2204
+[PROGRESS] 23:36:48 | Strategist starting Power & Energy
+[TOKEN_USAGE] Power_Energy_Scout_Strategist | input=3999 | output=14 | total=4414
 [18]      WARNING:  Tools at indices [0] are not compatible with automatic function calling (AFC). AFC is disabled. If AFC is intended, please include python callables in the tool list, and do not include function declaration and MCP server in the tool list.
-[TOKEN_USAGE] Strategic_Minerals_Scout_DE | input=1919 | output=554 | total=2473
+[TOKEN_USAGE] Space_Defense_Scout_DE | input=2723 | output=409 | total=3364
 [18]      WARNING:  Tools at indices [0] are not compatible with automatic function calling (AFC). AFC is disabled. If AFC is intended, please include python callables in the tool list, and do not include function declaration and MCP server in the tool list.
-[DEDUP] Wrote 2 deduped findings to shard: gs://marketresearch-agents/market_findings_log_Power & Energy.json
-[DEDUP] Power & Energy: 2 unique, 0 duplicates removed (from 2 scout findings vs 10 baseline).
-[PROGRESS] 11:19:15 | DE starting Power & Energy
-[TOKEN_USAGE] Power_Energy_Scout_DE | input=1568 | output=232 | total=2464
+[TOKEN_USAGE] Power_Energy_Scout_DE | input=2955 | output=781 | total=3736
 [18]      WARNING:  Tools at indices [0] are not compatible with automatic function calling (AFC). AFC is disabled. If AFC is intended, please include python callables in the tool list, and do not include function declaration and MCP server in the tool list.
-[PROGRESS] 11:19:12 | DE Strategic Minerals complete | Metrics: 3 searches, 3 topics
-[TOKEN_USAGE] Strategic_Minerals_Scout_DE | input=1885 | output=17 | total=2441
+[PROGRESS] 23:36:41 | DE Strategic Minerals complete | Metrics: 1 searches, 5 topics
+[TOKEN_USAGE] Strategic_Minerals_Scout_DE | input=3228 | output=17 | total=3586
 [18]      WARNING:  Tools at indices [0] are not compatible with automatic function calling (AFC). AFC is disabled. If AFC is intended, please include python callables in the tool list, and do not include function declaration and MCP server in the tool list.
-[DEDUP] Wrote 2 deduped findings to shard: gs://marketresearch-agents/market_findings_log_Space & Defense.json
-[DEDUP] Space & Defense: 2 unique, 0 duplicates removed (from 2 scout findings vs 10 baseline).
-[PROGRESS] 11:19:09 | DE starting Space & Defense
-[TOKEN_USAGE] Space_Defense_Scout_DE | input=1418 | output=201 | total=2104
+[PROGRESS] 23:36:34 | DE Power & Energy complete | Metrics: 2 searches, 5 topics
+[TOKEN_USAGE] Power_Energy_Scout_DE | input=2919 | output=18 | total=3187
 [18]      WARNING:  Tools at indices [0] are not compatible with automatic function calling (AFC). AFC is disabled. If AFC is intended, please include python callables in the tool list, and do not include function declaration and MCP server in the tool list.
-[TOKEN_USAGE] Power_Energy_Scout | input=370 | output=449 | total=827
+[DEDUP] Wrote 5 deduped findings to shard: gs://marketresearch-agents/market_findings_log_Strategic Minerals.json
+[DEDUP] Strategic Minerals: 5 unique, 0 duplicates removed (from 5 scout findings vs 10 baseline).
+[PROGRESS] 23:36:33 | DE starting Strategic Minerals
+[TOKEN_USAGE] Strategic_Minerals_Scout_DE | input=2684 | output=276 | total=3541
+[18]      WARNING:  Tools at indices [0] are not compatible with automatic function calling (AFC). AFC is disabled. If AFC is intended, please include python callables in the tool list, and do not include function declaration and MCP server in the tool list.
+[PROGRESS] 23:36:28 | DE Space & Defense complete | Metrics: 1 searches, 5 topics
+[TOKEN_USAGE] Space_Defense_Scout_DE | input=2687 | output=18 | total=3112
 [18]      WARNING:  Tools at indices [0] are not compatible with automatic function calling (AFC). AFC is disabled. If AFC is intended, please include python callables in the tool list, and do not include function declaration and MCP server in the tool list.
 [18]      WARNING:  Tools at indices [0] are not compatible with automatic function calling (AFC). AFC is disabled. If AFC is intended, please include python callables in the tool list, and do not include function declaration and MCP server in the tool list.
-[TOKEN_USAGE] Space_Defense_Scout | input=370 | output=374 | total=789
-[DEDUP] Wrote 3 deduped findings to shard: gs://marketresearch-agents/market_findings_log_Strategic Minerals.json
-[DEDUP] Strategic Minerals: 3 unique, 0 duplicates removed (from 3 scout findings vs 10 baseline).
-[PROGRESS] 11:19:02 | DE starting Strategic Minerals
-[TOKEN_USAGE] Strategic_Minerals_Scout_DE | input=1588 | output=152 | total=2315
+[TOKEN_USAGE] Strategic_Minerals_Scout | input=377 | output=1003 | total=1388
+[DEDUP] Wrote 5 deduped findings to shard: gs://marketresearch-agents/market_findings_log_Power & Energy.json
+[DEDUP] Power & Energy: 5 unique, 0 duplicates removed (from 5 scout findings vs 10 baseline).
+[TOKEN_USAGE] Power_Energy_Scout_DE | input=2505 | output=209 | total=2837
+[18]      WARNING:  Tools at indices [0] are not compatible with automatic function calling (AFC). AFC is disabled. If AFC is intended, please include python callables in the tool list, and do not include function declaration and MCP server in the tool list.
+[DEDUP] Wrote 5 deduped findings to shard: gs://marketresearch-agents/market_findings_log_Space & Defense.json
+[DEDUP] Space & Defense: 5 unique, 0 duplicates removed (from 5 scout findings vs 10 baseline).
+[PROGRESS] 23:36:20 | DE starting Space & Defense
+[TOKEN_USAGE] Space_Defense_Scout_DE | input=2098 | output=299 | total=3096
+[18]      WARNING:  Tools at indices [0] are not compatible with automatic function calling (AFC). AFC is disabled. If AFC is intended, please include python callables in the tool list, and do not include function declaration and MCP server in the tool list.
+[PROGRESS] 23:36:18 | DE starting Power & Energy
+[TOKEN_USAGE] Power_Energy_Scout_DE | input=2484 | output=13 | total=2588
+[18]      WARNING:  Tools at indices [0] are not compatible with automatic function calling (AFC). AFC is disabled. If AFC is intended, please include python callables in the tool list, and do not include function declaration and MCP server in the tool list.
+[TOKEN_USAGE] Power_Energy_Scout | input=370 | output=906 | total=1289
+[18]      WARNING:  Tools at indices [0] are not compatible with automatic function calling (AFC). AFC is disabled. If AFC is intended, please include python callables in the tool list, and do not include function declaration and MCP server in the tool list.
+[TOKEN_USAGE] Space_Defense_Scout | input=370 | output=714 | total=1131
 [18]      WARNING:  Tools at indices [2] are not compatible with automatic function calling (AFC). AFC is disabled. If AFC is intended, please include python callables in the tool list, and do not include function declaration and MCP server in the tool list.
-[PROGRESS] 11:19:00 | Scout Power Generation and Energy Storage complete | Metrics: 3 searches, 2 topics
-[TOKEN_USAGE] Power_Energy_Scout | input=329 | output=21 | total=3089
+[PROGRESS] 23:36:09 | Scout Strategic Minerals and Rare Earth Elements complete | Metrics: 2 searches, 5 topics
+[TOKEN_USAGE] Strategic_Minerals_Scout | input=334 | output=22 | total=2223
 [18]      WARNING:  Tools at indices [2] are not compatible with automatic function calling (AFC). AFC is disabled. If AFC is intended, please include python callables in the tool list, and do not include function declaration and MCP server in the tool list.
-[PROGRESS] 11:18:56 | Scout Space Exploration and Defense Technology complete | Metrics: 3 searches, 2 topics
-[TOKEN_USAGE] Space_Defense_Scout | input=329 | output=21 | total=3220
-[18]      WARNING:  Tools at indices [0] are not compatible with automatic function calling (AFC). AFC is disabled. If AFC is intended, please include python callables in the tool list, and do not include function declaration and MCP server in the tool list.
-[TOKEN_USAGE] Strategic_Minerals_Scout | input=377 | output=455 | total=838
+[PROGRESS] 23:36:06 | Scout Power Generation and Energy Storage complete | Metrics: 3 searches, 5 topics
+[TOKEN_USAGE] Power_Energy_Scout | input=329 | output=21 | total=2219
 [18]      WARNING:  Tools at indices [2] are not compatible with automatic function calling (AFC). AFC is disabled. If AFC is intended, please include python callables in the tool list, and do not include function declaration and MCP server in the tool list.
-[PROGRESS] 11:18:48 | Scout Strategic Minerals and Rare Earth Elements complete | Metrics: 2 searches, 2 topics
-[TOKEN_USAGE] Strategic_Minerals_Scout | input=334 | output=22 | total=2083
+[PROGRESS] 23:36:02 | Scout Space Exploration and Defense Technology complete | Metrics: 2 searches, 5 topics
+[TOKEN_USAGE] Space_Defense_Scout | input=329 | output=21 | total=1891
 [18]      WARNING:  Tools at indices [2] are not compatible with automatic function calling (AFC). AFC is disabled. If AFC is intended, please include python callables in the tool list, and do not include function declaration and MCP server in the tool list.
-[PROGRESS] 11:18:30 | Scout starting Power Generation and Energy Storage
-[TOKEN_USAGE] Power_Energy_Scout | input=303 | output=16 | total=559
+[PROGRESS] 23:35:49 | Scout starting Strategic Minerals and Rare Earth Elements
+[TOKEN_USAGE] Strategic_Minerals_Scout | input=306 | output=17 | total=741
 [18]      WARNING:  Tools at indices [2] are not compatible with automatic function calling (AFC). AFC is disabled. If AFC is intended, please include python callables in the tool list, and do not include function declaration and MCP server in the tool list.
-[PROGRESS] 11:18:29 | Scout starting Strategic Minerals and Rare Earth Elements
+[PROGRESS] 23:35:46 | Scout starting Power Generation and Energy Storage
+[TOKEN_USAGE] Power_Energy_Scout | input=303 | output=16 | total=716
 [18]      WARNING:  Tools at indices [2] are not compatible with automatic function calling (AFC). AFC is disabled. If AFC is intended, please include python callables in the tool list, and do not include function declaration and MCP server in the tool list.
-[TOKEN_USAGE] Strategic_Minerals_Scout | input=306 | output=17 | total=589
-[PROGRESS] 11:18:28 | Scout starting Space Exploration and Defense Technology
-[TOKEN_USAGE] Space_Defense_Scout | input=303 | output=16 | total=594
+[PROGRESS] 23:35:45 | Scout starting Space Exploration and Defense Technology
+[TOKEN_USAGE] Space_Defense_Scout | input=303 | output=16 | total=640
 [18]      WARNING:  Tools at indices [2] are not compatible with automatic function calling (AFC). AFC is disabled. If AFC is intended, please include python callables in the tool list, and do not include function declaration and MCP server in the tool list.
 [18]      WARNING:  Tools at indices [2] are not compatible with automatic function calling (AFC). AFC is disabled. If AFC is intended, please include python callables in the tool list, and do not include function declaration and MCP server in the tool list.
 [18]      WARNING:  Tools at indices [2] are not compatible with automatic function calling (AFC). AFC is disabled. If AFC is intended, please include python callables in the tool list, and do not include function declaration and MCP server in the tool list.
@@ -216,374 +299,272 @@ SWEEP COMPLETE — Total time: 0h 7m 27s
 ========================================
 [COOLDOWN] Sleeping 60s between batches...
 [CHECK] AI_Stack_Scout_Pipeline (AI Stack) — shard OK.
-[SHARD] AI Stack: 3/3 enriched — complete.
+[SHARD] AI Stack: 5/5 enriched — complete.
 [CHECK] Crypto_Scout_Pipeline (Crypto) — shard OK.
 [SHARD] Crypto: 5/5 enriched — complete.
 [CHECK] Robotics_Scout_Pipeline (Robotics) — shard OK.
-[SHARD] Robotics: 6/6 enriched — complete.
-[TOKEN_USAGE] Robotics_Scout_Strategist | input=5445 | output=969 | total=6420
+[SHARD] Robotics: 3/3 enriched — complete.
+[TOKEN_USAGE] Crypto_Scout_Strategist | input=6357 | output=1169 | total=7634
 [18]      WARNING:  Tools at indices [0] are not compatible with automatic function calling (AFC). AFC is disabled. If AFC is intended, please include python callables in the tool list, and do not include function declaration and MCP server in the tool list.
-[PROGRESS] 11:17:07 | Strategist Robotics complete | Metrics: 6 topics
-[TOKEN_USAGE] Robotics_Scout_Strategist | input=5415 | output=17 | total=5456
+[PROGRESS] 23:34:20 | Strategist Crypto complete | Metrics: 5 topics
+[TOKEN_USAGE] Crypto_Scout_Strategist | input=6330 | output=14 | total=6354
 [18]      WARNING:  Tools at indices [0] are not compatible with automatic function calling (AFC). AFC is disabled. If AFC is intended, please include python callables in the tool list, and do not include function declaration and MCP server in the tool list.
-[ENRICH] Robotics: 6/6 findings enriched.
-```
-}
-  "price_levels": "RCAT: Trading with elevated momentum and volatility. Monitor support at key moving averages and breakout potential above local highs. Analyst PTs likely upgraded."
-  "guidance_play": "Long RCAT for a 1-5 day swing trade on momentum. Increased software capability significantly bolsters defense contract win probability against legacy primes.",
-  "insights_sentiment": "Very Bullish. M&A in drones is shifting from hardware consolidation to software/autonomy stacking. Swarming capabilities elevate RCAT's tactical product suite.",
-  "finding": "Red Cat (RCAT) acquired Apium Swarm Robotics to integrate real-time swarming and distributed autonomy into tactical drones.",
-  "category": "Robotics",
-  "timestamp": "2026-03-30",
-{
-```json
-### [Saving to Memory] Category: Robotics
-[ENRICH] Robotics: 5/6 findings enriched.
-```
-}
-  "price_levels": "Seed round valuation estimated at $30M-$40M. High premium infrastructure layer."
-  "guidance_play": "Picks-and-shovels play. Highly probable future M&A target for major autonomous vehicle (TSLA) or foundation model labs seeking data edge.",
-  "insights_sentiment": "Bullish. The industry is pivoting to solve the data/spatial mapping bottleneck via synthetic data and teleop infrastructure, shifting focus from pure compute to premium data generation.",
-  "finding": "Nomadic raised $8.4M Seed led by TQ Ventures to build a spatial intelligence layer and visual data engine for physical AI training.",
-  "category": "Robotics",
-  "timestamp": "2026-03-31",
-{
-```json
-### [Saving to Memory] Category: Robotics
-[ENRICH] Robotics: 4/6 findings enriched.
-```
-}
-  "price_levels": "Awaiting HKEX pricing. Potential comp values in the $1B+ unicorn range for pure-play embodied AI."
-  "guidance_play": "Analyze impending HKEX pricing as a primary valuation benchmark for US-based embodied AI unicorns (Figure AI, Agility Robotics). Watch Chinese tech ETFs (KWEB, MCHI) for early inclusion bumps.",
-  "insights_sentiment": "Bullish. Signals rapid commercialization in Chinese embodied AI, setting up critical public market liquidity and valuation benchmarks outside of standard US VC rounds.",
-  "finding": "Chinese embodied intelligence firm Changzhou Microintelligence filed for a Hong Kong IPO.",
-  "category": "Robotics",
-  "timestamp": "2026-04-01",
-{
-```json
-### [Saving to Memory] Category: Robotics
-[ENRICH] Robotics: 3/6 findings enriched.
-```
-}
-  "price_levels": "Estimated Series A valuation $80M-$100M. Defense ETF (ITA) relevant macro proxy for naval contract expansions."
-  "guidance_play": "Positioning via top-tier defense primes (LMT, HII) expected to acquire attritable mass assets in the 12-24 month window. Monitor maritime autonomy players.",
-  "insights_sentiment": "Bullish. Rapid venture capital rotation into maritime defense tech and asymmetric attritable mass assets reflects continuous militarization of physical AI.",
-  "finding": "Seasats secured $20M Series A led by Konvoy Ventures to scale low-cost autonomous maritime vessels.",
-  "category": "Robotics",
-  "timestamp": "2026-04-01",
-{
-```json
-### [Saving to Memory] Category: Robotics
-[ENRICH] Robotics: 2/6 findings enriched.
-```
-}
-  "price_levels": "Private startups (Skild AI). Broad macro index (BOTZ/ROBO) positive sentiment for enterprise integration."
-  "guidance_play": "Accumulate shares in associated B2B IT integrators focusing on Robot Transformation (RX). Skild AI represents a high-premium private asset for subsequent funding rounds.",
-  "insights_sentiment": "Bullish. IT service giants are positioning as deployment layers for embodied AI, accelerating B2B commercial adoption and moving past frontier lab R&D into legacy enterprise operations.",
-  "finding": "LG CNS launched the RX Innovation Lab, partnering with Skild AI and Config Intelligence to build enterprise-tailored foundation models for robotics.",
-  "category": "Robotics",
-  "timestamp": "2026-04-01",
-{
-```json
-### [Saving to Memory] Category: Robotics
-[ENRICH] Robotics: 1/6 findings enriched.
-```
-}
-  "price_levels": "Foxconn (HNHPF): Watch for volume inflows. Mega-cap tech (AAPL/GOOGL) facing potential long-term edge interface disruption."
-  "guidance_play": "Monitor Foxconn (2354.TW / HNHPF) for contract scaling impacts. AAPL and GOOGL should be evaluated for defensive hardware releases or operating system pivots over the next 1-5 days.",
-  "insights_sentiment": "Very Bullish. Bypassing traditional OS ecosystems to establish a direct-to-consumer beachhead. Mass production expectations signal a shift from hardware prototyping to global commercialization.",
-  "finding": "OpenAI has confirmed plans to launch its first screen-free, voice-first physical AI companion device in H2 2026, manufactured by Foxconn and developed with Jony Ive.",
-  "category": "Robotics",
-  "timestamp": "2026-04-01",
-{
-```json
-### [Saving to Memory] Category: Robotics
-[TOKEN_USAGE] Robotics_Scout_Strategist | input=4254 | output=951 | total=5228
-[TOKEN_USAGE] Crypto_Scout_Strategist | input=4313 | output=914 | total=6245
-[TOKEN_USAGE] AI_Stack_Scout_Strategist | input=3787 | output=579 | total=4385
-[18]      WARNING:  Tools at indices [0] are not compatible with automatic function calling (AFC). AFC is disabled. If AFC is intended, please include python callables in the tool list, and do not include function declaration and MCP server in the tool list.
-[PROGRESS] 11:16:49 | Strategist AI Stack complete | Metrics: 3 topics
-[ENRICH] AI Stack: 3/3 findings enriched.
-```
-}
-  "price_levels": "NVDA: Unprecedented CapEx inflow secures moat. Watch analyst PT upgrades factoring in Vera Rubin deployment. ETF Proxies: BOTZ, XLK."
-  "guidance_play": "Long NVDA ahead of widespread Vera Rubin deployment. Look to hyperscaler ETFs or equal-weight big tech (QQQ/XLK) to capture the $600B CapEx surge.",
-  "insights_sentiment": "Very Bullish. Reinforces structural dominance of mega-cap tech. Despite OpenAI cutting standalone pipeline, aggregate hyperscaler market spend remains staggering with NVDA as the primary bottleneck and beneficiary.",
-  "finding": "Total global AI infrastructure spending forecasted to hit $1.37 trillion in 2026. Major hyperscalers account for $600 billion, funneling CapEx into trillion-parameter platforms like Nvidia's Vera Rubin.",
-  "category": "AI Stack",
-  "timestamp": "2026-04-01",
-{
-```json
-### [Saving to Memory] Category: AI Stack
-[ENRICH] AI Stack: 2/3 findings enriched.
-```
-}
-  "price_levels": "Private Company: $580M valuation (Series B). CRWD/PANW (M&A Candidates): Watch for acquisitions in the Defensive AI space driving upside."
-  "guidance_play": "Monitor traditional cybersecurity giants (CRWD, PANW) for M&A activity to acquire agent-defense capabilities. The \"Defensive AI\" sector is primed for heavy consolidation.",
-  "insights_sentiment": "Bullish. Validates necessity of specialized defense mechanisms against autonomous malicious AI agents. Points to Defensive AI emerging as a critical, high-margin sub-sector for enterprise stacks.",
-  "finding": "AI cybersecurity startup Depthfirst secured $120 million in a Series B round, valuing the company at $580 million, to develop dfs-mini1, an autonomous general security intelligence model.",
-  "category": "AI Stack",
-  "timestamp": "2026-03-31",
-{
-```json
-### [Saving to Memory] Category: AI Stack
-[ENRICH] AI Stack: 1/3 findings enriched.
-```
-}
-  "price_levels": "Private Company: Pre-IPO tracking. MSFT (Proxy): Bullish momentum expected on OpenAI profitability metrics."
-  "guidance_play": "Reallocate capital from pure-play speculative infrastructure/hardware providers toward application-layer and software scalability platforms (e.g., MSFT as key OpenAI partner). Monitor closely for official OpenAI IPO filings.",
-  "insights_sentiment": "Very Bullish for ecosystem maturity; Bearish for unconstrained physical compute providers. Cutting $1.4T to $600B signals a shift toward sustainable scaling. Reaching $25B ARR shows the business model is accelerating to self-fund leaner operations, strongly signaling imminent IPO prep.",
-  "finding": "OpenAI has reportedly reduced its projected infrastructure build-out budget from $1.4 trillion down to $600 billion by 2030, pivoting from hyper-expansion to capital efficiency. Simultaneously, annualized revenue run-rates have quietly crossed $25 billion.",
-  "category": "AI Stack",
-  "timestamp": "2026-03-31",
-{
-```json
-### [Saving to Memory] Category: AI Stack
-[PROGRESS] 11:16:48 | Strategist starting AI Stack
-[TOKEN_USAGE] AI_Stack_Scout_Strategist | input=3031 | output=626 | total=5430
-[18]      WARNING:  Tools at indices [0] are not compatible with automatic function calling (AFC). AFC is disabled. If AFC is intended, please include python callables in the tool list, and do not include function declaration and MCP server in the tool list.
-[PROGRESS] 11:16:44 | Strategist Crypto complete | Metrics: 5 topics
-[TOKEN_USAGE] Crypto_Scout_Strategist | input=4286 | output=14 | total=4316
-[18]      WARNING:  Tools at indices [0] are not compatible with automatic function calling (AFC). AFC is disabled. If AFC is intended, please include python callables in the tool list, and do not include function declaration and MCP server in the tool list.
-[PROGRESS] 11:16:42 | Strategist starting Robotics
-[18]      WARNING:  Tools at indices [0] are not compatible with automatic function calling (AFC). AFC is disabled. If AFC is intended, please include python callables in the tool list, and do not include function declaration and MCP server in the tool list.
-[TOKEN_USAGE] Robotics_Scout_Strategist | input=4235 | output=12 | total=6223
 [ENRICH] Crypto: 5/5 findings enriched.
 ```
 }
-  "price_levels": "Public Ticker: ETH. Accumulation volume at current local levels. ETH/BTC ratio showing potential reversal signals."
-  "guidance_play": "Long ETH or the ETH/BTC ratio for the next 1-5 days. Capitalize on smart money rotation into Ethereum.",
-  "insights_sentiment": "Bullish. A stark divergence between Bitcoin (seeing capitulation/shorts) and Ethereum (seeing accumulation). Suggests capital rotation or targeted confidence in Ethereum.",
-  "finding": "Anonymous whale rapidly accumulates $10M of Ethereum over a two-hour window, contrasting with Bitcoin capitulation.",
+  "price_levels": "Technicals (COIN): Trading near $171. The stock has experienced recent pressure (down ~6% over 30 days) and exhibits mixed technical signals as it consolidates between key moving averages."
+  "guidance_play": "Accumulate near the $171 consolidation zone. Positioning USDC as the definitive AI payment standard dramatically expands Coinbase's total addressable market (TAM) via stablecoin yield and Base L2 fees.",
+  "insights_sentiment": "Direct: Coinbase transfers governance of its x402 payment protocol to the Linux Foundation to standardize machine-to-machine commerce. Indirect: Activates legacy HTTP 402 codes to let autonomous AI agents instantly execute stablecoin (USDC) micro-payments. Market Dynamics: Supported by Google and Stripe, this open-source move positions stablecoins as the default, undisputed monetization layer for next-gen AI services. Sentiment: Very Bullish.",
+  "finding": "Coinbase transferred the governance of its \"x402\" payment protocol to the Linux Foundation, aiming to solidify a universal standard for machine-to-machine commerce. The protocol activates the legacy HTTP \"402 Payment Required\" code, empowering autonomous AI agents to negotiate and execute instant stablecoin micro-payments (like USDC). Supported by enterprise players like Stripe and Google, this open-source move targets the immediate monetization layer for next-gen AI services.",
   "category": "Crypto",
-  "timestamp": "2026-03-30",
+  "timestamp": "2026-04-03",
 {
 ```json
 ### [Saving to Memory] Category: Crypto
 [ENRICH] Crypto: 4/5 findings enriched.
 ```
 }
-  "price_levels": "Public Ticker: BTC. Whale Short Entry at $68,121. Squeeze risk pivot level at $68,500-$69,000."
-  "guidance_play": "Hedge near-term long exposure. Alternatively, play a potential short-squeeze if BTC breaks decisively above $68,500.",
-  "insights_sentiment": "Very Bearish. 'Smart money' anticipates further downside or at least a significant retracement from current levels. The aggressive leveraged short could trigger cascading liquidations if wrong.",
-  "finding": "Highly successful Hyperliquid whale opens massive $33.8M 3x leveraged short on Bitcoin from $68,121 entry price.",
+  "price_levels": "Technicals (BTC): Trading near $66,000\u2013$67,000 (down from $76,000 highs), hovering at critical support in a potential bearish continuation pattern amid \"extreme fear\" sentiment."
+  "guidance_play": "Hedge long crypto exposure. Consider tactical short positions on BTC proxies (like MSTR or spot ETFs) if critical support at $66k-$67k fails, targeting a bearish continuation breakdown.",
+  "insights_sentiment": "Direct: Whales have dumped 900,000 BTC (~$60B) over 6 weeks, paired with an $80M leveraged short on Hyperliquid. Indirect: The massive supply overhang has crushed aggregate Bitcoin demand into negative territory, creating extreme resistance. Market Dynamics: A drastically bearish macro setup where large entities are aggressively fading recent geopolitical (Middle East ceasefire) optimism. Sentiment: Very Bearish.",
+  "finding": "On-chain analytics flag a drastic shift in whale behavior: large entities have moved from accumulation into heavy distribution, offloading approximately 900,000 BTC (approx. $60 billion) over the last 6 weeks. Consequently, aggregate Bitcoin demand has fallen into negative territory, forming extreme overhead resistance. Reinforcing this bearish macro setup, a prominent whale placed an $80 million leveraged short on BTC via the Hyperliquid decentralized exchange, aggressively fading recent Middle East ceasefire optimism.",
   "category": "Crypto",
-  "timestamp": "2026-04-01",
+  "timestamp": "2026-04-02",
 {
 ```json
 ### [Saving to Memory] Category: Crypto
 [ENRICH] Crypto: 3/5 findings enriched.
 ```
 }
-  "price_levels": "Public Ticker: BTC. Support zone near $65,000. Resistance at $70,000. High capitulation volume noted."
-  "guidance_play": "Wait for volume confirmation of a bottom before entering new long positions. Watch for liquidity sweep below current support.",
-  "insights_sentiment": "Bearish. Heavy 'late-cycle' retail or institutional bag-holders from previous peaks are breaking and selling at lower support bands. Capitulation can often signal an approaching market bottom.",
-  "finding": "Bitcoin whale capitulates with $55.6M loss, depositing 1,102 BTC to Binance after originally buying near $117,770.",
+  "price_levels": "Technicals (XRP): Facing extreme overhead pressure near $1.31. Trading below short, medium, and long-term moving averages (a \"Death Stack\") with heavy liquidation imbalances."
+  "guidance_play": "Avoid immediate long exposure due to technical 'Death Stack' and $1.31 resistance overhead. Wait for a confirmed technical breakout or accumulation base before establishing a position. Fundamentally, solidifies enterprise SAAS revenue.",
+  "insights_sentiment": "Direct: Leveraging its GTreasury acquisition, Ripple launches a unified dashboard merging fiat and digital asset management. Indirect: Targets enterprise finance teams directly, eliminating the operational friction of juggling isolated crypto custody and traditional banking. Market Dynamics: Pivots Ripple's utility beyond basic cross-border settlements into full-suite corporate liquidity and compliance infrastructure. Sentiment: Bullish (Fundamentals) / Bearish (Price action).",
+  "finding": "Building on its 2025 acquisition of GTreasury, Ripple launched a corporate treasury management platform that combines fiat and digital assets within a single dashboard. The tool provides enterprise finance teams with full compliance visibility, integrated liquidity management, and 24/7 blockchain-based settlement, aiming to eliminate the friction of juggling traditional banking networks alongside isolated crypto custody solutions.",
   "category": "Crypto",
-  "timestamp": "2026-03-30",
+  "timestamp": "2026-04-02",
 {
 ```json
 ### [Saving to Memory] Category: Crypto
 [ENRICH] Crypto: 2/5 findings enriched.
 ```
 }
-  "price_levels": "Private Company. Estimated post-money valuation of $20M-$40M based on $5.2M raise."
-  "guidance_play": "Private equity play. Monitor Uniblock for future Series A/B rounds or potential acquisition by major Web3 infrastructure players like Coinbase or ConsenSys.",
-  "insights_sentiment": "Bullish. Multichain fragmentation continues to be a major hurdle; infrastructure bridging these gaps is highly valued by major VC players.",
-  "finding": "Uniblock secures $5.2M funding to launch a universal API aggregating over 300 blockchains, backed by SBI, AllianceDAO, and CoinSwitch.",
+  "price_levels": "Technicals (CLSK): Lagging the broader market, trading near $8.50 in the lower quartile of its 52-week range, exhibiting bearish moving average signals."
+  "guidance_play": "Watch for accumulation opportunities near the $8.50 support. Moody's rating validates Bitcoin as structured collateral, unlocking massive institutional debt financing potential for CLSK.",
+  "insights_sentiment": "Direct: Moody's gives a provisional Ba2 (speculative) rating to a $100M Bitcoin-backed bond for CleanSpark via the NH Business Finance Authority. Indirect: Establishes a massive bridge connecting traditional structured finance with crypto assets, replacing state tax revenue reliance with overcollateralized Bitcoin held by BitGo. Market Dynamics: Validates crypto as a legitimate, rated collateral source for municipal-style financing templates. Sentiment: Very Bullish.",
+  "finding": "Moody's Investors Service assigned a provisional Ba2 (speculative) rating to a $100 million Bitcoin-backed bond planned by the New Hampshire Business Finance Authority for Bitcoin miner CleanSpark. This marks a massive bridge between crypto assets and traditional structured finance. Repayment relies strictly on liquidated, overcollateralized Bitcoin held by BitGo rather than state tax revenue, establishing a new municipal-style financing template for crypto.",
   "category": "Crypto",
-  "timestamp": "2026-03-31",
+  "timestamp": "2026-04-02",
 {
 ```json
 ### [Saving to Memory] Category: Crypto
 [ENRICH] Crypto: 1/5 findings enriched.
 ```
 }
-  "price_levels": "Public Ticker: LINK. Near-term resistance at local highs. Monitor for accumulation dips."
-  "guidance_play": "Accumulate LINK as regulatory lobbying strengthens institutional ties and market position. Potential 1-5 day swing on regulatory news.",
-  "insights_sentiment": "Bullish. Institutional players are escalating lobbying efforts, preparing for critical regulatory shifts. Long-term positive infrastructure setup.",
-  "finding": "Launch of Blockchain Leadership Fund by Anchorage Digital and Chainlink Labs to support pro-crypto political candidates.",
+  "price_levels": "Technicals (BEN): Trading near $23.40, the stock remains in a short-to-mid term bearish trend, trading below its 20-day and 50-day moving averages with neutral RSI (~52)."
+  "guidance_play": "Monitor for reversal above the 50-day moving average. The novel use of BENJI tokens in M&A validates Franklin's tokenization lead and creates new utility for its on-chain money market fund.",
+  "insights_sentiment": "Direct: Franklin Templeton acquires 250 Digital to offer active crypto strategies to institutions, using tokenized money market fund shares (BENJI) for partial settlement. Indirect: Sets a precedent for using tokenized traditional assets as a medium of exchange in high-stakes M&A. Market Dynamics: Blurs the line between TradFi and DeFi infrastructure by institutionalizing active crypto fund management at a massive scale. Sentiment: Bullish.",
+  "finding": "Asset management giant Franklin Templeton agreed to acquire 250 Digital, an active crypto investment management firm spun out of CoinFund, to launch a dedicated division named \"Franklin Crypto.\" The unit is explicitly designed to offer active crypto strategies to institutional allocators like pensions and sovereign wealth funds. In a notable industry-first for M&A structure, a portion of the acquisition payment will be settled using Franklin\u2019s BENJI tokens (tokenized money market fund shares).",
   "category": "Crypto",
-  "timestamp": "2026-03-30",
+  "timestamp": "2026-04-02",
 {
 ```json
 ### [Saving to Memory] Category: Crypto
-[TOKEN_USAGE] Crypto_Scout_Strategist | input=3367 | output=749 | total=4995
+[TOKEN_USAGE] Crypto_Scout_Strategist | input=4659 | output=1501 | total=6178
 [18]      WARNING:  Tools at indices [0] are not compatible with automatic function calling (AFC). AFC is disabled. If AFC is intended, please include python callables in the tool list, and do not include function declaration and MCP server in the tool list.
-[TOKEN_USAGE] Robotics_Scout_DE | input=2703 | output=894 | total=3612
+[PROGRESS] 23:34:03 | Strategist starting Crypto
+[TOKEN_USAGE] Crypto_Scout_Strategist | input=4640 | output=12 | total=6932
+[TOKEN_USAGE] Robotics_Scout_Strategist | input=3698 | output=623 | total=4332
 [18]      WARNING:  Tools at indices [0] are not compatible with automatic function calling (AFC). AFC is disabled. If AFC is intended, please include python callables in the tool list, and do not include function declaration and MCP server in the tool list.
-[PROGRESS] 11:16:14 | Strategist starting Crypto
-[TOKEN_USAGE] Crypto_Scout_Strategist | input=3348 | output=12 | total=5805
+[TOKEN_USAGE] Crypto_Scout_DE | input=3400 | output=876 | total=4286
 [18]      WARNING:  Tools at indices [0] are not compatible with automatic function calling (AFC). AFC is disabled. If AFC is intended, please include python callables in the tool list, and do not include function declaration and MCP server in the tool list.
-[PROGRESS] 11:16:12 | DE Robotics complete | Metrics: 2 searches, 6 topics
-[TOKEN_USAGE] Robotics_Scout_DE | input=2671 | output=16 | total=3220
+[PROGRESS] 23:33:42 | Strategist Robotics complete | Metrics: 3 topics
+[ENRICH] Robotics: 3/3 findings enriched.
+```
+}
+  "price_levels": "Macro/ETF relevance: ARKK, COIN, BOTZ."
+  "guidance_play": "Track macro integration of AI agents and crypto wallets. Monitor ARKK, COIN, and BOTZ as proxies for the intersection of AI and blockchain infrastructure.",
+  "insights_sentiment": "Bullish. Bridges two massive macro themes (AI Robotics and Blockchain). Embodied agents and robots will act as future economic actors requiring decentralized networks and stablecoins to transact autonomously in the physical world.",
+  "finding": "ARK Innovation deployed $21.5M into crypto infrastructure (Coinbase, Block, Robinhood), highlighting the convergence of physical AI and blockchain, positioning embodied agents as autonomous transacting entities.",
+  "category": "Robotics",
+  "timestamp": "2026-04-02",
+{
+```json
+### [Saving to Memory] Category: Robotics
+[ENRICH] Robotics: 2/3 findings enriched.
+```
+}
+  "price_levels": "KIDZ trading near $3.40. Micro-cap ~$2M. Stabilizing with a massive short interest reduction."
+  "guidance_play": "Accumulate on dips post-stabilization from the 1-for-50 reverse split. Position for follow-through momentum above $3.40 as the robotics revenue catalyst attracts fresh small-cap/retail volume.",
+  "insights_sentiment": "Very Bullish. Demonstrates early monetization viability for physical AI in K-12 education, opening a completely new TAM for robotics manufacturers. The EdTech sector is shifting from pure software applications to hardware-software co-teaching solutions.",
+  "finding": "Classover (KIDZ) reported FY25 results, revealing its recently launched AI Robotics division is officially revenue-generating. The company is pivoting to hardware-software robotics for EdTech.",
+  "category": "Robotics",
+  "timestamp": "2026-04-02",
+{
+```json
+### [Saving to Memory] Category: Robotics
+[ENRICH] Robotics: 1/3 findings enriched.
+```
+}
+  "price_levels": "ONCO trading near $1.80. Sub-micro cap ~$1.1M-$1.3M. High volatility, ~7.34% short float."
+  "guidance_play": "Speculative long on delivery momentum; high volatility scalping around the $1.80 pivot. Look for short squeeze potential given the high short float on a sub-micro cap.",
+  "insights_sentiment": "Bullish. Tangible commercial hardware deliveries inject revenue potential into ONCO's extremely depressed micro-cap valuation. Proves enterprise-grade humanoid robots are actively transitioning from R&D into paid deployments and manufacturing scaling.",
+  "finding": "Realbotix expects to deliver 19 AI-powered humanoid robots between March and May 2026 ahead of 2H 2026 acquisition by Onconetix (ONCO).",
+  "category": "Robotics",
+  "timestamp": "2026-04-02",
+{
+```json
+### [Saving to Memory] Category: Robotics
+[PROGRESS] 23:33:41 | Strategist starting Robotics
+[TOKEN_USAGE] Robotics_Scout_Strategist | input=2986 | output=587 | total=5223
 [18]      WARNING:  Tools at indices [0] are not compatible with automatic function calling (AFC). AFC is disabled. If AFC is intended, please include python callables in the tool list, and do not include function declaration and MCP server in the tool list.
-[TOKEN_USAGE] AI_Stack_Scout_DE | input=2152 | output=498 | total=2655
+[PROGRESS] 23:33:30 | DE Crypto complete | Metrics: 5 searches, 5 topics
+[TOKEN_USAGE] Crypto_Scout_DE | input=3368 | output=16 | total=4730
+[TOKEN_USAGE] AI_Stack_Scout_Strategist | input=4524 | output=898 | total=5580
 [18]      WARNING:  Tools at indices [0] are not compatible with automatic function calling (AFC). AFC is disabled. If AFC is intended, please include python callables in the tool list, and do not include function declaration and MCP server in the tool list.
-[DEDUP] Wrote 6 deduped findings to shard: gs://marketresearch-agents/market_findings_log_Robotics.json
-[DEDUP] Robotics: 6 unique, 0 duplicates removed (from 6 scout findings vs 10 baseline).
-[PROGRESS] 11:16:03 | DE starting Robotics
-[TOKEN_USAGE] Robotics_Scout_DE | input=1939 | output=369 | total=2918
+[TOKEN_USAGE] Robotics_Scout_DE | input=2173 | output=528 | total=3051
 [18]      WARNING:  Tools at indices [0] are not compatible with automatic function calling (AFC). AFC is disabled. If AFC is intended, please include python callables in the tool list, and do not include function declaration and MCP server in the tool list.
-[PROGRESS] 11:16:00 | DE AI Stack complete | Metrics: 1 searches, 3 topics
-[TOKEN_USAGE] AI_Stack_Scout_DE | input=2118 | output=17 | total=2362
+[PROGRESS] 23:33:12 | Strategist AI Stack complete | Metrics: 5 topics
+[TOKEN_USAGE] AI_Stack_Scout_Strategist | input=4495 | output=15 | total=4531
 [18]      WARNING:  Tools at indices [0] are not compatible with automatic function calling (AFC). AFC is disabled. If AFC is intended, please include python callables in the tool list, and do not include function declaration and MCP server in the tool list.
-[TOKEN_USAGE] Robotics_Scout | input=381 | output=635 | total=1103
+[ENRICH] AI Stack: 5/5 findings enriched.
+```
+}
+  "price_levels": "Private. $21.5M Series A funding round. (Proxy ETF: FINX)"
+  "guidance_play": "Legacy compliance consultancies face massive margin compression. Actionable for Palantir (PLTR) or large financial risk enterprise software vendors as a bolt-on acquisition to enhance automated investigations.",
+  "insights_sentiment": "Bullish. Autonomous AI agents are penetrating high-stakes, highly regulated Fortune 500 compliance environments (KYC/AML). This demonstrates growing enterprise trust in agentic decision-making beyond copilot interfaces.",
+  "finding": "Variance emerged with a $21.5M Series A led by Ten Eleven Ventures to provide autonomous AI agents for financial risk and AML compliance.",
+  "category": "AI Stack",
+  "timestamp": "2026-04-01",
+{
+```json
+### [Saving to Memory] Category: AI Stack
+[ENRICH] AI Stack: 4/5 findings enriched.
+```
+}
+  "price_levels": "Private. $60M Series A funding round. (Proxy ETFs: SOXX, SMH)"
+  "guidance_play": "Highly actionable future M&A target for EDA software giants like Synopsys (SNPS) and Cadence (CDNS) or a foundry titan like Intel (INTC). Keep semiconductor design proxies on watch.",
+  "insights_sentiment": "Very Bullish. Physics-informed AI models are explicitly accelerating semiconductor engineering cycles. AI is feeding its own supply chain\u2014software accelerating the creation of hardware needed to run more software.",
+  "finding": "Cognichip raised $60M Series A for an 'Artificial Chip Intelligence' (ACI) platform, with Intel's Lip-Bu Tan joining the board.",
+  "category": "AI Stack",
+  "timestamp": "2026-04-01",
+{
+```json
+### [Saving to Memory] Category: AI Stack
+[ENRICH] AI Stack: 3/5 findings enriched.
+```
+}
+  "price_levels": "Private. $25M Series A funding round."
+  "guidance_play": "A major long-term threat to ServiceNow (NOW) and Atlassian (TEAM). Expect legacy IT helpdesk incumbents to pursue aggressive M&A to defensive-buy AI automation systems.",
+  "insights_sentiment": "Bullish. MSPs are being equipped with AI-first ticketing, replacing manual IT legacy models. This signals strong VC conviction that enterprise IT helpdesks are ripe for total autonomous disruption and margin expansion.",
+  "finding": "Treeline secured $25M Series A backed by a16z to launch an AI-first platform targeting Managed Service Providers (MSPs).",
+  "category": "AI Stack",
+  "timestamp": "2026-04-02",
+{
+```json
+### [Saving to Memory] Category: AI Stack
+[ENRICH] AI Stack: 2/5 findings enriched.
+```
+}
+  "price_levels": "Private. $45M Series B funding round. (Proxy ETF: BOTZ)"
+  "guidance_play": "Traditional HR legacy software (e.g., WDAY, PAYC) is under threat. Watch for Sona as a potential acquisition target by enterprise software giants looking to bolt-on AI frontline capabilities.",
+  "insights_sentiment": "Bullish. Capital is aggressively moving toward verticalized AI. Foundational AI models are commoditizing, pushing maximum value-capture to highly specialized, workflow-specific SaaS platforms.",
+  "finding": "Sona closed a $45M Series B led by Felicis to build out a verticalized AI stack tailored for frontline and deskless workers.",
+  "category": "AI Stack",
+  "timestamp": "2026-04-02",
+{
+```json
+### [Saving to Memory] Category: AI Stack
+[ENRICH] AI Stack: 1/5 findings enriched.
+```
+}
+  "price_levels": "Private deal. Estimated valuation in the low hundreds of millions."
+  "guidance_play": "Expect aggressive tech media/PR arms races. Microsoft (MSFT) and Alphabet (GOOGL) will likely have to mirror these moves to secure developer mindshare.",
+  "insights_sentiment": "Bullish. OpenAI is vertically integrating media and content into its broader stack to own the developer and public narrative. AI hyperscalers are acting like sovereign tech states, buying up cultural assets to soften regulatory pushback.",
+  "finding": "OpenAI acquired the popular tech talk show \"TBPN\" in a deal reportedly in the low hundreds of millions.",
+  "category": "AI Stack",
+  "timestamp": "2026-04-02",
+{
+```json
+### [Saving to Memory] Category: AI Stack
+[TOKEN_USAGE] AI_Stack_Scout_Strategist | input=3505 | output=810 | total=4406
 [18]      WARNING:  Tools at indices [0] are not compatible with automatic function calling (AFC). AFC is disabled. If AFC is intended, please include python callables in the tool list, and do not include function declaration and MCP server in the tool list.
-[DEDUP] Wrote 3 deduped findings to shard: gs://marketresearch-agents/market_findings_log_AI Stack.json
-[DEDUP] AI Stack: 3 unique, 0 duplicates removed (from 3 scout findings vs 10 baseline).
-[PROGRESS] 11:15:53 | DE starting AI Stack
-[TOKEN_USAGE] AI_Stack_Scout_DE | input=1636 | output=247 | total=2540
+[PROGRESS] 23:33:01 | DE Robotics complete | Metrics: 2 searches, 3 topics
+[TOKEN_USAGE] Robotics_Scout_DE | input=2141 | output=16 | total=2670
 [18]      WARNING:  Tools at indices [0] are not compatible with automatic function calling (AFC). AFC is disabled. If AFC is intended, please include python callables in the tool list, and do not include function declaration and MCP server in the tool list.
-[TOKEN_USAGE] Crypto_Scout_DE | input=2598 | output=555 | total=3160
-[18]      WARNING:  Tools at indices [2] are not compatible with automatic function calling (AFC). AFC is disabled. If AFC is intended, please include python callables in the tool list, and do not include function declaration and MCP server in the tool list.
-[PROGRESS] 11:15:46 | Scout Physical AI and Embodied Robotics complete | Metrics: 3 searches, 6 topics
-[TOKEN_USAGE] Robotics_Scout | input=336 | output=23 | total=4923
+[PROGRESS] 23:32:58 | Strategist starting AI Stack
+[TOKEN_USAGE] AI_Stack_Scout_Strategist | input=3484 | output=13 | total=5908
 [18]      WARNING:  Tools at indices [0] are not compatible with automatic function calling (AFC). AFC is disabled. If AFC is intended, please include python callables in the tool list, and do not include function declaration and MCP server in the tool list.
-[PROGRESS] 11:15:44 | DE Crypto complete | Metrics: 5 topics
-[TOKEN_USAGE] Crypto_Scout_DE | input=2570 | output=16 | total=2632
+[DEDUP] Wrote 3 deduped findings to shard: gs://marketresearch-agents/market_findings_log_Robotics.json
+[DEDUP] Robotics: 3 unique, 0 duplicates removed (from 3 scout findings vs 10 baseline).
+[TOKEN_USAGE] Robotics_Scout_DE | input=1936 | output=106 | total=2156
+[18]      WARNING:  Tools at indices [0] are not compatible with automatic function calling (AFC). AFC is disabled. If AFC is intended, please include python callables in the tool list, and do not include function declaration and MCP server in the tool list.
+[PROGRESS] 23:32:47 | DE starting Robotics
+[TOKEN_USAGE] Robotics_Scout_DE | input=1919 | output=11 | total=2385
+[18]      WARNING:  Tools at indices [0] are not compatible with automatic function calling (AFC). AFC is disabled. If AFC is intended, please include python callables in the tool list, and do not include function declaration and MCP server in the tool list.
+[TOKEN_USAGE] Robotics_Scout | input=381 | output=625 | total=1025
+[18]      WARNING:  Tools at indices [0] are not compatible with automatic function calling (AFC). AFC is disabled. If AFC is intended, please include python callables in the tool list, and do not include function declaration and MCP server in the tool list.
+[TOKEN_USAGE] AI_Stack_Scout_DE | input=2608 | output=616 | total=3293
 [18]      WARNING:  Tools at indices [0] are not compatible with automatic function calling (AFC). AFC is disabled. If AFC is intended, please include python callables in the tool list, and do not include function declaration and MCP server in the tool list.
 [DEDUP] Wrote 5 deduped findings to shard: gs://marketresearch-agents/market_findings_log_Crypto.json
 [DEDUP] Crypto: 5 unique, 0 duplicates removed (from 5 scout findings vs 10 baseline).
-[TOKEN_USAGE] Crypto_Scout_DE | input=2125 | output=224 | total=2356
+[PROGRESS] 23:32:35 | DE starting Crypto
+[TOKEN_USAGE] Crypto_Scout_DE | input=2410 | output=480 | total=3477
+[18]      WARNING:  Tools at indices [2] are not compatible with automatic function calling (AFC). AFC is disabled. If AFC is intended, please include python callables in the tool list, and do not include function declaration and MCP server in the tool list.
+[PROGRESS] 23:32:30 | Scout Physical AI and Embodied Robotics complete | Metrics: 5 searches, 3 topics
+[TOKEN_USAGE] Robotics_Scout | input=336 | output=23 | total=7677
 [18]      WARNING:  Tools at indices [0] are not compatible with automatic function calling (AFC). AFC is disabled. If AFC is intended, please include python callables in the tool list, and do not include function declaration and MCP server in the tool list.
-[TOKEN_USAGE] AI_Stack_Scout | input=352 | output=495 | total=847
+[TOKEN_USAGE] Crypto_Scout | input=356 | output=887 | total=1243
 [18]      WARNING:  Tools at indices [0] are not compatible with automatic function calling (AFC). AFC is disabled. If AFC is intended, please include python callables in the tool list, and do not include function declaration and MCP server in the tool list.
-[PROGRESS] 11:15:37 | DE starting Crypto
-[TOKEN_USAGE] Crypto_Scout_DE | input=2108 | output=11 | total=2489
+[PROGRESS] 23:32:25 | DE AI Stack complete | Metrics: 5 topics
+[TOKEN_USAGE] AI_Stack_Scout_DE | input=2578 | output=17 | total=2996
 [18]      WARNING:  Tools at indices [0] are not compatible with automatic function calling (AFC). AFC is disabled. If AFC is intended, please include python callables in the tool list, and do not include function declaration and MCP server in the tool list.
-[TOKEN_USAGE] Crypto_Scout | input=356 | output=733 | total=1100
+[DEDUP] Wrote 5 deduped findings to shard: gs://marketresearch-agents/market_findings_log_AI Stack.json
+[DEDUP] AI Stack: 5 unique, 0 duplicates removed (from 5 scout findings vs 10 baseline).
+[PROGRESS] 23:32:18 | DE starting AI Stack
+[TOKEN_USAGE] AI_Stack_Scout_DE | input=2124 | output=231 | total=2725
 [18]      WARNING:  Tools at indices [2] are not compatible with automatic function calling (AFC). AFC is disabled. If AFC is intended, please include python callables in the tool list, and do not include function declaration and MCP server in the tool list.
-[PROGRESS] 11:15:28 | Scout AI Stack complete | Metrics: 2 searches, 3 topics
-[PROGRESS] 11:15:28 | Scout starting AI Stack
-[TOKEN_USAGE] AI_Stack_Scout | input=297 | output=31 | total=2686
+[PROGRESS] 23:32:17 | Scout Crypto and Blockchain complete | Metrics: 2 searches, 5 topics
+[PROGRESS] 23:32:17 | Scout starting Crypto and Blockchain
+[TOKEN_USAGE] Crypto_Scout | input=297 | output=33 | total=4586
+[18]      WARNING:  Tools at indices [0] are not compatible with automatic function calling (AFC). AFC is disabled. If AFC is intended, please include python callables in the tool list, and do not include function declaration and MCP server in the tool list.
+[TOKEN_USAGE] AI_Stack_Scout | input=352 | output=736 | total=1147
 [18]      WARNING:  Tools at indices [2] are not compatible with automatic function calling (AFC). AFC is disabled. If AFC is intended, please include python callables in the tool list, and do not include function declaration and MCP server in the tool list.
-[PROGRESS] 11:15:23 | Scout Crypto and Blockchain complete | Metrics: 1 searches, 5 topics
-[TOKEN_USAGE] Crypto_Scout | input=319 | output=19 | total=1211
+[PROGRESS] 23:32:03 | Scout AI Stack complete | Metrics: 2 searches, 5 topics
+[TOKEN_USAGE] AI_Stack_Scout | input=317 | output=18 | total=1503
+[2259]    INFO:     Application startup complete.
+[2259]    INFO:     Waiting for application startup.
+[2259]    INFO:     Started server process [2259]
+[2258]    INFO:     Application startup complete.
+[2258]    INFO:     Waiting for application startup.
+[2258]    INFO:     Started server process [2258]
+📦 Registered sector: Strategic Minerals and Rare Earth Elements
+📦 Registered sector: Power Generation and Energy Storage
+📦 Registered sector: Space Exploration and Defense Technology
+📦 Registered sector: AI Stack
+📦 Registered sector: Crypto and Blockchain
+📦 Registered sector: Physical AI and Embodied Robotics
+--- Building Sector Pipelines ---
+📦 Registered sector: Strategic Minerals and Rare Earth Elements
+📦 Registered sector: Power Generation and Energy Storage
+📦 Registered sector: Space Exploration and Defense Technology
+📦 Registered sector: AI Stack
+📦 Registered sector: Crypto and Blockchain
+📦 Registered sector: Physical AI and Embodied Robotics
+--- Building Sector Pipelines ---
 [18]      WARNING:  Tools at indices [2] are not compatible with automatic function calling (AFC). AFC is disabled. If AFC is intended, please include python callables in the tool list, and do not include function declaration and MCP server in the tool list.
-[PROGRESS] 11:15:11 | Scout starting Crypto and Blockchain
-[TOKEN_USAGE] Crypto_Scout | input=297 | output=14 | total=759
+[PROGRESS] 23:31:49 | Scout starting AI Stack
+  from google.cloud.aiplatform.utils import gcs_utils
+/code/.venv/lib/python3.11/site-packages/google/cloud/aiplatform/models.py:52: FutureWarning: Support for google-cloud-storage < 3.0.0 will be removed in a future version of google-cloud-aiplatform. Please upgrade to google-cloud-storage >= 3.0.0.
+  from google.cloud.aiplatform.utils import gcs_utils
+/code/.venv/lib/python3.11/site-packages/google/cloud/aiplatform/models.py:52: FutureWarning: Support for google-cloud-storage < 3.0.0 will be removed in a future version of google-cloud-aiplatform. Please upgrade to google-cloud-storage >= 3.0.0.
+[TOKEN_USAGE] AI_Stack_Scout | input=297 | output=13 | total=698
 [18]      WARNING:  Tools at indices [2] are not compatible with automatic function calling (AFC). AFC is disabled. If AFC is intended, please include python callables in the tool list, and do not include function declaration and MCP server in the tool list.
-[PROGRESS] 11:15:10 | Scout starting Physical AI and Embodied Robotics
-[TOKEN_USAGE] Robotics_Scout | input=306 | output=18 | total=616
-[18]      WARNING:  Warning: there are non-text parts in the response: ['function_call'], returning concatenated text result from text parts. Check the full candidates.content.parts accessor to get the full model response.
+[PROGRESS] 23:31:49 | Scout starting Physical AI and Embodied Robotics
+[TOKEN_USAGE] Robotics_Scout | input=306 | output=18 | total=683
 [18]      WARNING:  Tools at indices [2] are not compatible with automatic function calling (AFC). AFC is disabled. If AFC is intended, please include python callables in the tool list, and do not include function declaration and MCP server in the tool list.
 [18]      WARNING:  Tools at indices [2] are not compatible with automatic function calling (AFC). AFC is disabled. If AFC is intended, please include python callables in the tool list, and do not include function declaration and MCP server in the tool list.
 [18]      WARNING:  Tools at indices [2] are not compatible with automatic function calling (AFC). AFC is disabled. If AFC is intended, please include python callables in the tool list, and do not include function declaration and MCP server in the tool list.
 ========================================
   STARTING Batch_1
 ========================================
-[18]      INFO:     169.254.169.126:30302 - "POST /api/stream_reasoning_engine HTTP/1.1" 200 OK
-[18]      INFO:     Application startup complete.
-[18]      INFO:     Waiting for application startup.
-[18]      INFO:     Started server process [18]
-[19]      INFO:     Application startup complete.
-[19]      INFO:     Waiting for application startup.
-[15]      INFO:     Application startup complete.
-[19]      INFO:     Started server process [19]
-[15]      INFO:     Waiting for application startup.
-[15]      INFO:     Started server process [15]
-[22]      INFO:     Application startup complete.
-[17]      INFO:     Application startup complete.
-[22]      INFO:     Waiting for application startup.
-[22]      INFO:     Started server process [22]
-[17]      INFO:     Waiting for application startup.
-[17]      INFO:     Started server process [17]
-[16]      INFO:     Application startup complete.
-[16]      INFO:     Waiting for application startup.
-[16]      INFO:     Started server process [16]
-[20]      INFO:     Application startup complete.
-[21]      INFO:     Application startup complete.
-[21]      INFO:     Waiting for application startup.
-[21]      INFO:     Started server process [21]
-[20]      INFO:     Waiting for application startup.
-[20]      INFO:     Started server process [20]
-[23]      INFO:     Application startup complete.
-[23]      INFO:     Waiting for application startup.
-[23]      INFO:     Started server process [23]
-📦 Registered sector: Strategic Minerals and Rare Earth Elements
-📦 Registered sector: Power Generation and Energy Storage
-📦 Registered sector: Space Exploration and Defense Technology
-📦 Registered sector: AI Stack
-📦 Registered sector: Crypto and Blockchain
-📦 Registered sector: Physical AI and Embodied Robotics
-📦 Registered sector: Strategic Minerals and Rare Earth Elements
-📦 Registered sector: Power Generation and Energy Storage
-📦 Registered sector: Space Exploration and Defense Technology
-📦 Registered sector: AI Stack
-📦 Registered sector: Crypto and Blockchain
-📦 Registered sector: Physical AI and Embodied Robotics
---- Building Sector Pipelines ---
---- Building Sector Pipelines ---
-📦 Registered sector: Strategic Minerals and Rare Earth Elements
-📦 Registered sector: Strategic Minerals and Rare Earth Elements
-📦 Registered sector: Power Generation and Energy Storage
-📦 Registered sector: Power Generation and Energy Storage
-📦 Registered sector: Space Exploration and Defense Technology
-📦 Registered sector: Space Exploration and Defense Technology
-📦 Registered sector: AI Stack
-📦 Registered sector: Crypto and Blockchain
-📦 Registered sector: AI Stack
-📦 Registered sector: Crypto and Blockchain
-📦 Registered sector: Physical AI and Embodied Robotics
-📦 Registered sector: Physical AI and Embodied Robotics
---- Building Sector Pipelines ---
---- Building Sector Pipelines ---
-📦 Registered sector: Strategic Minerals and Rare Earth Elements
-📦 Registered sector: Strategic Minerals and Rare Earth Elements
-📦 Registered sector: Power Generation and Energy Storage
-📦 Registered sector: Power Generation and Energy Storage
-📦 Registered sector: Space Exploration and Defense Technology
-📦 Registered sector: Space Exploration and Defense Technology
-📦 Registered sector: AI Stack
-📦 Registered sector: AI Stack
-📦 Registered sector: Crypto and Blockchain
-📦 Registered sector: Crypto and Blockchain
-📦 Registered sector: Physical AI and Embodied Robotics
-📦 Registered sector: Physical AI and Embodied Robotics
---- Building Sector Pipelines ---
-📦 Registered sector: Strategic Minerals and Rare Earth Elements
---- Building Sector Pipelines ---
-📦 Registered sector: Power Generation and Energy Storage
-📦 Registered sector: Space Exploration and Defense Technology
-📦 Registered sector: AI Stack
-📦 Registered sector: Crypto and Blockchain
-📦 Registered sector: Physical AI and Embodied Robotics
-📦 Registered sector: Strategic Minerals and Rare Earth Elements
-📦 Registered sector: Power Generation and Energy Storage
-📦 Registered sector: Space Exploration and Defense Technology
-📦 Registered sector: AI Stack
-📦 Registered sector: Crypto and Blockchain
-📦 Registered sector: Physical AI and Embodied Robotics
---- Building Sector Pipelines ---
-📦 Registered sector: Strategic Minerals and Rare Earth Elements
-📦 Registered sector: Power Generation and Energy Storage
---- Building Sector Pipelines ---
-📦 Registered sector: Space Exploration and Defense Technology
-📦 Registered sector: AI Stack
-📦 Registered sector: Crypto and Blockchain
-📦 Registered sector: Physical AI and Embodied Robotics
---- Building Sector Pipelines ---
-  from google.cloud.aiplatform.utils import gcs_utils
-/code/.venv/lib/python3.11/site-packages/google/cloud/aiplatform/models.py:52: FutureWarning: Support for google-cloud-storage < 3.0.0 will be removed in a future version of google-cloud-aiplatform. Please upgrade to google-cloud-storage >= 3.0.0.
-  from google.cloud.aiplatform.utils import gcs_utils
-/code/.venv/lib/python3.11/site-packages/google/cloud/aiplatform/models.py:52: FutureWarning: Support for google-cloud-storage < 3.0.0 will be removed in a future version of google-cloud-aiplatform. Please upgrade to google-cloud-storage >= 3.0.0.
-  from google.cloud.aiplatform.utils import gcs_utils
-/code/.venv/lib/python3.11/site-packages/google/cloud/aiplatform/models.py:52: FutureWarning: Support for google-cloud-storage < 3.0.0 will be removed in a future version of google-cloud-aiplatform. Please upgrade to google-cloud-storage >= 3.0.0.
-  from google.cloud.aiplatform.utils import gcs_utils
-/code/.venv/lib/python3.11/site-packages/google/cloud/aiplatform/models.py:52: FutureWarning: Support for google-cloud-storage < 3.0.0 will be removed in a future version of google-cloud-aiplatform. Please upgrade to google-cloud-storage >= 3.0.0.
-  from google.cloud.aiplatform.utils import gcs_utils
-/code/.venv/lib/python3.11/site-packages/google/cloud/aiplatform/models.py:52: FutureWarning: Support for google-cloud-storage < 3.0.0 will be removed in a future version of google-cloud-aiplatform. Please upgrade to google-cloud-storage >= 3.0.0.
-  from google.cloud.aiplatform.utils import gcs_utils
-/code/.venv/lib/python3.11/site-packages/google/cloud/aiplatform/models.py:52: FutureWarning: Support for google-cloud-storage < 3.0.0 will be removed in a future version of google-cloud-aiplatform. Please upgrade to google-cloud-storage >= 3.0.0.
-  from google.cloud.aiplatform.utils import gcs_utils
-/code/.venv/lib/python3.11/site-packages/google/cloud/aiplatform/models.py:52: FutureWarning: Support for google-cloud-storage < 3.0.0 will be removed in a future version of google-cloud-aiplatform. Please upgrade to google-cloud-storage >= 3.0.0.
-  from google.cloud.aiplatform.utils import gcs_utils
-/code/.venv/lib/python3.11/site-packages/google/cloud/aiplatform/models.py:52: FutureWarning: Support for google-cloud-storage < 3.0.0 will be removed in a future version of google-cloud-aiplatform. Please upgrade to google-cloud-storage >= 3.0.0.
-  from google.cloud.aiplatform.utils import gcs_utils
-/code/.venv/lib/python3.11/site-packages/google/cloud/aiplatform/models.py:52: FutureWarning: Support for google-cloud-storage < 3.0.0 will be removed in a future version of google-cloud-aiplatform. Please upgrade to google-cloud-storage >= 3.0.0.
-[13]      INFO:     Started parent process [13]
-[13]      INFO:     Uvicorn running on http://0.0.0.0:8080 (Press CTRL+C to quit)
-Entrypoint: Launching main application with .venv/bin/python...
-./startup_scripts directory not found, skipping startup script execution.
-Entrypoint: Starting up services...
+[18]      INFO:     169.254.169.126:36096 - "POST /api/stream_reasoning_engine HTTP/1.1" 200 OK

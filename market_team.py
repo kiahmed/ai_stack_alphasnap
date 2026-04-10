@@ -1,6 +1,7 @@
 import os
 import re
 import math
+import time
 from collections import Counter
 from google.cloud import storage
 import json
@@ -61,12 +62,20 @@ vertexai.init(project=PROJECT_ID, location=LOCATION)
 # ==========================================
 # 2. HYBRID STORAGE LOGIC (Local & GCS)
 # ==========================================
+_gcs_client = None
+
+def _get_gcs_client():
+    global _gcs_client
+    if _gcs_client is None:
+        _gcs_client = storage.Client(project=PROJECT_ID)
+    return _gcs_client
+
 def _get_gcs_blob(gs_path: str):
     """Helper to get a blob from a gs:// URI."""
     parts = gs_path.replace("gs://", "").split("/", 1)
     bucket_name = parts[0]
     blob_name = parts[1]
-    client = storage.Client(project=PROJECT_ID)
+    client = _get_gcs_client()
     bucket = client.bucket(bucket_name)
     return bucket.blob(blob_name)
 
@@ -197,7 +206,8 @@ def append_to_memory_log(findings_date: str, category: str, finding: str, insigh
                         shard_data = raw
                     else:
                         shard_data["enriched"] = raw
-                except: pass
+                except Exception as e:
+                    print(f"[WARN] Could not read local shard {local_sector_path}: {e}", flush=True)
         shard_data["enriched"].append(entry)
         with open(local_sector_path, "w") as f:
             json.dump(shard_data, f, indent=4)
@@ -438,7 +448,6 @@ def _log_token_usage(callback_context, llm_response):
 
 def log_progress(message: str, searches: int = 0, topics: int = 0):
     """Log a timing or status marker to stdout with automated work metrics."""
-    import time
     ts = time.strftime("%H:%M:%S")
     
     parts = []
@@ -570,6 +579,9 @@ def _get_pipeline_category(pipeline) -> str:
 def _rebuild_pipeline(pipeline) -> "SequentialAgent":
     """Build a fresh copy of a sector pipeline (new Agent objects, no parent binding).
     ADK Pydantic enforces single-parent — reusing agents in a new ParallelAgent fails."""
+    SCOUT_BASE_PROMPT = config["prompts"]["scout_base"]
+    DE_INSTRUCTIONS = config["prompts"]["data_engineer_instructions"]
+    ST_INSTRUCTIONS = config["prompts"]["strategist_instructions"]
     scouts_cfg = config.get("scouts", {})
     for scout_name, info in scouts_cfg.items():
         if scout_name in pipeline.name:
@@ -724,12 +736,19 @@ def merge_sector_shards() -> str:
         if USE_GCS:
             master_blob = _get_gcs_blob(GCS_PATH)
             if master_blob.exists():
-                existing = json.loads(master_blob.download_as_text())
+                try:
+                    existing = json.loads(master_blob.download_as_text())
+                except Exception as e:
+                    print(f"[ERROR] GCS master log corrupted, refusing to overwrite: {e}", flush=True)
+                    return f"MERGE ABORTED: master log at {GCS_PATH} is corrupted — fix manually before re-running."
         else:
             if os.path.exists(LOCAL_PATH):
                 with open(LOCAL_PATH, "r") as f:
-                    try: existing = json.load(f)
-                    except: pass
+                    try:
+                        existing = json.load(f)
+                    except Exception as e:
+                        print(f"[ERROR] Master log corrupted, refusing to overwrite: {e}", flush=True)
+                        return f"MERGE ABORTED: master log at {LOCAL_PATH} is corrupted — fix manually before re-running."
 
         all_findings = existing + new_findings
         all_findings.sort(key=lambda x: x.get("timestamp", ""), reverse=True)
@@ -831,7 +850,6 @@ class MarketSweepApp:
         self.batches, self.merge_agent = get_market_batches()
 
     def stream_query(self, **kwargs):
-        import time
         sweep_start = time.time()
         user_id = kwargs.get("user_id", "scheduler")
         message = kwargs.get("message", "Execute your daily market sweep.")
@@ -866,7 +884,11 @@ class MarketSweepApp:
                 else:
                     # Distinguish partial shard (strategist died mid-way) vs no shard (full failure)
                     shard_path = (GCS_PATH if USE_GCS else LOCAL_PATH).replace(".json", f"_{cat}.json")
-                    has_shard = (_get_gcs_blob(shard_path).exists() if USE_GCS else os.path.exists(shard_path))
+                    try:
+                        has_shard = (_get_gcs_blob(shard_path).exists() if USE_GCS else os.path.exists(shard_path))
+                    except Exception as e:
+                        print(f"[WARN] Could not check shard for {cat}, assuming full retry needed: {e}", flush=True)
+                        has_shard = False
                     if has_shard:
                         incomplete_sectors.append(pipeline)
                         print(f"[CHECK] {pipeline.name} ({cat}) — partial shard, strategist retry needed.", flush=True)
@@ -922,9 +944,27 @@ class MarketSweepApp:
                 time.sleep(60)
 
         print(f"\n{'='*40}\n  STARTING MERGE PHASE\n{'='*40}", flush=True)
-        merge_app = agent_engines.AdkApp(agent=self.merge_agent)
-        for event in merge_app.stream_query(user_id=user_id, message="Merge the shards."):
-            yield event
+        merge_success = False
+        for merge_attempt in range(1, MAX_RETRIES + 1):
+            try:
+                merge_app = agent_engines.AdkApp(agent=self.merge_agent)
+                for event in merge_app.stream_query(user_id=user_id, message="Merge the shards."):
+                    yield event
+                merge_success = True
+                break
+            except Exception as e:
+                print(f"[ERROR] Merge attempt {merge_attempt}/{MAX_RETRIES}: {e}", flush=True)
+                if merge_attempt < MAX_RETRIES:
+                    print(f"[RETRY-MERGE] Waiting 60s before retry...", flush=True)
+                    time.sleep(60)
+
+        if not merge_success:
+            print(f"[RETRY-MERGE] Agent retries exhausted — falling back to direct merge.", flush=True)
+            try:
+                result = merge_sector_shards()
+                print(f"[RETRY-MERGE] Direct merge result: {result}", flush=True)
+            except Exception as e:
+                print(f"[FATAL] Direct merge also failed: {e}", flush=True)
 
         elapsed = time.time() - sweep_start
         print(f"\n{'='*40}", flush=True)

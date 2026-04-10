@@ -1,0 +1,24 @@
+for merging and broken shards         
+                                                                                                                                     
+  # See what's broken (no changes)                                                                                                   
+  python3 dev-utils/fix_broken_run.py --dry-run                                                                                      
+                                                                                                                                     
+  # Fix Space & Defense only, then merge                                                                                             
+  python3 dev-utils/fix_broken_run.py --sector "Space & Defense"
+                                                                                                                                     
+  # Fix ALL broken sectors + merge                                                                                                   
+  python3 dev-utils/fix_broken_run.py
+                                                                                                                                     
+  # Shards are fine, just re-run the merge that timed out                                                                            
+  python3 dev-utils/fix_broken_run.py --merge-only
+                                                                                                                                     
+  For today's run, based on the logs I'd start with:                                                                                 
+                                                                                                                                     
+  python3 dev-utils/fix_broken_run.py --sector "Space & Defense"                                                                     
+                                                            
+  This will: rebuild the Space & Defense pipeline from scratch, run it locally via AdkApp (Scout -> DE -> Strategist writing to GCS  
+  shard), then call merge_sector_shards() directly in Python — no agent wrapper, no timeout risk.
+                                                                                                                                     
+  If the other 5 sectors' shards already got merged before the timeout, you can check with --dry-run first. If they show as MISSING  
+  it means the earlier merge cleaned them up (which means the data is already in the master log). If they show as COMPLETE, the merge
+   never ran and --merge-only will pick them all up. 
