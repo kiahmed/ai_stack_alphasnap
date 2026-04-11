@@ -1,3 +1,18 @@
 *.json
 .adk/
 __pycache__/
+
+# Sensitive config (project IDs, service accounts, engine IDs)
+ae_config.config
+mcp_tools/mcp.config
+service_account*.json
+
+# Runtime logs
+run-logs/
+dev-utils/run-logs/
+
+# Environment / secrets
+.env
+.env.*
+*.key
+*.pem

@@ -18,6 +18,35 @@ FUNCTION_DIR="./cloud_function"
 FUNCTION_TIMEOUT="3540s"   # 59 minutes (Cloud Function 2nd gen max = 3600s)
 FUNCTION_MEMORY="512Mi"
 
+# ==========================================
+# --patch: Update env vars only (no rebuild)
+# ==========================================
+if [ "$1" == "--patch" ]; then
+    echo "============================================"
+    echo "  Patching env vars (no rebuild)"
+    echo "============================================"
+
+    if [ -z "$ENGINE_ID" ] || [ "$ENGINE_ID" == '""' ]; then
+        echo "Error: ENGINE_ID is not set in ae_config.config."
+        exit 1
+    fi
+
+    echo "Updating Cloud Run service '$FUNCTION_NAME' with:"
+    echo "  PROJECT_ID=$PROJECT_ID"
+    echo "  LOCATION=$LOCATION"
+    echo "  ENGINE_ID=$ENGINE_ID"
+
+    gcloud run services update "$FUNCTION_NAME" \
+        --region="$LOCATION" \
+        --project="$PROJECT_ID" \
+        --update-env-vars="PROJECT_ID=$PROJECT_ID,LOCATION=$LOCATION,ENGINE_ID=$ENGINE_ID"
+
+    echo ""
+    echo "Patched. New revision will be live in seconds."
+    echo "To verify: gcloud run services describe $FUNCTION_NAME --region=$LOCATION --project=$PROJECT_ID --format='value(spec.template.spec.containers[0].env)'"
+    exit 0
+fi
+
 echo "============================================"
 echo "  Deploying Cloud Function + Scheduler"
 echo "============================================"
