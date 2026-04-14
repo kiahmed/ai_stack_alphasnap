@@ -8,7 +8,14 @@
 # Idempotent: safe to re-run. Creates or updates all resources.
 
 set -e
-source ae_config.config
+
+# Re-read ae_config.config bypassing any WSL /mnt/c page-cache staleness.
+# `source` on /mnt/c can serve cached bytes when the file was just written
+# from Windows (deploy_agent.py / VS Code). Parse via grep on a fresh open.
+SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+CONFIG_FILE="$SCRIPT_DIR/ae_config.config"
+source "$CONFIG_FILE"
+ENGINE_ID=$(grep -E '^ENGINE_ID=' "$CONFIG_FILE" | tail -1 | sed -E 's/^ENGINE_ID="?([^"]*)"?$/\1/')
 
 # ==========================================
 # Config
@@ -17,6 +24,48 @@ FUNCTION_NAME="market-sweep-runner"
 FUNCTION_DIR="./cloud_function"
 FUNCTION_TIMEOUT="3540s"   # 59 minutes (Cloud Function 2nd gen max = 3600s)
 FUNCTION_MEMORY="512Mi"
+
+# ==========================================
+# Helper: verify ENGINE_ID actually exists in Vertex AI before we deploy.
+# Catches both stale config (deploy_agent.py write failed) and stale shell
+# reads (WSL /mnt/c cache). Fails loud with the offending ID + a list of
+# what's actually live, instead of silently deploying a dead pointer.
+# ==========================================
+verify_engine() {
+    echo "Verifying engine $ENGINE_ID exists in $PROJECT_ID/$LOCATION..."
+    local TOKEN API_HOST URL HTTP_CODE BODY
+    TOKEN=$(gcloud auth print-access-token 2>/dev/null)
+    if [ -z "$TOKEN" ]; then
+        echo "Error: could not get gcloud access token. Run 'gcloud auth login'."
+        exit 1
+    fi
+    API_HOST="${LOCATION}-aiplatform.googleapis.com"
+    URL="https://${API_HOST}/v1/projects/${PROJECT_ID}/locations/${LOCATION}/reasoningEngines/${ENGINE_ID}"
+    HTTP_CODE=$(curl -sS -o /tmp/verify_engine.json -w "%{http_code}" \
+        -H "Authorization: Bearer $TOKEN" \
+        -H "Content-Type: application/json" \
+        "$URL")
+    if [ "$HTTP_CODE" != "200" ]; then
+        echo ""
+        echo "Error: ENGINE_ID '$ENGINE_ID' not found (HTTP $HTTP_CODE)."
+        echo "       Either the config is stale, or the shell read a cached"
+        echo "       copy of ae_config.config (WSL /mnt/c page cache)."
+        echo ""
+        echo "API response:"
+        cat /tmp/verify_engine.json 2>/dev/null || true
+        echo ""
+        echo "Live engines in $PROJECT_ID/$LOCATION:"
+        curl -sS -H "Authorization: Bearer $TOKEN" \
+            "https://${API_HOST}/v1/projects/${PROJECT_ID}/locations/${LOCATION}/reasoningEngines" \
+            2>&1 || true
+        echo ""
+        echo "Fix: confirm ENGINE_ID in $CONFIG_FILE matches a live engine, then re-run."
+        exit 1
+    fi
+    local DISPLAY
+    DISPLAY=$(grep -o '"displayName"[[:space:]]*:[[:space:]]*"[^"]*"' /tmp/verify_engine.json | head -1 | sed -E 's/.*"([^"]*)"$/\1/')
+    echo "  Engine OK: $ENGINE_ID ($DISPLAY)"
+}
 
 # ==========================================
 # --patch: Update env vars only (no rebuild)
@@ -30,6 +79,8 @@ if [ "$1" == "--patch" ]; then
         echo "Error: ENGINE_ID is not set in ae_config.config."
         exit 1
     fi
+
+    verify_engine
 
     echo "Updating Cloud Run service '$FUNCTION_NAME' with:"
     echo "  PROJECT_ID=$PROJECT_ID"
@@ -56,12 +107,17 @@ if [ -z "$ENGINE_ID" ] || [ "$ENGINE_ID" == '""' ]; then
     exit 1
 fi
 
+verify_engine
+
 # ==========================================
 # 1. Deploy Cloud Function (2nd gen, HTTP trigger)
 # ==========================================
 echo ""
 echo "--- Step 1: Cloud Function ---"
 echo "Deploying '$FUNCTION_NAME' from $FUNCTION_DIR..."
+echo "  PROJECT_ID=$PROJECT_ID"
+echo "  LOCATION=$LOCATION"
+echo "  ENGINE_ID=$ENGINE_ID"
 
 gcloud functions deploy "$FUNCTION_NAME" \
     --gen2 \

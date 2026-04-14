@@ -23,12 +23,27 @@ safe_google_search = google_search
 # 1. DEFINE THE THINKING CONFIGURATIONS
 # ==========================================
 
+# Disable safety filters: market intel routinely covers defense, weapons, crypto,
+# and biotech topics that the default Gemini filters silently drop (output=0, no
+# tool calls). There is no end-user here to protect — the agent is the only consumer.
+_SAFETY_OFF = [
+    types.SafetySetting(category=cat, threshold=types.HarmBlockThreshold.OFF)
+    for cat in (
+        types.HarmCategory.HARM_CATEGORY_HATE_SPEECH,
+        types.HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT,
+        types.HarmCategory.HARM_CATEGORY_SEXUALLY_EXPLICIT,
+        types.HarmCategory.HARM_CATEGORY_HARASSMENT,
+    )
+]
+
 # Thinking budgets: light for Scouts/DEs (search + filter), high for Strategists (synthesis + judgment)
 worker_config = types.GenerateContentConfig(
-    thinking_config=types.ThinkingConfig(thinking_budget=4096)
+    thinking_config=types.ThinkingConfig(thinking_budget=4096),
+    safety_settings=_SAFETY_OFF,
 )
 strategist_config = types.GenerateContentConfig(
-    thinking_config=types.ThinkingConfig(thinking_budget=16384)
+    thinking_config=types.ThinkingConfig(thinking_budget=16384),
+    safety_settings=_SAFETY_OFF,
 )
 
 # ==========================================
@@ -435,8 +450,8 @@ TOKEN_METRICS = {"input": 0, "output": 0, "total": 0}
 def _log_token_usage(callback_context, llm_response):
     """after_model_callback: prints token usage to stdout (captured by Cloud Logging when deployed)."""
     um = llm_response.usage_metadata
+    agent_name = getattr(callback_context, 'agent_name', 'unknown')
     if um:
-        agent_name = getattr(callback_context, 'agent_name', 'unknown')
         inp = um.prompt_token_count or 0
         out = um.candidates_token_count or 0
         tot = um.total_token_count or 0
@@ -444,6 +459,22 @@ def _log_token_usage(callback_context, llm_response):
         TOKEN_METRICS["output"] += out
         TOKEN_METRICS["total"] += tot
         print(f"[TOKEN_USAGE] {agent_name} | input={inp} | output={out} | total={tot}", flush=True)
+
+        # Surface silent model failures (safety blocks, transient empty completions).
+        # Without this they look like a successful turn — agent exits, shard stays partial.
+        if out == 0:
+            finish = "?"
+            block = "?"
+            try:
+                cands = getattr(llm_response, "candidates", None) or []
+                if cands:
+                    finish = getattr(cands[0], "finish_reason", "?")
+                pf = getattr(llm_response, "prompt_feedback", None)
+                if pf is not None:
+                    block = getattr(pf, "block_reason", "?")
+            except Exception:
+                pass
+            print(f"[WARN] {agent_name} returned EMPTY response (output=0). finish_reason={finish}, block_reason={block}", flush=True)
     return None
 
 def log_progress(message: str, searches: int = 0, topics: int = 0):

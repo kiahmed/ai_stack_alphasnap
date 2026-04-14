@@ -87,4 +87,4 @@ fi
 #   timestamp>="2026-03-31T00:00:00Z" AND timestamp<"2026-04-01T00:00:00Z" AND textPayload:"TOKEN_USAGE"' --limit=500                  
 #   --project=marketresearch-agents --format="value(textPayload,resource.labels.reasoning_engine_id)" 2>&1 | head -60 
 #get logs for a pariticular agent engine from yesterday and output to a file
-#gcloud logging read 'resource.type="aiplatform.googleapis.com/ReasoningEngine" AND resource.labels.location="us-central1" AND resource.labels.reasoning_engine_id="9172513576756183040" AND timestamp>="2026-03-31T00:00:00Z"' --limit=5000 --project=marketresearch-agents --format="value(textPayload)" > output.log
+#gcloud logging read 'resource.type="aiplatform.googleapis.com/ReasoningEngine" AND resource.labels.location="us-central1" AND resource.labels.reasoning_engine_id="3197987293746954240" AND timestamp>="2026-04-13T00:00:00Z"' --limit=5000 --project=marketresearch-agents --format="value(textPayload)" > output.log
