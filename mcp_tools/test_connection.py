@@ -25,7 +25,7 @@ async def main():
         tools = await client.list_tools()
         print(f"    Discovered {len(tools)} tools:", flush=True)
         for t in tools:
-            print(f"    - {t['name']}: {t['description'][:100]}", flush=True)
+            print(f"    - {t['name']}: {(t['description'] or '')[:100]}", flush=True)
 
         if tools:
             print(f"\n[3] Smoke-test: calling Stock-Quote for NVDA...", flush=True)

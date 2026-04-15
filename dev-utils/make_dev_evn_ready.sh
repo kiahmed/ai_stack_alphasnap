@@ -88,3 +88,9 @@ fi
 #   --project=marketresearch-agents --format="value(textPayload,resource.labels.reasoning_engine_id)" 2>&1 | head -60 
 #get logs for a pariticular agent engine from yesterday and output to a file
 #gcloud logging read 'resource.type="aiplatform.googleapis.com/ReasoningEngine" AND resource.labels.location="us-central1" AND resource.labels.reasoning_engine_id="3197987293746954240" AND timestamp>="2026-04-13T00:00:00Z"' --limit=5000 --project=marketresearch-agents --format="value(textPayload)" > output.log
+source ae_config.config && echo "shell sees: $ENGINE_ID" 
+
+  gcloud ai reasoning-engines list \
+      --project=marketresearch-agents \                                                                                              
+      --region=us-central1 \                                
+      --format='table(name.basename(),displayName,createTime.date("%Y-%m-%d %H:%M"))' 

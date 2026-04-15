@@ -1,0 +1,1451 @@
+MCP TOOLS TEST — GOOGL
+============================================================
+
+
+[2] Greek Exposures (GOOGL)
+{
+  "symbol": "GOOGL",
+  "current_price": 337.12,
+  "expirations_analyzed": [
+    "2026-04-15",
+    "2026-04-17",
+    "2026-04-20",
+    "2026-04-22",
+    "2026-04-24"
+  ],
+  "total_options_processed": 201,
+  "portfolio_totals": {
+    "gamma": 696284574.25,
+    "delta": 5616332699.87,
+    "vanna": 1376322252.76,
+    "theta": 13101847.52
+  },
+  "key_levels": {
+    "max_gamma_strike": 345.0,
+    "max_delta_strike": 320.0
+  },
+  "exposures_by_date": {
+    "2026-04-15": [
+      {
+        "strike": 275.0,
+        "gamma_net_exposure": -4724.32,
+        "delta_net_exposure": 345362.19,
+        "vanna_net_exposure": 64102.93,
+        "theta_net_exposure": -12510.36
+      },
+      {
+        "strike": 277.5,
+        "gamma_net_exposure": -3118.63,
+        "delta_net_exposure": 17425.32,
+        "vanna_net_exposure": -1604.31,
+        "theta_net_exposure": -11936.06
+      },
+      {
+        "strike": 280.0,
+        "gamma_net_exposure": -1415.32,
+        "delta_net_exposure": 1317557.9,
+        "vanna_net_exposure": 489466.3,
+        "theta_net_exposure": 14366.78
+      },
+      {
+        "strike": 282.5,
+        "gamma_net_exposure": 5490.72,
+        "delta_net_exposure": 591979.54,
+        "vanna_net_exposure": 21345.88,
+        "theta_net_exposure": -1825.45
+      },
+      {
+        "strike": 285.0,
+        "gamma_net_exposure": -2133.97,
+        "delta_net_exposure": 1347865.33,
+        "vanna_net_exposure": 441736.15,
+        "theta_net_exposure": 11003.96
+      },
+      {
+        "strike": 287.5,
+        "gamma_net_exposure": 2990.48,
+        "delta_net_exposure": 1087456.04,
+        "vanna_net_exposure": 59414.58,
+        "theta_net_exposure": 7451.15
+      },
+      {
+        "strike": 290.0,
+        "gamma_net_exposure": 50103.27,
+        "delta_net_exposure": 9918203.76,
+        "vanna_net_exposure": 1229703.65,
+        "theta_net_exposure": 153541.88
+      },
+      {
+        "strike": 292.5,
+        "gamma_net_exposure": 10942.29,
+        "delta_net_exposure": 1049261.37,
+        "vanna_net_exposure": -10750.73,
+        "theta_net_exposure": -5335.86
+      },
+      {
+        "strike": 295.0,
+        "gamma_net_exposure": 174800.52,
+        "delta_net_exposure": 18143527.6,
+        "vanna_net_exposure": 901128.86,
+        "theta_net_exposure": 428110.24
+      },
+      {
+        "strike": 297.5,
+        "gamma_net_exposure": 925.01,
+        "delta_net_exposure": 459603.8,
+        "vanna_net_exposure": 90497.63,
+        "theta_net_exposure": 2254.41
+      },
+      {
+        "strike": 300.0,
+        "gamma_net_exposure": 7777.7,
+        "delta_net_exposure": 17370759.27,
+        "vanna_net_exposure": 3560563.24,
+        "theta_net_exposure": 41131.48
+      },
+      {
+        "strike": 302.5,
+        "gamma_net_exposure": 20624.67,
+        "delta_net_exposure": 2471219.46,
+        "vanna_net_exposure": 923318.81,
+        "theta_net_exposure": -19294.03
+      },
+      {
+        "strike": 305.0,
+        "gamma_net_exposure": 175458.03,
+        "delta_net_exposure": 10856850.06,
+        "vanna_net_exposure": 1383353.04,
+        "theta_net_exposure": -31686.12
+      },
+      {
+        "strike": 307.5,
+        "gamma_net_exposure": -84484.74,
+        "delta_net_exposure": 5165504.12,
+        "vanna_net_exposure": 3107563.72,
+        "theta_net_exposure": -22127.17
+      },
+      {
+        "strike": 310.0,
+        "gamma_net_exposure": -66482.04,
+        "delta_net_exposure": 16173302.17,
+        "vanna_net_exposure": 13829264.65,
+        "theta_net_exposure": 132471.9
+      },
+      {
+        "strike": 312.5,
+        "gamma_net_exposure": 64425.81,
+        "delta_net_exposure": 7693405.78,
+        "vanna_net_exposure": 3773104.93,
+        "theta_net_exposure": 137868.87
+      },
+      {
+        "strike": 315.0,
+        "gamma_net_exposure": -347619.15,
+        "delta_net_exposure": 8468483.34,
+        "vanna_net_exposure": 15073517.55,
+        "theta_net_exposure": 489.53
+      },
+      {
+        "strike": 317.5,
+        "gamma_net_exposure": 599827.24,
+        "delta_net_exposure": 20180786.21,
+        "vanna_net_exposure": 4852426.12,
+        "theta_net_exposure": -54240.59
+      },
+      {
+        "strike": 320.0,
+        "gamma_net_exposure": 492333.87,
+        "delta_net_exposure": 39301295.08,
+        "vanna_net_exposure": 855657.16,
+        "theta_net_exposure": -41625.06
+      },
+      {
+        "strike": 322.5,
+        "gamma_net_exposure": 739831.62,
+        "delta_net_exposure": 39477572.47,
+        "vanna_net_exposure": -2476284.11,
+        "theta_net_exposure": 127943.79
+      },
+      {
+        "strike": 325.0,
+        "gamma_net_exposure": 171288.35,
+        "delta_net_exposure": 47821574.85,
+        "vanna_net_exposure": 34952858.07,
+        "theta_net_exposure": 177739.18
+      },
+      {
+        "strike": 327.5,
+        "gamma_net_exposure": 2941238.68,
+        "delta_net_exposure": 41472990.12,
+        "vanna_net_exposure": 2357904.47,
+        "theta_net_exposure": 476350.6
+      },
+      {
+        "strike": 330.0,
+        "gamma_net_exposure": 6098395.13,
+        "delta_net_exposure": 58699198.33,
+        "vanna_net_exposure": 23257975.18,
+        "theta_net_exposure": 1215331.4
+      },
+      {
+        "strike": 332.5,
+        "gamma_net_exposure": 6457709.85,
+        "delta_net_exposure": 83829719.59,
+        "vanna_net_exposure": -34911631.78,
+        "theta_net_exposure": -60656.95
+      },
+      {
+        "strike": 335.0,
+        "gamma_net_exposure": 26462367.73,
+        "delta_net_exposure": 53307681.92,
+        "vanna_net_exposure": -33122362.77,
+        "theta_net_exposure": 291679.13
+      },
+      {
+        "strike": 337.5,
+        "gamma_net_exposure": 120166715.28,
+        "delta_net_exposure": 12328943.96,
+        "vanna_net_exposure": 96426855.02,
+        "theta_net_exposure": 103177.53
+      },
+      {
+        "strike": 340.0,
+        "gamma_net_exposure": 12349449.13,
+        "delta_net_exposure": 2452161.21,
+        "vanna_net_exposure": 100569274.44,
+        "theta_net_exposure": 82776.69
+      },
+      {
+        "strike": 342.5,
+        "gamma_net_exposure": 1232735.58,
+        "delta_net_exposure": 70971.73,
+        "vanna_net_exposure": 15800844.08,
+        "theta_net_exposure": 23246.17
+      },
+      {
+        "strike": 345.0,
+        "gamma_net_exposure": 228978.56,
+        "delta_net_exposure": 93298.19,
+        "vanna_net_exposure": 3763037.44,
+        "theta_net_exposure": 8113.33
+      },
+      {
+        "strike": 347.5,
+        "gamma_net_exposure": 79250.91,
+        "delta_net_exposure": 39659.65,
+        "vanna_net_exposure": 1607383.52,
+        "theta_net_exposure": 4369.48
+      },
+      {
+        "strike": 350.0,
+        "gamma_net_exposure": 578285.18,
+        "delta_net_exposure": 314990.16,
+        "vanna_net_exposure": 18575740.2,
+        "theta_net_exposure": 41965.65
+      }
+    ],
+    "2026-04-17": [
+      {
+        "strike": 275.0,
+        "gamma_net_exposure": -232884.11,
+        "delta_net_exposure": 18691937.14,
+        "vanna_net_exposure": 3971149.96,
+        "theta_net_exposure": -33690.57
+      },
+      {
+        "strike": 277.5,
+        "gamma_net_exposure": -17408.41,
+        "delta_net_exposure": 7551332.74,
+        "vanna_net_exposure": 402981.77,
+        "theta_net_exposure": -997.66
+      },
+      {
+        "strike": 280.0,
+        "gamma_net_exposure": -30084.22,
+        "delta_net_exposure": 46849361.24,
+        "vanna_net_exposure": 1881198.29,
+        "theta_net_exposure": 27479.11
+      },
+      {
+        "strike": 282.5,
+        "gamma_net_exposure": 25801.06,
+        "delta_net_exposure": 23453013.97,
+        "vanna_net_exposure": -248393.43,
+        "theta_net_exposure": 7261.74
+      },
+      {
+        "strike": 285.0,
+        "gamma_net_exposure": -172294.38,
+        "delta_net_exposure": 53969534.37,
+        "vanna_net_exposure": 4658100.4,
+        "theta_net_exposure": 18993.16
+      },
+      {
+        "strike": 287.5,
+        "gamma_net_exposure": 82725.07,
+        "delta_net_exposure": 25621121.05,
+        "vanna_net_exposure": -780413.45,
+        "theta_net_exposure": 18692.18
+      },
+      {
+        "strike": 290.0,
+        "gamma_net_exposure": 809613.52,
+        "delta_net_exposure": 114925515.36,
+        "vanna_net_exposure": -8709261.02,
+        "theta_net_exposure": 194441.13
+      },
+      {
+        "strike": 292.5,
+        "gamma_net_exposure": -65353.76,
+        "delta_net_exposure": 28266530.62,
+        "vanna_net_exposure": 1115929.84,
+        "theta_net_exposure": -2583.36
+      },
+      {
+        "strike": 295.0,
+        "gamma_net_exposure": -195274.75,
+        "delta_net_exposure": 106590869.68,
+        "vanna_net_exposure": 4746095.69,
+        "theta_net_exposure": 55395.77
+      },
+      {
+        "strike": 297.5,
+        "gamma_net_exposure": 44159.43,
+        "delta_net_exposure": 39663445.04,
+        "vanna_net_exposure": 369426.09,
+        "theta_net_exposure": 22001.07
+      },
+      {
+        "strike": 300.0,
+        "gamma_net_exposure": 3402772.99,
+        "delta_net_exposure": 397999636.69,
+        "vanna_net_exposure": -42285346.13,
+        "theta_net_exposure": 380679.9
+      },
+      {
+        "strike": 302.5,
+        "gamma_net_exposure": 223394.21,
+        "delta_net_exposure": 41278351.06,
+        "vanna_net_exposure": -2490119.04,
+        "theta_net_exposure": 23768.86
+      },
+      {
+        "strike": 305.0,
+        "gamma_net_exposure": 1409190.88,
+        "delta_net_exposure": 205310562.78,
+        "vanna_net_exposure": -17690076.67,
+        "theta_net_exposure": 110637.01
+      },
+      {
+        "strike": 307.5,
+        "gamma_net_exposure": -226637.82,
+        "delta_net_exposure": 36022457.52,
+        "vanna_net_exposure": 4873813.23,
+        "theta_net_exposure": 10288.84
+      },
+      {
+        "strike": 310.0,
+        "gamma_net_exposure": 4372616.21,
+        "delta_net_exposure": 305801381.9,
+        "vanna_net_exposure": -38715624.19,
+        "theta_net_exposure": 378918.73
+      },
+      {
+        "strike": 312.5,
+        "gamma_net_exposure": 2982102.28,
+        "delta_net_exposure": 105124920.22,
+        "vanna_net_exposure": -23497386.87,
+        "theta_net_exposure": 333836.61
+      },
+      {
+        "strike": 315.0,
+        "gamma_net_exposure": 915999.24,
+        "delta_net_exposure": 176023474.97,
+        "vanna_net_exposure": -9268428.1,
+        "theta_net_exposure": 64482.77
+      },
+      {
+        "strike": 317.5,
+        "gamma_net_exposure": 1563565.22,
+        "delta_net_exposure": 109908252.64,
+        "vanna_net_exposure": -15750176.98,
+        "theta_net_exposure": 68094.05
+      },
+      {
+        "strike": 320.0,
+        "gamma_net_exposure": 21332444.31,
+        "delta_net_exposure": 632261939.44,
+        "vanna_net_exposure": -210111320.58,
+        "theta_net_exposure": 763638.25
+      },
+      {
+        "strike": 322.5,
+        "gamma_net_exposure": 796723.44,
+        "delta_net_exposure": 192963058.79,
+        "vanna_net_exposure": 29582155.85,
+        "theta_net_exposure": 275784.68
+      },
+      {
+        "strike": 325.0,
+        "gamma_net_exposure": 10111453.31,
+        "delta_net_exposure": 307327602.5,
+        "vanna_net_exposure": -129185816.57,
+        "theta_net_exposure": 111054.35
+      },
+      {
+        "strike": 327.5,
+        "gamma_net_exposure": 8942554.83,
+        "delta_net_exposure": 135715073.28,
+        "vanna_net_exposure": -60895563.96,
+        "theta_net_exposure": 214816.05
+      },
+      {
+        "strike": 330.0,
+        "gamma_net_exposure": 54382468.63,
+        "delta_net_exposure": 448251762.19,
+        "vanna_net_exposure": -319272156.16,
+        "theta_net_exposure": 980059.08
+      },
+      {
+        "strike": 332.5,
+        "gamma_net_exposure": 4253867.34,
+        "delta_net_exposure": 27907410.5,
+        "vanna_net_exposure": -16599173.56,
+        "theta_net_exposure": 74911.66
+      },
+      {
+        "strike": 335.0,
+        "gamma_net_exposure": 57808588.89,
+        "delta_net_exposure": 223985159.29,
+        "vanna_net_exposure": -116079634.09,
+        "theta_net_exposure": 831217.14
+      },
+      {
+        "strike": 337.5,
+        "gamma_net_exposure": 3286704.9,
+        "delta_net_exposure": 9283639.79,
+        "vanna_net_exposure": 1198227.65,
+        "theta_net_exposure": 45208.96
+      },
+      {
+        "strike": 340.0,
+        "gamma_net_exposure": 48913129.67,
+        "delta_net_exposure": 106664935.82,
+        "vanna_net_exposure": 138639170.81,
+        "theta_net_exposure": 637920.03
+      },
+      {
+        "strike": 342.5,
+        "gamma_net_exposure": 5238539.62,
+        "delta_net_exposure": 9227928.36,
+        "vanna_net_exposure": 28129572.78,
+        "theta_net_exposure": 66207.24
+      },
+      {
+        "strike": 345.0,
+        "gamma_net_exposure": 190748324.18,
+        "delta_net_exposure": 289610257.21,
+        "vanna_net_exposure": 1481014141.43,
+        "theta_net_exposure": 2442686.54
+      },
+      {
+        "strike": 347.5,
+        "gamma_net_exposure": 1594170.27,
+        "delta_net_exposure": 2192596.82,
+        "vanna_net_exposure": 15585032.75,
+        "theta_net_exposure": 21513.05
+      },
+      {
+        "strike": 350.0,
+        "gamma_net_exposure": 21010959.67,
+        "delta_net_exposure": 27354074.72,
+        "vanna_net_exposure": 238106028.45,
+        "theta_net_exposure": 325902.32
+      },
+      {
+        "strike": 355.0,
+        "gamma_net_exposure": 2443374.47,
+        "delta_net_exposure": 3183360.25,
+        "vanna_net_exposure": 33153439.18,
+        "theta_net_exposure": 48683.0
+      },
+      {
+        "strike": 360.0,
+        "gamma_net_exposure": 3699250.7,
+        "delta_net_exposure": 5219054.93,
+        "vanna_net_exposure": 54070336.99,
+        "theta_net_exposure": 95006.15
+      },
+      {
+        "strike": 365.0,
+        "gamma_net_exposure": 1065575.3,
+        "delta_net_exposure": 955437.87,
+        "vanna_net_exposure": 17316021.78,
+        "theta_net_exposure": 33107.65
+      },
+      {
+        "strike": 370.0,
+        "gamma_net_exposure": 581579.0,
+        "delta_net_exposure": 840228.55,
+        "vanna_net_exposure": 9847085.83,
+        "theta_net_exposure": 22360.63
+      },
+      {
+        "strike": 375.0,
+        "gamma_net_exposure": 673834.04,
+        "delta_net_exposure": 1074330.33,
+        "vanna_net_exposure": 11936504.69,
+        "theta_net_exposure": 30040.02
+      },
+      {
+        "strike": 380.0,
+        "gamma_net_exposure": 321071.72,
+        "delta_net_exposure": 496607.59,
+        "vanna_net_exposure": 6348260.14,
+        "theta_net_exposure": 16664.32
+      },
+      {
+        "strike": 385.0,
+        "gamma_net_exposure": 239380.06,
+        "delta_net_exposure": 455205.93,
+        "vanna_net_exposure": 4436219.85,
+        "theta_net_exposure": 15870.38
+      },
+      {
+        "strike": 390.0,
+        "gamma_net_exposure": 176285.19,
+        "delta_net_exposure": 324054.06,
+        "vanna_net_exposure": 3481020.09,
+        "theta_net_exposure": 12272.51
+      },
+      {
+        "strike": 395.0,
+        "gamma_net_exposure": 163306.02,
+        "delta_net_exposure": 321569.74,
+        "vanna_net_exposure": 3214030.99,
+        "theta_net_exposure": 13148.6
+      },
+      {
+        "strike": 400.0,
+        "gamma_net_exposure": 264543.56,
+        "delta_net_exposure": 554828.23,
+        "vanna_net_exposure": 5209420.35,
+        "theta_net_exposure": 24351.73
+      },
+      {
+        "strike": 405.0,
+        "gamma_net_exposure": 30936.63,
+        "delta_net_exposure": 65697.56,
+        "vanna_net_exposure": 636628.26,
+        "theta_net_exposure": 3063.62
+      },
+      {
+        "strike": 410.0,
+        "gamma_net_exposure": 130664.22,
+        "delta_net_exposure": 369850.75,
+        "vanna_net_exposure": 2390553.66,
+        "theta_net_exposure": 18868.71
+      },
+      {
+        "strike": 415.0,
+        "gamma_net_exposure": 31669.87,
+        "delta_net_exposure": 74674.71,
+        "vanna_net_exposure": 670780.73,
+        "theta_net_exposure": 3943.56
+      },
+      {
+        "strike": 420.0,
+        "gamma_net_exposure": 44598.54,
+        "delta_net_exposure": 110213.38,
+        "vanna_net_exposure": 959149.94,
+        "theta_net_exposure": 6159.27
+      },
+      {
+        "strike": 425.0,
+        "gamma_net_exposure": 64845.7,
+        "delta_net_exposure": 201643.78,
+        "vanna_net_exposure": 1318934.37,
+        "theta_net_exposure": 12399.73
+      },
+      {
+        "strike": 430.0,
+        "gamma_net_exposure": 202038.31,
+        "delta_net_exposure": 773314.1,
+        "vanna_net_exposure": 3448172.93,
+        "theta_net_exposure": 48978.47
+      },
+      {
+        "strike": 435.0,
+        "gamma_net_exposure": 138928.02,
+        "delta_net_exposure": 522356.35,
+        "vanna_net_exposure": 2496126.05,
+        "theta_net_exposure": 34481.85
+      },
+      {
+        "strike": 440.0,
+        "gamma_net_exposure": 62818.44,
+        "delta_net_exposure": 190667.09,
+        "vanna_net_exposure": 1323867.84,
+        "theta_net_exposure": 12849.27
+      }
+    ],
+    "2026-04-20": [
+      {
+        "strike": 275.0,
+        "gamma_net_exposure": -1363.29,
+        "delta_net_exposure": 137463.3,
+        "vanna_net_exposure": 3413.66,
+        "theta_net_exposure": -1071.49
+      },
+      {
+        "strike": 277.5,
+        "gamma_net_exposure": -311.87,
+        "delta_net_exposure": -1219.67,
+        "vanna_net_exposure": 7172.56,
+        "theta_net_exposure": -27.6
+      },
+      {
+        "strike": 280.0,
+        "gamma_net_exposure": -922.91,
+        "delta_net_exposure": 165215.14,
+        "vanna_net_exposure": 21731.27,
+        "theta_net_exposure": -58.89
+      },
+      {
+        "strike": 282.5,
+        "gamma_net_exposure": 0.0,
+        "delta_net_exposure": 0.0,
+        "vanna_net_exposure": 0.0,
+        "theta_net_exposure": 0.0
+      },
+      {
+        "strike": 285.0,
+        "gamma_net_exposure": -1841.28,
+        "delta_net_exposure": 129800.53,
+        "vanna_net_exposure": 61132.48,
+        "theta_net_exposure": -59.09
+      },
+      {
+        "strike": 287.5,
+        "gamma_net_exposure": 170.48,
+        "delta_net_exposure": 403435.17,
+        "vanna_net_exposure": -6972.56,
+        "theta_net_exposure": 35.03
+      },
+      {
+        "strike": 290.0,
+        "gamma_net_exposure": -5250.51,
+        "delta_net_exposure": 222902.17,
+        "vanna_net_exposure": 163055.38,
+        "theta_net_exposure": -161.33
+      },
+      {
+        "strike": 292.5,
+        "gamma_net_exposure": -9977.29,
+        "delta_net_exposure": 114671.28,
+        "vanna_net_exposure": 321126.35,
+        "theta_net_exposure": -287.78
+      },
+      {
+        "strike": 295.0,
+        "gamma_net_exposure": 589.8,
+        "delta_net_exposure": 1235590.04,
+        "vanna_net_exposure": -20366.02,
+        "theta_net_exposure": 114.27
+      },
+      {
+        "strike": 297.5,
+        "gamma_net_exposure": -2948.42,
+        "delta_net_exposure": 123367.71,
+        "vanna_net_exposure": 92741.14,
+        "theta_net_exposure": -37.55
+      },
+      {
+        "strike": 300.0,
+        "gamma_net_exposure": -6353.77,
+        "delta_net_exposure": 1196522.08,
+        "vanna_net_exposure": 208504.32,
+        "theta_net_exposure": 23.63
+      },
+      {
+        "strike": 302.5,
+        "gamma_net_exposure": -1231.19,
+        "delta_net_exposure": 194161.95,
+        "vanna_net_exposure": 37122.54,
+        "theta_net_exposure": -4.87
+      },
+      {
+        "strike": 305.0,
+        "gamma_net_exposure": -59961.02,
+        "delta_net_exposure": 4010218.12,
+        "vanna_net_exposure": 1683399.99,
+        "theta_net_exposure": -589.55
+      },
+      {
+        "strike": 307.5,
+        "gamma_net_exposure": -12889.25,
+        "delta_net_exposure": 105447.38,
+        "vanna_net_exposure": 310529.58,
+        "theta_net_exposure": -218.8
+      },
+      {
+        "strike": 310.0,
+        "gamma_net_exposure": -130758.3,
+        "delta_net_exposure": 554530.34,
+        "vanna_net_exposure": 2984217.31,
+        "theta_net_exposure": -2057.83
+      },
+      {
+        "strike": 312.5,
+        "gamma_net_exposure": -1965.52,
+        "delta_net_exposure": 577281.82,
+        "vanna_net_exposure": 92980.45,
+        "theta_net_exposure": 103.26
+      },
+      {
+        "strike": 315.0,
+        "gamma_net_exposure": -63939.26,
+        "delta_net_exposure": 1890246.72,
+        "vanna_net_exposure": 1388865.02,
+        "theta_net_exposure": -443.04
+      },
+      {
+        "strike": 317.5,
+        "gamma_net_exposure": 110115.13,
+        "delta_net_exposure": 5362823.96,
+        "vanna_net_exposure": -1384598.21,
+        "theta_net_exposure": 3265.84
+      },
+      {
+        "strike": 320.0,
+        "gamma_net_exposure": -9867.76,
+        "delta_net_exposure": 13991189.79,
+        "vanna_net_exposure": -1684880.45,
+        "theta_net_exposure": -767.53
+      },
+      {
+        "strike": 322.5,
+        "gamma_net_exposure": 556210.84,
+        "delta_net_exposure": 9385870.91,
+        "vanna_net_exposure": -6437873.7,
+        "theta_net_exposure": 11283.6
+      },
+      {
+        "strike": 325.0,
+        "gamma_net_exposure": 941765.24,
+        "delta_net_exposure": 15777049.43,
+        "vanna_net_exposure": -13129398.49,
+        "theta_net_exposure": 9643.87
+      },
+      {
+        "strike": 327.5,
+        "gamma_net_exposure": 1724367.76,
+        "delta_net_exposure": 19285248.33,
+        "vanna_net_exposure": -16019236.83,
+        "theta_net_exposure": 23670.26
+      },
+      {
+        "strike": 330.0,
+        "gamma_net_exposure": 4595801.0,
+        "delta_net_exposure": 37488410.74,
+        "vanna_net_exposure": -33614066.18,
+        "theta_net_exposure": 56156.88
+      },
+      {
+        "strike": 332.5,
+        "gamma_net_exposure": 702495.42,
+        "delta_net_exposure": 4825503.72,
+        "vanna_net_exposure": -3343940.65,
+        "theta_net_exposure": 8463.71
+      },
+      {
+        "strike": 335.0,
+        "gamma_net_exposure": 4765288.1,
+        "delta_net_exposure": 22931586.42,
+        "vanna_net_exposure": -11352616.95,
+        "theta_net_exposure": 50532.1
+      },
+      {
+        "strike": 337.5,
+        "gamma_net_exposure": 435451.74,
+        "delta_net_exposure": 1706205.52,
+        "vanna_net_exposure": 151413.48,
+        "theta_net_exposure": 4573.06
+      },
+      {
+        "strike": 340.0,
+        "gamma_net_exposure": 3281436.96,
+        "delta_net_exposure": 10691150.59,
+        "vanna_net_exposure": 10241121.39,
+        "theta_net_exposure": 33340.94
+      },
+      {
+        "strike": 342.5,
+        "gamma_net_exposure": 235037.12,
+        "delta_net_exposure": 586574.16,
+        "vanna_net_exposure": 1386738.02,
+        "theta_net_exposure": 2377.14
+      },
+      {
+        "strike": 345.0,
+        "gamma_net_exposure": 457598.66,
+        "delta_net_exposure": 1100685.0,
+        "vanna_net_exposure": 3921469.31,
+        "theta_net_exposure": 4661.58
+      },
+      {
+        "strike": 347.5,
+        "gamma_net_exposure": 103689.56,
+        "delta_net_exposure": 226068.28,
+        "vanna_net_exposure": 1175680.01,
+        "theta_net_exposure": 1061.93
+      },
+      {
+        "strike": 350.0,
+        "gamma_net_exposure": 1370219.45,
+        "delta_net_exposure": 2765916.73,
+        "vanna_net_exposure": 18619151.66,
+        "theta_net_exposure": 14975.66
+      },
+      {
+        "strike": 355.0,
+        "gamma_net_exposure": 20095.86,
+        "delta_net_exposure": 37817.58,
+        "vanna_net_exposure": 353578.25,
+        "theta_net_exposure": 257.09
+      },
+      {
+        "strike": 360.0,
+        "gamma_net_exposure": 0.0,
+        "delta_net_exposure": 0.0,
+        "vanna_net_exposure": 0.0,
+        "theta_net_exposure": 0.0
+      },
+      {
+        "strike": 365.0,
+        "gamma_net_exposure": 0.0,
+        "delta_net_exposure": 0.0,
+        "vanna_net_exposure": 0.0,
+        "theta_net_exposure": 0.0
+      },
+      {
+        "strike": 370.0,
+        "gamma_net_exposure": 0.0,
+        "delta_net_exposure": 0.0,
+        "vanna_net_exposure": 0.0,
+        "theta_net_exposure": 0.0
+      }
+    ],
+    "2026-04-22": [
+      {
+        "strike": 275.0,
+        "gamma_net_exposure": -592.28,
+        "delta_net_exposure": -1748.02,
+        "vanna_net_exposure": 20417.15,
+        "theta_net_exposure": -28.46
+      },
+      {
+        "strike": 277.5,
+        "gamma_net_exposure": -290.52,
+        "delta_net_exposure": -777.46,
+        "vanna_net_exposure": 10708.88,
+        "theta_net_exposure": -12.12
+      },
+      {
+        "strike": 280.0,
+        "gamma_net_exposure": 376.63,
+        "delta_net_exposure": 197494.19,
+        "vanna_net_exposure": -7571.05,
+        "theta_net_exposure": 44.43
+      },
+      {
+        "strike": 282.5,
+        "gamma_net_exposure": -125.42,
+        "delta_net_exposure": -302.49,
+        "vanna_net_exposure": 4675.48,
+        "theta_net_exposure": -4.28
+      },
+      {
+        "strike": 285.0,
+        "gamma_net_exposure": -34.51,
+        "delta_net_exposure": 64755.93,
+        "vanna_net_exposure": 4057.2,
+        "theta_net_exposure": 11.67
+      },
+      {
+        "strike": 287.5,
+        "gamma_net_exposure": 226.15,
+        "delta_net_exposure": 32921.48,
+        "vanna_net_exposure": -5941.68,
+        "theta_net_exposure": 13.4
+      },
+      {
+        "strike": 290.0,
+        "gamma_net_exposure": -9368.29,
+        "delta_net_exposure": 833543.31,
+        "vanna_net_exposure": 309610.88,
+        "theta_net_exposure": -187.98
+      },
+      {
+        "strike": 292.5,
+        "gamma_net_exposure": -2069.14,
+        "delta_net_exposure": -4954.4,
+        "vanna_net_exposure": 66791.12,
+        "theta_net_exposure": -58.75
+      },
+      {
+        "strike": 295.0,
+        "gamma_net_exposure": -1941.91,
+        "delta_net_exposure": 59829.72,
+        "vanna_net_exposure": 62034.28,
+        "theta_net_exposure": -41.49
+      },
+      {
+        "strike": 297.5,
+        "gamma_net_exposure": -764.77,
+        "delta_net_exposure": 62625.28,
+        "vanna_net_exposure": 23141.5,
+        "theta_net_exposure": -10.89
+      },
+      {
+        "strike": 300.0,
+        "gamma_net_exposure": -7357.28,
+        "delta_net_exposure": 588836.28,
+        "vanna_net_exposure": 214230.42,
+        "theta_net_exposure": -79.31
+      },
+      {
+        "strike": 302.5,
+        "gamma_net_exposure": -66015.53,
+        "delta_net_exposure": -125081.15,
+        "vanna_net_exposure": 1738705.08,
+        "theta_net_exposure": -1433.27
+      },
+      {
+        "strike": 305.0,
+        "gamma_net_exposure": -27664.96,
+        "delta_net_exposure": 617702.21,
+        "vanna_net_exposure": 742486.94,
+        "theta_net_exposure": -464.99
+      },
+      {
+        "strike": 307.5,
+        "gamma_net_exposure": 11210.1,
+        "delta_net_exposure": 782049.79,
+        "vanna_net_exposure": -216580.99,
+        "theta_net_exposure": 383.12
+      },
+      {
+        "strike": 310.0,
+        "gamma_net_exposure": -17871.4,
+        "delta_net_exposure": 2459889.74,
+        "vanna_net_exposure": 575355.19,
+        "theta_net_exposure": 325.33
+      },
+      {
+        "strike": 312.5,
+        "gamma_net_exposure": 29425.24,
+        "delta_net_exposure": 2263242.88,
+        "vanna_net_exposure": -467525.29,
+        "theta_net_exposure": 981.92
+      },
+      {
+        "strike": 315.0,
+        "gamma_net_exposure": 11392.65,
+        "delta_net_exposure": 805394.93,
+        "vanna_net_exposure": -162472.06,
+        "theta_net_exposure": 365.61
+      },
+      {
+        "strike": 317.5,
+        "gamma_net_exposure": -605066.06,
+        "delta_net_exposure": -840738.09,
+        "vanna_net_exposure": 10481828.83,
+        "theta_net_exposure": -8938.81
+      },
+      {
+        "strike": 320.0,
+        "gamma_net_exposure": -538453.32,
+        "delta_net_exposure": 2854950.42,
+        "vanna_net_exposure": 8489947.64,
+        "theta_net_exposure": -6825.71
+      },
+      {
+        "strike": 322.5,
+        "gamma_net_exposure": 95507.33,
+        "delta_net_exposure": 1606246.98,
+        "vanna_net_exposure": -1230281.51,
+        "theta_net_exposure": 1611.39
+      },
+      {
+        "strike": 325.0,
+        "gamma_net_exposure": 493559.92,
+        "delta_net_exposure": 7659432.24,
+        "vanna_net_exposure": -5039608.93,
+        "theta_net_exposure": 8870.85
+      },
+      {
+        "strike": 327.5,
+        "gamma_net_exposure": 67659.2,
+        "delta_net_exposure": 1049757.19,
+        "vanna_net_exposure": -684433.63,
+        "theta_net_exposure": 848.68
+      },
+      {
+        "strike": 330.0,
+        "gamma_net_exposure": 2632419.36,
+        "delta_net_exposure": 22514510.13,
+        "vanna_net_exposure": -18061796.52,
+        "theta_net_exposure": 36082.09
+      },
+      {
+        "strike": 332.5,
+        "gamma_net_exposure": 3536292.59,
+        "delta_net_exposure": 25176642.33,
+        "vanna_net_exposure": -15951835.28,
+        "theta_net_exposure": 46841.01
+      },
+      {
+        "strike": 335.0,
+        "gamma_net_exposure": 622781.24,
+        "delta_net_exposure": 3782516.41,
+        "vanna_net_exposure": -1341076.39,
+        "theta_net_exposure": 7912.67
+      },
+      {
+        "strike": 337.5,
+        "gamma_net_exposure": 149425.55,
+        "delta_net_exposure": 754867.51,
+        "vanna_net_exposure": 49449.35,
+        "theta_net_exposure": 1858.02
+      },
+      {
+        "strike": 340.0,
+        "gamma_net_exposure": 2025037.28,
+        "delta_net_exposure": 8771430.86,
+        "vanna_net_exposure": 5903411.83,
+        "theta_net_exposure": 23728.13
+      },
+      {
+        "strike": 342.5,
+        "gamma_net_exposure": -13783.51,
+        "delta_net_exposure": -138229.33,
+        "vanna_net_exposure": -86344.79,
+        "theta_net_exposure": -106.84
+      },
+      {
+        "strike": 345.0,
+        "gamma_net_exposure": 791586.04,
+        "delta_net_exposure": 2689471.59,
+        "vanna_net_exposure": 6377772.5,
+        "theta_net_exposure": 9226.83
+      },
+      {
+        "strike": 347.5,
+        "gamma_net_exposure": 61730.54,
+        "delta_net_exposure": 189624.67,
+        "vanna_net_exposure": 639315.94,
+        "theta_net_exposure": 743.39
+      },
+      {
+        "strike": 350.0,
+        "gamma_net_exposure": 232830.53,
+        "delta_net_exposure": 660837.35,
+        "vanna_net_exposure": 3011002.31,
+        "theta_net_exposure": 2797.27
+      },
+      {
+        "strike": 355.0,
+        "gamma_net_exposure": 123364.74,
+        "delta_net_exposure": 311247.01,
+        "vanna_net_exposure": 2123213.89,
+        "theta_net_exposure": 1596.57
+      },
+      {
+        "strike": 360.0,
+        "gamma_net_exposure": 7315.45,
+        "delta_net_exposure": 16982.91,
+        "vanna_net_exposure": 155191.51,
+        "theta_net_exposure": 105.1
+      },
+      {
+        "strike": 365.0,
+        "gamma_net_exposure": 1396.89,
+        "delta_net_exposure": 3129.52,
+        "vanna_net_exposure": 34194.81,
+        "theta_net_exposure": 21.71
+      },
+      {
+        "strike": 370.0,
+        "gamma_net_exposure": 0.0,
+        "delta_net_exposure": 0.0,
+        "vanna_net_exposure": 0.0,
+        "theta_net_exposure": 0.0
+      },
+      {
+        "strike": 375.0,
+        "gamma_net_exposure": 5856.25,
+        "delta_net_exposure": 13164.61,
+        "vanna_net_exposure": 171476.65,
+        "theta_net_exposure": 116.26
+      }
+    ],
+    "2026-04-24": [
+      {
+        "strike": 275.0,
+        "gamma_net_exposure": -59234.33,
+        "delta_net_exposure": 3973443.44,
+        "vanna_net_exposure": 2284514.72,
+        "theta_net_exposure": -1940.38
+      },
+      {
+        "strike": 277.5,
+        "gamma_net_exposure": -25531.94,
+        "delta_net_exposure": 17144.15,
+        "vanna_net_exposure": 944778.0,
+        "theta_net_exposure": -990.92
+      },
+      {
+        "strike": 280.0,
+        "gamma_net_exposure": -22367.05,
+        "delta_net_exposure": 10334641.36,
+        "vanna_net_exposure": 1159515.6,
+        "theta_net_exposure": 414.48
+      },
+      {
+        "strike": 282.5,
+        "gamma_net_exposure": -4517.46,
+        "delta_net_exposure": 2836308.55,
+        "vanna_net_exposure": 306236.66,
+        "theta_net_exposure": 391.89
+      },
+      {
+        "strike": 285.0,
+        "gamma_net_exposure": -75280.63,
+        "delta_net_exposure": 7381032.14,
+        "vanna_net_exposure": 2698729.89,
+        "theta_net_exposure": -1660.17
+      },
+      {
+        "strike": 287.5,
+        "gamma_net_exposure": -49893.21,
+        "delta_net_exposure": 398285.8,
+        "vanna_net_exposure": 1621094.55,
+        "theta_net_exposure": -1521.63
+      },
+      {
+        "strike": 290.0,
+        "gamma_net_exposure": -18017.0,
+        "delta_net_exposure": 21781955.81,
+        "vanna_net_exposure": 848072.78,
+        "theta_net_exposure": 2170.39
+      },
+      {
+        "strike": 292.5,
+        "gamma_net_exposure": -67862.63,
+        "delta_net_exposure": 261233.92,
+        "vanna_net_exposure": 2067708.53,
+        "theta_net_exposure": -1861.82
+      },
+      {
+        "strike": 295.0,
+        "gamma_net_exposure": -62076.21,
+        "delta_net_exposure": 13559879.8,
+        "vanna_net_exposure": 2471320.99,
+        "theta_net_exposure": 561.2
+      },
+      {
+        "strike": 297.5,
+        "gamma_net_exposure": 4713.32,
+        "delta_net_exposure": 3400342.41,
+        "vanna_net_exposure": 54402.15,
+        "theta_net_exposure": 738.85
+      },
+      {
+        "strike": 300.0,
+        "gamma_net_exposure": 264259.94,
+        "delta_net_exposure": 58479015.21,
+        "vanna_net_exposure": -5475999.69,
+        "theta_net_exposure": 14203.81
+      },
+      {
+        "strike": 302.5,
+        "gamma_net_exposure": -19177.47,
+        "delta_net_exposure": 2432627.25,
+        "vanna_net_exposure": 669003.68,
+        "theta_net_exposure": 225.46
+      },
+      {
+        "strike": 305.0,
+        "gamma_net_exposure": -86067.96,
+        "delta_net_exposure": 17310492.75,
+        "vanna_net_exposure": 2286758.04,
+        "theta_net_exposure": 272.04
+      },
+      {
+        "strike": 307.5,
+        "gamma_net_exposure": -461342.44,
+        "delta_net_exposure": 4046600.3,
+        "vanna_net_exposure": 10842425.77,
+        "theta_net_exposure": -8618.05
+      },
+      {
+        "strike": 310.0,
+        "gamma_net_exposure": 133569.16,
+        "delta_net_exposure": 31802741.25,
+        "vanna_net_exposure": 1821583.68,
+        "theta_net_exposure": 17531.64
+      },
+      {
+        "strike": 312.5,
+        "gamma_net_exposure": -194051.83,
+        "delta_net_exposure": 2877567.11,
+        "vanna_net_exposure": 4060240.44,
+        "theta_net_exposure": -2724.78
+      },
+      {
+        "strike": 315.0,
+        "gamma_net_exposure": -849316.8,
+        "delta_net_exposure": 28622481.31,
+        "vanna_net_exposure": 14851720.85,
+        "theta_net_exposure": -12456.19
+      },
+      {
+        "strike": 317.5,
+        "gamma_net_exposure": 2319893.29,
+        "delta_net_exposure": 66224142.39,
+        "vanna_net_exposure": -32773486.74,
+        "theta_net_exposure": 58784.32
+      },
+      {
+        "strike": 320.0,
+        "gamma_net_exposure": 1764133.8,
+        "delta_net_exposure": 49544183.11,
+        "vanna_net_exposure": -27421807.8,
+        "theta_net_exposure": 30699.56
+      },
+      {
+        "strike": 322.5,
+        "gamma_net_exposure": 23607.98,
+        "delta_net_exposure": 4791950.9,
+        "vanna_net_exposure": 321663.14,
+        "theta_net_exposure": 2772.79
+      },
+      {
+        "strike": 325.0,
+        "gamma_net_exposure": 5460895.82,
+        "delta_net_exposure": 78219681.96,
+        "vanna_net_exposure": -55822017.53,
+        "theta_net_exposure": 98410.51
+      },
+      {
+        "strike": 327.5,
+        "gamma_net_exposure": 334437.71,
+        "delta_net_exposure": 6213065.08,
+        "vanna_net_exposure": -2665824.91,
+        "theta_net_exposure": 6523.3
+      },
+      {
+        "strike": 330.0,
+        "gamma_net_exposure": 2892221.35,
+        "delta_net_exposure": 61076283.78,
+        "vanna_net_exposure": -15685009.61,
+        "theta_net_exposure": 64511.61
+      },
+      {
+        "strike": 332.5,
+        "gamma_net_exposure": 149413.81,
+        "delta_net_exposure": 2164962.95,
+        "vanna_net_exposure": -574122.37,
+        "theta_net_exposure": 2931.19
+      },
+      {
+        "strike": 335.0,
+        "gamma_net_exposure": 5394082.79,
+        "delta_net_exposure": 37715900.86,
+        "vanna_net_exposure": -10957350.37,
+        "theta_net_exposure": 74811.24
+      },
+      {
+        "strike": 337.5,
+        "gamma_net_exposure": 1159243.45,
+        "delta_net_exposure": 7356568.64,
+        "vanna_net_exposure": 412420.54,
+        "theta_net_exposure": 17372.19
+      },
+      {
+        "strike": 340.0,
+        "gamma_net_exposure": 6575739.24,
+        "delta_net_exposure": 36603517.83,
+        "vanna_net_exposure": 17755079.44,
+        "theta_net_exposure": 92922.67
+      },
+      {
+        "strike": 342.5,
+        "gamma_net_exposure": 732191.57,
+        "delta_net_exposure": 3634005.7,
+        "vanna_net_exposure": 3637379.22,
+        "theta_net_exposure": 10422.89
+      },
+      {
+        "strike": 345.0,
+        "gamma_net_exposure": 1777457.11,
+        "delta_net_exposure": 7468652.74,
+        "vanna_net_exposure": 12931853.3,
+        "theta_net_exposure": 25452.68
+      },
+      {
+        "strike": 347.5,
+        "gamma_net_exposure": 2050721.85,
+        "delta_net_exposure": 8728574.75,
+        "vanna_net_exposure": 19347962.48,
+        "theta_net_exposure": 30380.39
+      },
+      {
+        "strike": 350.0,
+        "gamma_net_exposure": 4495403.41,
+        "delta_net_exposure": 16952450.29,
+        "vanna_net_exposure": 52535475.75,
+        "theta_net_exposure": 65316.32
+      },
+      {
+        "strike": 352.5,
+        "gamma_net_exposure": 158430.73,
+        "delta_net_exposure": 566640.72,
+        "vanna_net_exposure": 2236324.92,
+        "theta_net_exposure": 2266.59
+      },
+      {
+        "strike": 355.0,
+        "gamma_net_exposure": 975481.94,
+        "delta_net_exposure": 3297856.77,
+        "vanna_net_exposure": 15763895.02,
+        "theta_net_exposure": 14382.14
+      },
+      {
+        "strike": 360.0,
+        "gamma_net_exposure": 538107.99,
+        "delta_net_exposure": 1247915.76,
+        "vanna_net_exposure": 10733579.95,
+        "theta_net_exposure": 8411.26
+      },
+      {
+        "strike": 365.0,
+        "gamma_net_exposure": 127057.53,
+        "delta_net_exposure": 367789.77,
+        "vanna_net_exposure": 3008645.05,
+        "theta_net_exposure": 2151.1
+      },
+      {
+        "strike": 370.0,
+        "gamma_net_exposure": 18927.97,
+        "delta_net_exposure": -1914146.94,
+        "vanna_net_exposure": 619104.6,
+        "theta_net_exposure": 568.32
+      },
+      {
+        "strike": 375.0,
+        "gamma_net_exposure": 30156.82,
+        "delta_net_exposure": 82764.52,
+        "vanna_net_exposure": 899284.78,
+        "theta_net_exposure": 598.78
+      },
+      {
+        "strike": 380.0,
+        "gamma_net_exposure": 14801.3,
+        "delta_net_exposure": 40276.44,
+        "vanna_net_exposure": 473875.5,
+        "theta_net_exposure": 319.03
+      },
+      {
+        "strike": 385.0,
+        "gamma_net_exposure": 1852.56,
+        "delta_net_exposure": 5052.95,
+        "vanna_net_exposure": 63188.15,
+        "theta_net_exposure": 43.16
+      },
+      {
+        "strike": 390.0,
+        "gamma_net_exposure": 13668.84,
+        "delta_net_exposure": 37430.85,
+        "vanna_net_exposure": 506352.16,
+        "theta_net_exposure": 350.85
+      },
+      {
+        "strike": 395.0,
+        "gamma_net_exposure": 6521.61,
+        "delta_net_exposure": 17873.47,
+        "vanna_net_exposure": 257880.53,
+        "theta_net_exposure": 182.22
+      },
+      {
+        "strike": 400.0,
+        "gamma_net_exposure": 8147.18,
+        "delta_net_exposure": 22292.88,
+        "vanna_net_exposure": 329600.59,
+        "theta_net_exposure": 237.52
+      },
+      {
+        "strike": 405.0,
+        "gamma_net_exposure": 5164.54,
+        "delta_net_exposure": 14532.16,
+        "vanna_net_exposure": 215827.17,
+        "theta_net_exposure": 164.56
+      },
+      {
+        "strike": 410.0,
+        "gamma_net_exposure": 467.08,
+        "delta_net_exposure": 1267.94,
+        "vanna_net_exposure": 22253.47,
+        "theta_net_exposure": 15.46
+      },
+      {
+        "strike": 415.0,
+        "gamma_net_exposure": 910.12,
+        "delta_net_exposure": 2591.48,
+        "vanna_net_exposure": 44235.79,
+        "theta_net_exposure": 33.65
+      },
+      {
+        "strike": 420.0,
+        "gamma_net_exposure": 94.96,
+        "delta_net_exposure": 269.17,
+        "vanna_net_exposure": 4695.97,
+        "theta_net_exposure": 3.64
+      },
+      {
+        "strike": 425.0,
+        "gamma_net_exposure": 87.26,
+        "delta_net_exposure": 258.09,
+        "vanna_net_exposure": 4308.82,
+        "theta_net_exposure": 3.66
+      },
+      {
+        "strike": 430.0,
+        "gamma_net_exposure": 0.0,
+        "delta_net_exposure": 0.0,
+        "vanna_net_exposure": 0.0,
+        "theta_net_exposure": 0.0
+      },
+      {
+        "strike": 435.0,
+        "gamma_net_exposure": 101.97,
+        "delta_net_exposure": 455.09,
+        "vanna_net_exposure": 4041.96,
+        "theta_net_exposure": 7.41
+      },
+      {
+        "strike": 440.0,
+        "gamma_net_exposure": 0.0,
+        "delta_net_exposure": 0.0,
+        "vanna_net_exposure": 0.0,
+        "theta_net_exposure": 0.0
+      }
+    ]
+  },
+  "from_expiration": null,
+  "to_expiration": null,
+  "expiration_range": null,
+  "timestamp_eastern": "2026-04-15T16:22:36-04:00"
+}
+
