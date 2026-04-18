@@ -128,6 +128,8 @@ gcloud functions deploy "$FUNCTION_NAME" \
     --trigger-http \
     --timeout="$FUNCTION_TIMEOUT" \
     --memory="$FUNCTION_MEMORY" \
+    --max-instances=1 \
+    --concurrency=1 \
     --set-env-vars="PROJECT_ID=$PROJECT_ID,LOCATION=$LOCATION,ENGINE_ID=$ENGINE_ID" \
     --service-account="$SA_EMAIL" \
     --project="$PROJECT_ID" \
@@ -205,7 +207,12 @@ echo "Flow: Cloud Scheduler ($SCHEDULE_INTERVAL $TIMEZONE)"
 echo "   -> Cloud Function: $FUNCTION_URL (59m timeout)"
 echo "   -> Agent Engine: $ENGINE_ID (streamQuery)"
 echo ""
-echo "Scheduler has max-retry-attempts=0 to prevent duplicate sweeps."
+echo "Concurrency safety:"
+echo "  - Scheduler: max-retry-attempts=0 (no automatic re-fire on flake)"
+echo "  - Cloud Run: max-instances=1 + concurrency=1 (second caller gets 429)"
+echo "  This guarantees at most one sweep running at a time — protects the"
+echo "  entry_id counter and shard writes from cross-invocation races."
+echo ""
 echo "The function keeps running on Cloud Run even after scheduler's"
 echo "30-min attempt-deadline expires."
 echo ""

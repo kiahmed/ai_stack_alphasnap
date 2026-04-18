@@ -2,11 +2,14 @@ import os
 import re
 import math
 import time
+import fcntl
 from collections import Counter
 from google.cloud import storage
+from google.api_core.exceptions import PreconditionFailed
 import json
 import yaml
 from datetime import datetime
+from dateutil.parser import parse as _parse_date
 import vertexai
 from vertexai import agent_engines
 from google.genai import types
@@ -98,12 +101,93 @@ def _normalize_category(input_string: str) -> str:
     """Soft map varying LLM strings (e.g. 'Power Energy') to true canonical categories ('Power & Energy')."""
     valid_categories = [cfg.get("category") for cfg in config.get("scouts", {}).values() if cfg.get("category")]
     normalized_input = input_string.lower().replace("&", "").replace("and", "").replace(" ", "").replace("_", "")
-    
+
     for valid in valid_categories:
         normalized_valid = valid.lower().replace("&", "").replace("and", "").replace(" ", "").replace("_", "")
         if normalized_input == normalized_valid:
             return valid
     return input_string
+
+# Locked 3-letter abbreviations for entry_id generation.
+# If a new category is added, define its abbreviation here AND in proposed_alphasnap_changes.md.
+CATEGORY_ABBR = {
+    "Robotics": "ROB",
+    "Crypto": "CRY",
+    "AI Stack": "AIS",
+    "Space & Defense": "SPD",
+    "Power & Energy": "PWE",
+    "Strategic Minerals": "STM",
+}
+
+def _reject_range_timestamp(ts: str) -> None:
+    """Raise if ts looks like a range (e.g. 'March 21-22, 2026', '2026-03-23 to 2026-03-27').
+    Strict ISO YYYY-MM-DD is short-circuited by the caller before this runs — so we only see
+    mixed-format inputs here. We must not false-positive on ISO-with-time ('2026-04-15 14:23:00')."""
+    if " to " in ts.lower() or "–" in ts or "—" in ts:
+        raise ValueError(f"Range-shaped timestamp rejected: {ts!r}")
+    # "<Month> <num>-<num>" style (requires leading letter to avoid matching the '-DD' inside ISO dates)
+    if re.search(r"[A-Za-z]\w*\s+\d{1,2}\s*-\s*\d{1,2}", ts):
+        raise ValueError(f"Range-shaped timestamp rejected: {ts!r}")
+
+def _normalize_timestamp(ts) -> str:
+    """Normalize any input timestamp to YYYY-MM-DD. Rejects ranges and unparseable input."""
+    if ts is None or not str(ts).strip():
+        raise ValueError("timestamp required")
+    ts = str(ts).strip()
+    if re.fullmatch(r"\d{4}-\d{2}-\d{2}", ts):
+        return ts
+    _reject_range_timestamp(ts)
+    try:
+        return _parse_date(ts).strftime("%Y-%m-%d")
+    except Exception as e:
+        raise ValueError(f"Unparseable timestamp {ts!r}: {e}")
+
+def _count_entries_for(category: str, date_iso: str) -> int:
+    """Count existing entries matching (category, date_iso) across master log + current sector shard.
+    Source-of-truth for the YYY counter in entry_id. Stateless — reads on every call."""
+    count = 0
+    # Master log
+    try:
+        if USE_GCS:
+            blob = _get_gcs_blob(GCS_PATH)
+            if blob.exists():
+                data = json.loads(blob.download_as_text())
+                count += sum(1 for e in data
+                             if e.get("category") == category
+                             and e.get("timestamp") == date_iso)
+        else:
+            if os.path.exists(LOCAL_PATH):
+                with open(LOCAL_PATH, "r") as f:
+                    data = json.load(f)
+                count += sum(1 for e in data
+                             if e.get("category") == category
+                             and e.get("timestamp") == date_iso)
+    except Exception as e:
+        print(f"[WARN] _count_entries_for master log read failed: {e}", flush=True)
+
+    # Current sector shard (enriched list already written this run)
+    shard_base = GCS_PATH if USE_GCS else LOCAL_PATH
+    shard_path = shard_base.replace(".json", f"_{category}.json")
+    try:
+        if USE_GCS:
+            b = _get_gcs_blob(shard_path)
+            raw = json.loads(b.download_as_text()) if b.exists() else None
+        else:
+            raw = json.load(open(shard_path)) if os.path.exists(shard_path) else None
+        if isinstance(raw, dict):
+            count += sum(1 for e in raw.get("enriched", [])
+                         if e.get("timestamp") == date_iso)
+    except Exception as e:
+        print(f"[WARN] _count_entries_for shard read failed: {e}", flush=True)
+    return count
+
+def _next_entry_id(category: str, date_iso: str) -> str:
+    """Generate the next entry_id for (category, date_iso). Format: XXX-MMDDYY-YYY."""
+    abbr = CATEGORY_ABBR.get(category)
+    if not abbr:
+        raise ValueError(f"No CATEGORY_ABBR mapping for category {category!r}")
+    mm, dd, yy = date_iso[5:7], date_iso[8:10], date_iso[2:4]
+    return f"{abbr}-{mm}{dd}{yy}-{_count_entries_for(category, date_iso) + 1:03d}"
 
 def read_memory_log(category: str = "all", memory_limit: int = 10) -> str:
     """Reads the previous findings based on the active storage toggle.
@@ -167,69 +251,138 @@ def read_memory_log(category: str = "all", memory_limit: int = 10) -> str:
         
         return json.dumps(baseline, indent=2)
 
-def append_to_memory_log(findings_date: str, category: str, finding: str, insights_sentiment: str, guidance_play: str, price_levels: str) -> str:
-    """Appends findings using the active storage toggle (Local or GCS).
+def append_to_memory_log(category: str, finding: str, timestamp: str,
+                         insights_sentiment: str, guidance_play: str,
+                         price_levels: str, source_url: str = None) -> str:
+    """Appends a single finding to the per-sector shard with a unique entry_id.
+
     Args:
-        findings_date: The date received from the scout.
-        category: The canonical category (e.g., 'Robotics').
-        finding: The raw finding text from the scout.
-        insights_sentiment: Key investable takeaways and sentiment analysis.
-        guidance_play: Near-term guidance and possible play.
-        price_levels: Technical levels, pivots, and analyst PTs.
+        category: Canonical category (e.g., 'Robotics').
+        finding: Raw finding text from the scout.
+        timestamp: Finding date. Accepts YYYY-MM-DD, ISO with time, or human-readable
+                   (e.g., 'March 24, 2026'). Range-shaped values (e.g., 'March 21-22, 2026')
+                   are rejected — pass a single date only.
+        insights_sentiment: Layered takeaways + sentiment (Very Bullish/Bullish/Neutral/Bearish/Very Bearish).
+        guidance_play: Near-term trade idea.
+        price_levels: Tickers, PTs, institutional levels.
+        source_url: Primary source URL for this finding. Pass None if unavailable.
+
+    Returns:
+        The generated entry_id (e.g., 'ROB-041726-003').
     """
     category = _normalize_category(category)
-    
-    entry = {
-        "timestamp": findings_date,
+    date_iso = _normalize_timestamp(timestamp)
+
+    base_entry = {
+        "timestamp": date_iso,
         "category": category,
         "finding": finding,
         "insights_sentiment": insights_sentiment,
         "guidance_play": guidance_play,
-        "price_levels": price_levels
+        "price_levels": price_levels,
+        "source_url": source_url,
     }
-    print(f"\n### [Saving to Memory] Category: {category}", flush=True)
-    print(f"```json\n{json.dumps(entry, indent=2)}\n```\n", flush=True)
 
     if USE_GCS:
-        sector_path = GCS_PATH.replace(".json", f"_{category}.json")
+        return _append_gcs(category, date_iso, base_entry)
+    return _append_local(category, date_iso, base_entry)
+
+# Max retries when a concurrent writer bumps the shard generation (GCS) or holds
+# the flock (local) between our read and our write. 5 attempts absorbs realistic
+# Strategist-parallel-batch contention (usually 2-6 appends per turn).
+_APPEND_MAX_RETRIES = 5
+
+def _append_gcs(category: str, date_iso: str, base_entry: dict) -> str:
+    """GCS write path with if_generation_match retry. Closes the parallel-append race."""
+    sector_path = GCS_PATH.replace(".json", f"_{category}.json")
+    blob = _get_gcs_blob(sector_path)
+
+    for attempt in range(1, _APPEND_MAX_RETRIES + 1):
+        # 1. Capture current shard state + its generation number.
+        #    generation=0 on the upload means "only succeed if the object does not yet exist"
+        #    — the right precondition for a first-time create.
+        shard_data = {"deduped": [], "enriched": []}
+        generation = 0
+        if blob.exists():
+            blob.reload()
+            generation = blob.generation
+            raw = json.loads(blob.download_as_text())
+            if isinstance(raw, dict) and "deduped" in raw:
+                shard_data = raw
+            else:
+                shard_data["enriched"] = raw  # legacy flat list migrate
+
+        # 2. Recompute entry_id against the FRESHLY read shard + master. This must be
+        #    inside the retry loop — if a concurrent writer landed an entry since our
+        #    last read, our counter advances too.
+        entry_id = _next_entry_id(category, date_iso)
+        entry = {"entry_id": entry_id, **base_entry}
+        shard_data["enriched"].append(entry)
+
+        # 3. Conditional upload. PreconditionFailed (HTTP 412) means the shard's
+        #    generation moved under us — another writer landed between our read
+        #    and our write. Retry with fresh state.
         try:
-            blob = _get_gcs_blob(sector_path)
-            shard_data = {"deduped": [], "enriched": []}
-            if blob.exists():
-                raw = json.loads(blob.download_as_text())
-                if isinstance(raw, dict) and "deduped" in raw:
-                    shard_data = raw
-                else:
-                    # Legacy flat list — migrate
-                    shard_data["enriched"] = raw
-            shard_data["enriched"].append(entry)
-            blob.upload_from_string(json.dumps(shard_data, indent=4), content_type='application/json')
-            enriched_n = len(shard_data["enriched"])
-            deduped_n = len(shard_data["deduped"])
-            print(f"[ENRICH] {category}: {enriched_n}/{deduped_n} findings enriched.", flush=True)
-            return f"Logged finding for {category} to GCS shard ({enriched_n}/{deduped_n} enriched): {sector_path}"
+            blob.upload_from_string(
+                json.dumps(shard_data, indent=4),
+                content_type='application/json',
+                if_generation_match=generation,
+            )
+        except PreconditionFailed:
+            print(f"[APPEND] {category} | generation-match miss on attempt {attempt}/{_APPEND_MAX_RETRIES} — retrying", flush=True)
+            continue
         except Exception as e:
             return f"Error writing to GCS Shard: {str(e)}"
-    else:
-        local_sector_path = LOCAL_PATH.replace(".json", f"_{category}.json")
-        shard_data = {"deduped": [], "enriched": []}
-        if os.path.exists(local_sector_path):
-            with open(local_sector_path, "r") as f:
-                try:
-                    raw = json.load(f)
-                    if isinstance(raw, dict) and "deduped" in raw:
-                        shard_data = raw
-                    else:
-                        shard_data["enriched"] = raw
-                except Exception as e:
-                    print(f"[WARN] Could not read local shard {local_sector_path}: {e}", flush=True)
-        shard_data["enriched"].append(entry)
-        with open(local_sector_path, "w") as f:
-            json.dump(shard_data, f, indent=4)
+
+        if attempt > 1:
+            print(f"[APPEND] {category} | {entry_id} landed after {attempt} attempts (contention resolved)", flush=True)
+        print(f"\n### [Saving to Memory] Category: {category} | ID: {entry_id}", flush=True)
+        print(f"```json\n{json.dumps(entry, indent=2)}\n```\n", flush=True)
         enriched_n = len(shard_data["enriched"])
         deduped_n = len(shard_data["deduped"])
         print(f"[ENRICH] {category}: {enriched_n}/{deduped_n} findings enriched.", flush=True)
-        return f"Logged finding for {category} to local shard ({enriched_n}/{deduped_n} enriched): {local_sector_path}"
+        return entry_id
+
+    raise RuntimeError(
+        f"append_to_memory_log: exceeded {_APPEND_MAX_RETRIES} retries on shard contention for {category}. "
+        f"Check for stuck concurrent writers."
+    )
+
+def _append_local(category: str, date_iso: str, base_entry: dict) -> str:
+    """Local-mode write path with advisory flock — serializes in-process concurrent writers."""
+    local_sector_path = LOCAL_PATH.replace(".json", f"_{category}.json")
+    lock_path = local_sector_path + ".lock"
+
+    with open(lock_path, "w") as lockfile:
+        fcntl.flock(lockfile, fcntl.LOCK_EX)
+        try:
+            shard_data = {"deduped": [], "enriched": []}
+            if os.path.exists(local_sector_path):
+                with open(local_sector_path, "r") as f:
+                    try:
+                        raw = json.load(f)
+                        if isinstance(raw, dict) and "deduped" in raw:
+                            shard_data = raw
+                        else:
+                            shard_data["enriched"] = raw
+                    except Exception as e:
+                        print(f"[WARN] Could not read local shard {local_sector_path}: {e}", flush=True)
+
+            entry_id = _next_entry_id(category, date_iso)
+            entry = {"entry_id": entry_id, **base_entry}
+            shard_data["enriched"].append(entry)
+
+            with open(local_sector_path, "w") as f:
+                json.dump(shard_data, f, indent=4)
+
+            print(f"\n### [Saving to Memory] Category: {category} | ID: {entry_id}", flush=True)
+            print(f"```json\n{json.dumps(entry, indent=2)}\n```\n", flush=True)
+            enriched_n = len(shard_data["enriched"])
+            deduped_n = len(shard_data["deduped"])
+            print(f"[ENRICH] {category}: {enriched_n}/{deduped_n} findings enriched.", flush=True)
+            return entry_id
+        finally:
+            fcntl.flock(lockfile, fcntl.LOCK_UN)
 
 # ==========================================
 # 3. DETERMINISTIC DEDUP ENGINE (TF-IDF + Entity Overlap)
@@ -327,26 +480,50 @@ def _entity_overlap(entities_a, entities_b):
     smaller = min(len(merged_a), len(merged_b))
     return len(intersection) / smaller
 
+def _coerce_scout_item(item):
+    """Accept either a bare finding string (legacy) or {finding, source_url} object.
+    Returns (finding_text, source_url_or_None)."""
+    if isinstance(item, dict):
+        return str(item.get("finding", "")).strip(), (item.get("source_url") or None)
+    return str(item).strip(), None
+
 def dedup_findings(scout_findings_json: str, category: str) -> str:
     """Deterministic dedup: compares scout findings against the memory baseline.
-    Removes duplicates unless the scout finding contains significant new data (new development).
+
+    Three-layer matching (any layer → duplicate, short-circuit):
+      1. URL equality — same source_url as a baseline entry (both non-null)
+      2. TF-IDF cosine on finding text
+      3. Entity overlap on tickers/names/amounts
+
     Args:
-        scout_findings_json: A JSON array of finding strings from the scout, e.g. '["finding 1", "finding 2"]'.
-        category: The sector category to check against (e.g. 'Robotics', 'AI Stack').
+        scout_findings_json: JSON array. Each element is either:
+          - an object: {"finding": "...", "source_url": "https://..."}  (preferred)
+          - a bare string: "finding text"  (legacy, source_url treated as None)
+        category: Sector category (e.g. 'Robotics', 'AI Stack').
+
     Returns:
-        JSON array of unique/updated findings that passed dedup.
+        JSON with shape:
+          {
+            "kept":    [{"finding": "...", "source_url": "..." | null}, ...],
+            "dropped": [{"title": "...", "matched_entry_id": "..." | null,
+                         "reason": "url_match" | "tfidf" | "entity_overlap" | "intra_batch",
+                         "scores": {"tfidf": 0.52, "entity": 0.71}}, ...]
+          }
     """
     category = _normalize_category(category)
 
-    # Parse scout findings
+    # Parse scout findings — tolerate bare strings as legacy shorthand
     try:
-        scout_findings = json.loads(scout_findings_json)
-        if not isinstance(scout_findings, list):
-            scout_findings = [str(scout_findings)]
+        raw = json.loads(scout_findings_json)
+        if not isinstance(raw, list):
+            raw = [raw]
     except json.JSONDecodeError:
-        scout_findings = [scout_findings_json]
+        raw = [scout_findings_json]
 
-    # Load baseline from master log (same source as read_memory_log)
+    scout_items = [_coerce_scout_item(x) for x in raw]   # [(text, url), ...]
+    scout_texts = [t for t, _ in scout_items]
+
+    # Load baseline from master log — capture entry_id + source_url alongside text
     baseline_entries = []
     mem_limit = config.get("storage", {}).get("memory_limit", 10)
     if USE_GCS:
@@ -369,80 +546,108 @@ def dedup_findings(scout_findings_json: str, category: str) -> str:
                 pass
 
     baseline_texts = [e.get("finding", "") for e in baseline_entries]
+    baseline_urls = [(e.get("source_url") or None) for e in baseline_entries]
+    baseline_ids = [e.get("entry_id") for e in baseline_entries]
 
+    kept = []       # list of {"finding", "source_url"} dicts
+    dropped = []    # list of drop-report dicts
+
+    def _drop(text, url, reason, matched_id, tfidf_s=None, ent_s=None):
+        dropped.append({
+            "title": text[:80],
+            "matched_entry_id": matched_id,
+            "reason": reason,
+            "scores": {
+                "tfidf": round(tfidf_s, 2) if tfidf_s is not None else None,
+                "entity": round(ent_s, 2) if ent_s is not None else None,
+            },
+        })
+        print(f"[DEDUP] {category} | DROP ({reason}) matched={matched_id}", flush=True)
+        print(f"  scout    : {text[:140]}", flush=True)
+
+    # No baseline → nothing to compare against; still run intra-batch check
     if not baseline_texts:
-        print(f"[DEDUP] {category}: No baseline — all {len(scout_findings)} findings pass through.", flush=True)
-        return json.dumps(scout_findings, indent=2)
+        print(f"[DEDUP] {category}: No baseline — checking intra-batch only.", flush=True)
 
-    # Build IDF corpus from baseline + scout findings
-    all_texts = baseline_texts + scout_findings
-    corpus_tokens = [_tokenize(t) for t in all_texts]
-    idf = _build_idf(corpus_tokens)
+    # Build IDF corpus only if we have baseline or multiple scout items (for intra-batch)
+    need_tfidf = bool(baseline_texts) or len(scout_texts) > 1
+    if need_tfidf:
+        corpus = baseline_texts + scout_texts
+        idf = _build_idf([_tokenize(t) for t in corpus])
+        baseline_entity_sets = [_extract_entities(t) for t in baseline_texts]
 
-    # Pre-extract entities for baseline
-    baseline_entity_sets = [_extract_entities(t) for t in baseline_texts]
-
-    unique_findings = []
-
-    for finding in scout_findings:
-        finding_entities, finding_tickers = _extract_entities(finding)
+    for idx, (finding_text, finding_url) in enumerate(scout_items):
         is_duplicate = False
+        finding_entities, finding_tickers = _extract_entities(finding_text) if need_tfidf else (set(), set())
 
-        for i, base_text in enumerate(baseline_texts):
-            base_entities, base_tickers = baseline_entity_sets[i]
-            tfidf_score = _tfidf_similarity(finding, base_text, idf)
-            ent_score = _entity_overlap(finding_entities, base_entities)
-
-            if tfidf_score >= TFIDF_THRESHOLD or ent_score >= ENTITY_THRESHOLD:
-                # Check novelty: exclude tickers — they're alternate identifiers, not new info
-                novel_entities = (finding_entities - base_entities) - finding_tickers
-                if len(novel_entities) >= NOVELTY_MIN:
-                    # New development on same topic — keep it
-                    continue
-
-                is_duplicate = True
-                print(f"[DEDUP] {category} | DUPLICATE (tfidf={tfidf_score:.2f}, entity={ent_score:.2f})", flush=True)
-                print(f"  baseline : {base_text[:140]}", flush=True)
-                print(f"  scout    : {finding[:140]}", flush=True)
-                break
-
-        # Intra-batch dedup: compare against already-accepted findings from this run
-        if not is_duplicate:
-            for accepted in unique_findings:
-                accepted_entities, accepted_tickers = _extract_entities(accepted)
-                tfidf_score = _tfidf_similarity(finding, accepted, idf)
-                ent_score = _entity_overlap(finding_entities, accepted_entities)
-                if tfidf_score >= TFIDF_THRESHOLD or ent_score >= ENTITY_THRESHOLD:
+        # ── Layer 1: URL equality fast-path ──
+        if finding_url:
+            for i, b_url in enumerate(baseline_urls):
+                if b_url and b_url == finding_url:
+                    _drop(finding_text, finding_url, "url_match", baseline_ids[i])
                     is_duplicate = True
-                    print(f"[DEDUP] {category} | INTRA-BATCH DUPLICATE (tfidf={tfidf_score:.2f}, entity={ent_score:.2f})", flush=True)
-                    print(f"  accepted : {accepted[:140]}", flush=True)
-                    print(f"  scout    : {finding[:140]}", flush=True)
+                    break
+
+        # ── Layer 2+3: TF-IDF + entity overlap vs baseline ──
+        if not is_duplicate and baseline_texts:
+            for i, base_text in enumerate(baseline_texts):
+                base_entities, _ = baseline_entity_sets[i]
+                tfidf_score = _tfidf_similarity(finding_text, base_text, idf)
+                ent_score = _entity_overlap(finding_entities, base_entities)
+
+                if tfidf_score >= TFIDF_THRESHOLD or ent_score >= ENTITY_THRESHOLD:
+                    # Novelty check: exclude tickers — they're alt identifiers, not new info
+                    novel = (finding_entities - base_entities) - finding_tickers
+                    if len(novel) >= NOVELTY_MIN:
+                        continue  # update on same topic — keep
+
+                    reason = "tfidf" if tfidf_score >= TFIDF_THRESHOLD else "entity_overlap"
+                    _drop(finding_text, finding_url, reason, baseline_ids[i], tfidf_score, ent_score)
+                    is_duplicate = True
+                    break
+
+        # ── Intra-batch dedup ──
+        if not is_duplicate and kept:
+            for k in kept:
+                k_text = k["finding"]
+                k_url = k.get("source_url")
+                # URL fast-path within batch
+                if finding_url and k_url and finding_url == k_url:
+                    _drop(finding_text, finding_url, "intra_batch", None)
+                    is_duplicate = True
+                    break
+                k_entities, _ = _extract_entities(k_text)
+                tfidf_score = _tfidf_similarity(finding_text, k_text, idf)
+                ent_score = _entity_overlap(finding_entities, k_entities)
+                if tfidf_score >= TFIDF_THRESHOLD or ent_score >= ENTITY_THRESHOLD:
+                    _drop(finding_text, finding_url, "intra_batch", None, tfidf_score, ent_score)
+                    is_duplicate = True
                     break
 
         if not is_duplicate:
-            unique_findings.append(finding)
+            kept.append({"finding": finding_text, "source_url": finding_url})
 
-    kept = len(unique_findings)
-    dropped = len(scout_findings) - kept
-    print(f"[DEDUP] {category}: {kept} unique, {dropped} duplicates removed (from {len(scout_findings)} scout findings vs {len(baseline_texts)} baseline).", flush=True)
+    print(f"[DEDUP] {category}: {len(kept)} unique, {len(dropped)} duplicates removed "
+          f"(from {len(scout_items)} scout findings vs {len(baseline_texts)} baseline).",
+          flush=True)
 
-    # Persist deduped manifest to the sector shard — source of truth for the Strategist
-    shard_data = {"deduped": unique_findings, "enriched": []}
+    # Persist deduped manifest to sector shard — source of truth for the Strategist
+    shard_data = {"deduped": kept, "enriched": []}
     if USE_GCS:
         shard_path = GCS_PATH.replace(".json", f"_{category}.json")
         try:
             blob = _get_gcs_blob(shard_path)
             blob.upload_from_string(json.dumps(shard_data, indent=4), content_type='application/json')
-            print(f"[DEDUP] Wrote {kept} deduped findings to shard: {shard_path}", flush=True)
+            print(f"[DEDUP] Wrote {len(kept)} deduped findings to shard: {shard_path}", flush=True)
         except Exception as e:
             print(f"[DEDUP] WARNING: Failed to write shard manifest: {e}", flush=True)
     else:
         shard_path = LOCAL_PATH.replace(".json", f"_{category}.json")
         with open(shard_path, "w") as f:
             json.dump(shard_data, f, indent=4)
-        print(f"[DEDUP] Wrote {kept} deduped findings to shard: {shard_path}", flush=True)
+        print(f"[DEDUP] Wrote {len(kept)} deduped findings to shard: {shard_path}", flush=True)
 
-    return json.dumps(unique_findings, indent=2)
+    return json.dumps({"kept": kept, "dropped": dropped}, indent=2)
 
 # Global accumulation for local execution
 TOKEN_METRICS = {"input": 0, "output": 0, "total": 0}

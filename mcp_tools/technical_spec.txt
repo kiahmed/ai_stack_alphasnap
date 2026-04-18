@@ -1,0 +1,26 @@
+Based on your requirement for options Greeks and real-time equity data, here are the top recommendations:
+
+MarketXLS MCP (Top Pick for Options): If your workflow touches derivatives, this is currently the premier choice. It provides real-time options data with live Greeks. Specifically, it offers live delta, gamma, theta, vega, and rho calculations right alongside full option chain data.
+
+Massive MCP (Top Pick for Composability): This server recently underwent a major rewrite to cut context overhead and now features 13 built-in financial functions. Crucially for your needs, it includes built-in Black-Scholes functions (bs_price, bs_delta, bs_gamma, bs_theta, bs_vega, bs_rho) that run server-side, allowing your agent to recalculate Greeks under different assumptions without needing to write custom Python logic.
+
+Alpha Vantage MCP (Top Pick for Baseline Equities): If you need rock-solid, real-time, and historical stock market data, their official MCP server is deeply integrated for agentic workflows. While it may lack the deepest options Greek calculations of MarketXLS, it excels at technical indicators and rapid intraday price retrieval.
+
+To build this next-level agent, we want to isolate it from the noise of your massive 24-hour sweep. It should operate as a standalone pipeline that wakes up after your JSON file is finalized.
+
+Step 1: The Ingestion & Filter Node
+Before the LLM even turns on, a standard Python script reads market_findings_log.json. It filters the data strictly for timestamps from the last 24 hours (March 29 and March 30) and isolates only the entries that contain public U.S. tickers.
+
+Step 2: The Market Maker Agent (Data Enrichment)
+This agent is armed strictly with your chosen financial MCP server. It takes the filtered list of tickers from Step 1 and sequentially queries the MCP server to build a quantitative profile for each:
+
+Spot Price & AH High/Low
+
+Volume vs. Average Volume
+
+Options Chain Data (Delta, Gamma positioning, GEX walls)
+
+Step 3: The Execution Quant (Synthesis)
+This is your apex agent. It takes the fundamental catalyst from your original JSON and overlays it onto the quantitative data pulled by the Market Maker. Its system prompt forces it to discard conflicting setups and output exactly one high-conviction trade execution plan per category.
+
+By decoupling the quantitative analysis from the qualitative research, you ensure your execution agent isn't hallucinating technical levels and is making decisions based purely on hard data and verified catalysts.

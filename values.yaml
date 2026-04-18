@@ -78,15 +78,45 @@ prompts:
   data_engineer_instructions: |
     <task_instructions>
     1. **START**: Call `log_progress(message="DE starting {category}")`.
-    2. **EXTRACT FINDINGS**: From the scout data in your context, extract each distinct finding as a separate string.
-    3. **DEDUP**: Call `dedup_findings(scout_findings_json='["finding 1 text", "finding 2 text", ...]', category="{category}")`.
-       - The tool compares each finding against the memory baseline and returns only unique or updated findings as a JSON array.
-       - If the returned array is empty, skip to step 5 — there is nothing new.
-    4. **ANALYZE** the filtered findings only:
-       - **ANALYSIS**: Extract multiple, layered takeaways (Direct, Indirect, Market Dynamics) and assign a sentiment (Very Bullish/Bullish/Neutral/Bearish/Very Bearish). Keep it extremely concise.
+    2. **EXTRACT FINDINGS**: From the scout data in your context, extract each distinct finding as a structured object preserving the source URL the scout provided.
+    3. **DEDUP**: Call `dedup_findings(scout_findings_json='[{"finding": "finding 1 text", "source_url": "https://..."}, {"finding": "finding 2 text", "source_url": "https://..."}]', category="{category}")`.
+       - Always pass an array of objects, each with keys `finding` and `source_url`. If the scout did not provide a URL for a specific finding, pass `"source_url": null` — do not omit the key.
+       - The tool returns `{"kept": [...], "dropped": [...]}`. The `kept` array is an array of `{finding, source_url}` objects that passed dedup — URLs are preserved verbatim. The `dropped` array is informational (shows what matched and why).
+       - If `kept` is empty, skip to step 5 — there is nothing new.
+    4. **ANALYZE** the `kept` findings only:
+       - **ANALYSIS**: Extract multiple, layered takeaways (Direct, Indirect, Market Dynamics) and assign a sentiment. Keep it extremely concise.
        - **TICKER DATA**: If findings include public tickers, use `safe_google_search` to find today's technicals.
+       - **PRESERVE URL**: Keep each finding's `source_url` attached to its analysis so the Strategist can pass it to `append_to_memory_log` later.
     5. **PROGRESS REPORT**: Call `log_progress(message="DE {category} complete", searches=[Number of tickers researched], topics=[Number of unique topics after dedup])`.
     </task_instructions>
+    <output_constraints>
+    - **SENTIMENT**: Assign EXACTLY ONE of these 5 values, verbatim, case-sensitive:
+      - `Very Bullish`
+      - `Bullish`
+      - `Neutral`
+      - `Bearish`
+      - `Very Bearish`
+      Do NOT invent synonyms (no "Highly Bullish", "Extremely Bullish", "Strongly Bullish",
+      "Heavily Bullish", "Drastically Bearish", "Moderately Bearish", etc.). Strength
+      intensifiers collapse to `Very Bullish` / `Very Bearish`. Mixed-signal sentiment
+      (e.g., "short-term bearish, long-term bullish") must be resolved to a single label
+      reflecting the dominant near-term read.
+    - **TAKEAWAY STRUCTURE**: Exactly 3 layered takeaways, each prefixed with its layer label:
+      - `Direct:` — the first-order implication for named entities
+      - `Indirect:` — second-order effects on related entities or sub-sectors
+      - `Market Dynamics:` — structural/flow/positioning impact
+    - **FORMAT**: Emit the sentiment label on its own line at the end, after the 3 takeaways.
+      Example:
+      ```
+      Direct: [one sentence]
+      Indirect: [one sentence]
+      Market Dynamics: [one sentence]
+      Sentiment: Very Bullish
+      ```
+    - **TICKERS**: Use official exchange tickers in uppercase (e.g., `NVDA`, `AMZN`). For
+      private companies, name the entity without a ticker placeholder.
+    - **CONCISENESS**: Each takeaway ≤ 25 words. No hedging ("may", "could potentially").
+    </output_constraints>
 
   # ── STRATEGIST: Guidance + persistence + sector report ──
   strategist_instructions: |
@@ -97,12 +127,13 @@ prompts:
        - **Private Companies**: Estimate future valuations or acquisition potential by Big Tech, possible effect on a public company.
     3. **PERSISTENCE**: For every distinct Topic or News Item identified, call `append_to_memory_log` separately.
        - **CRITICAL: ONE LOG PER TOPIC**. DO NOT group multiple unrelated developments (e.g., TSLA news and NVDA news) into a single tool call. This is vital for data granularity.
-       - `findings_date`: Pass the findings date that you received for this particular finding.
        - `category`: "{category}"
        - `finding`: The raw discovery (specific to this single topic).
+       - `timestamp`: The YYYY-MM-DD date for this specific finding (single date only — no ranges like "March 21-22", no time component).
        - `insights_sentiment`: The layered takeaways and sentiment for this topic.
        - `guidance_play`: Send Call to action and the near-term trade idea for this topic.
        - `price_levels`: Ticker Data from the analysis step.
+       - `source_url`: The primary source URL the scout surfaced for this specific topic. Pass `None` if the scout did not provide one — do NOT block logging over a missing URL.
     4. **PROGRESS REPORT**: Call `log_progress(message="Strategist {category} complete", topics=[Number of topics logged])`.
     </task_instructions>
     <output_constraints>
