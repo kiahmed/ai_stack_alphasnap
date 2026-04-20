@@ -50,7 +50,7 @@ _BASELINE_ENTRY = {
     "finding": "Accenture Ventures announced a strategic investment in General Robotics to accelerate "
                "AI-powered robotic automation in manufacturing and logistics, integrating with NVIDIA "
                "Isaac Sim and Omniverse.",
-    "insights_sentiment": "Very Bullish.",
+    "sentiment_takeaways": "Very Bullish.",
     "guidance_play": "Accumulate ACN",
     "price_levels": "NVDA",
     "source_url": "https://newsroom.accenture.com/news/2026/accenture-invests-in-general-robotics",

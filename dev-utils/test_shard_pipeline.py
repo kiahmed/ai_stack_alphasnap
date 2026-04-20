@@ -91,7 +91,7 @@ def test_strategist_enriches(unique_findings):
             findings_date="2026-03-31",
             category=TEST_CATEGORY,
             finding=finding,
-            insights_sentiment=f"Bullish. Test insight #{i+1}.",
+            sentiment_takeaways=f"Bullish. Test insight #{i+1}.",
             guidance_play=f"Test guidance #{i+1}.",
             price_levels=f"Test levels #{i+1}."
         )
@@ -104,7 +104,7 @@ def test_strategist_enriches(unique_findings):
     assert enriched_n == deduped_n, f"FAIL: enriched ({enriched_n}) != deduped ({deduped_n})"
 
     for entry in shard["enriched"]:
-        for key in ["timestamp", "category", "finding", "insights_sentiment", "guidance_play", "price_levels"]:
+        for key in ["timestamp", "category", "finding", "sentiment_takeaways", "guidance_play", "price_levels"]:
             assert key in entry, f"FAIL: enriched entry missing '{key}'"
 
     print(f"\n  PASS: {enriched_n}/{deduped_n} enriched — complete shard")
@@ -131,7 +131,7 @@ def test_shard_valid_partial():
         "deduped": ["finding A", "finding B", "finding C"],
         "enriched": [
             {"timestamp": "2026-03-31", "category": TEST_CATEGORY, "finding": "finding A",
-             "insights_sentiment": "Bullish", "guidance_play": "test", "price_levels": "test"}
+             "sentiment_takeaways": "Bullish", "guidance_play": "test", "price_levels": "test"}
         ]
     }
     with open(SHARD_PATH, "w") as f:
@@ -163,7 +163,7 @@ def test_unenriched_findings():
             findings_date="2026-03-31",
             category=TEST_CATEGORY,
             finding=finding,
-            insights_sentiment="Bullish retry",
+            sentiment_takeaways="Bullish retry",
             guidance_play="retry guidance",
             price_levels="retry levels"
         )
@@ -204,9 +204,9 @@ def test_merge_complete_with_stats():
         "deduped": ["Finding Alpha", "Finding Beta"],
         "enriched": [
             {"timestamp": "2026-03-31", "category": "Robotics", "finding": "Finding Alpha",
-             "insights_sentiment": "Bullish", "guidance_play": "Buy AMZN", "price_levels": "$210"},
+             "sentiment_takeaways": "Bullish", "guidance_play": "Buy AMZN", "price_levels": "$210"},
             {"timestamp": "2026-03-31", "category": "Robotics", "finding": "Finding Beta",
-             "insights_sentiment": "Very Bullish", "guidance_play": "Buy NVDA", "price_levels": "$165"},
+             "sentiment_takeaways": "Very Bullish", "guidance_play": "Buy NVDA", "price_levels": "$165"},
         ]
     }
     with open(SHARD_PATH, "w") as f:
@@ -232,7 +232,7 @@ def test_merge_partial_no_salvage():
         "deduped": ["Finding X", "Finding Y", "Finding Z"],
         "enriched": [
             {"timestamp": "2026-03-31", "category": "Robotics", "finding": "Finding X",
-             "insights_sentiment": "Bullish", "guidance_play": "test", "price_levels": "test"}
+             "sentiment_takeaways": "Bullish", "guidance_play": "test", "price_levels": "test"}
         ]
     }
     with open(SHARD_PATH, "w") as f:
@@ -247,7 +247,7 @@ def test_merge_partial_no_salvage():
     if os.path.exists(LOCAL_PATH):
         with open(LOCAL_PATH, "r") as f:
             master = json.load(f)
-        salvaged = [e for e in master if "Pending analysis" in e.get("insights_sentiment", "")]
+        salvaged = [e for e in master if "Pending analysis" in e.get("sentiment_takeaways", "")]
         assert len(salvaged) == 0, f"FAIL: Should NOT salvage raw deduped, found {len(salvaged)}"
     print(f"  PASS: Only 1 enriched entry merged, 2 raw deduped correctly skipped")
 

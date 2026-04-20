@@ -1,7 +1,9 @@
+import argparse
 import json
 import os
 import re
 import math
+import sys
 import yaml
 from collections import Counter
 
@@ -9,8 +11,8 @@ from collections import Counter
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 PROJECT_ROOT = os.path.join(SCRIPT_DIR, "..")
 
-INPUT_FILE = os.path.join(PROJECT_ROOT, "market_findings_log.json")
-OUTPUT_FILE = os.path.join(PROJECT_ROOT, "market_findings_log_deduped.json")
+DEFAULT_INPUT_FILE = os.path.join(PROJECT_ROOT, "market_findings_log.json")
+DEFAULT_OUTPUT_FILE = os.path.join(PROJECT_ROOT, "market_findings_log_deduped.json")
 
 # Load thresholds from values.yaml if available, else use defaults
 try:
@@ -101,6 +103,10 @@ def _extract_entities(text):
             tickers.add(t)
     # Multi-word capitalized names (company/product names)
     entities.update(re.findall(r'[A-Z][a-z]+(?:\s+[A-Z][a-z]+)+', text))
+    # Intra-word camelCase / PascalCase (OpenAI, DeepMind, LinkedIn, McDonald)
+    entities.update(re.findall(r'\b[A-Z][a-z]+(?:[A-Z][a-z]*)+\b', text))
+    # Acronym-prefix names (UBTech, NASAStudy) — 2+ uppercase run then lowercase tail
+    entities.update(re.findall(r'\b[A-Z]{2,}[a-z][A-Za-z]*\b', text))
     # All entities includes tickers (for overlap scoring), but tickers tracked separately for novelty
     all_entities = entities | tickers
     return all_entities, tickers
@@ -131,31 +137,43 @@ def _entity_overlap(entities_a, entities_b):
     smaller = min(len(merged_a), len(merged_b))
     return len(intersection) / smaller if smaller > 0 else 0.0
 
+# ── File loader (handles master-log list OR shard dict) ────────
+def _load_entries(path):
+    """Load a findings file. Accepts two shapes:
+      1. Master log: a list of full entry dicts (`entry_id`, `category`, ...).
+      2. Shard file: `{"deduped": [...], "enriched": [...]}` — returns `enriched`
+         which has master-log-shaped entries; `deduped` has stubs only.
+    Returns (entries_list, err_message). entries_list is None on error."""
+    if not os.path.exists(path):
+        return None, f"{path} not found."
+    try:
+        with open(path, 'r') as f:
+            data = json.load(f)
+    except Exception as e:
+        return None, f"Error reading {path}: {e}"
+    if isinstance(data, list):
+        return data, None
+    if isinstance(data, dict) and isinstance(data.get("enriched"), list):
+        print(f"{YELLOW}  {path}: shard format detected — using `enriched` ({len(data['enriched'])} entries).{RESET}")
+        return data["enriched"], None
+    return None, f"{path} has unrecognized shape (expected list or {{deduped, enriched}} dict)."
+
+
 # ── Main dedup logic ───────────────────────────────────────────
-def deduplicate():
-    print(f"{CYAN}--- Dedup: comparing {OUTPUT_FILE} against {INPUT_FILE} ---")
+def deduplicate(input_file=DEFAULT_INPUT_FILE, output_file=DEFAULT_OUTPUT_FILE, filter_only=False):
+    mode = "FILTER-ONLY (output = unique OUTPUT entries only)" if filter_only else "MERGE (output = INPUT + unique OUTPUT entries)"
+    print(f"{CYAN}--- Dedup: comparing {output_file} against {input_file} ---")
+    print(f"    Mode: {mode}")
     print(f"    Thresholds: TF-IDF={TFIDF_THRESHOLD}, Entity={ENTITY_THRESHOLD}, Novelty≥{NOVELTY_MIN}{RESET}\n")
 
-    # Load INPUT_FILE (the baseline to compare against)
-    if not os.path.exists(INPUT_FILE):
-        print(f"{RED}Error: {INPUT_FILE} not found.{RESET}")
-        return
-    try:
-        with open(INPUT_FILE, 'r') as f:
-            input_data = json.load(f)
-    except Exception as e:
-        print(f"{RED}Error reading {INPUT_FILE}: {e}{RESET}")
+    input_data, err = _load_entries(input_file)
+    if err:
+        print(f"{RED}Error: {err}{RESET}")
         return
 
-    # Load OUTPUT_FILE (the new entries to check)
-    if not os.path.exists(OUTPUT_FILE):
-        print(f"{RED}Error: {OUTPUT_FILE} not found.{RESET}")
-        return
-    try:
-        with open(OUTPUT_FILE, 'r') as f:
-            output_data = json.load(f)
-    except Exception as e:
-        print(f"{RED}Error reading {OUTPUT_FILE}: {e}{RESET}")
+    output_data, err = _load_entries(output_file)
+    if err:
+        print(f"{RED}Error: {err}{RESET}")
         return
 
     # Group entries by category
@@ -269,8 +287,11 @@ def deduplicate():
             if not is_duplicate:
                 unique_entries.append(entry)
 
-        # Merge: deduped input entries + unique output entries, sorted by timestamp
-        combined = input_entries + unique_entries
+        # Filter-only: write only OUTPUT's unique entries. Merge: INPUT + uniques.
+        if filter_only:
+            combined = list(unique_entries)
+        else:
+            combined = input_entries + unique_entries
         combined.sort(key=lambda x: x.get("timestamp", ""), reverse=True)
         merged_list.extend(combined)
 
@@ -278,12 +299,12 @@ def deduplicate():
         print(f"{GREEN}  Finished {cat}: {input_self_dups} input self-dups, {dup_count} cross-dups removed, kept {len(unique_entries)} new entries. Final: {len(combined)}{RESET}\n")
 
 
-    # Save merged result back to OUTPUT_FILE
+    # Save merged result back to output_file
     try:
-        with open(OUTPUT_FILE, 'w') as f:
+        with open(output_file, 'w') as f:
             json.dump(merged_list, f, indent=4)
         print(f"{GREEN}--------------------------------------------------------")
-        print(f"✅ Deduplication complete. Saved to {OUTPUT_FILE}")
+        print(f"✅ Deduplication complete. Saved to {output_file}")
         print(f"--------------------------------------------------------{RESET}")
     except Exception as e:
         print(f"{RED}Error saving file: {e}{RESET}")
@@ -311,4 +332,23 @@ def deduplicate():
 
 
 if __name__ == "__main__":
-    deduplicate()
+    parser = argparse.ArgumentParser(
+        description="Deduplicate market_findings_log.json entries. "
+                    "Runs Phase 0 self-dedup on INPUT, cross-dedup on OUTPUT against INPUT, "
+                    "intra-batch dedup within OUTPUT, then merges + writes to OUTPUT.",
+    )
+    parser.add_argument(
+        "input_file", nargs="?", default=DEFAULT_INPUT_FILE,
+        help=f"Baseline log (default: {DEFAULT_INPUT_FILE})",
+    )
+    parser.add_argument(
+        "output_file", nargs="?", default=DEFAULT_OUTPUT_FILE,
+        help=f"New-entries log, also the write target (default: {DEFAULT_OUTPUT_FILE})",
+    )
+    parser.add_argument(
+        "--filter-only", action="store_true",
+        help="Write ONLY OUTPUT's non-dup entries back to OUTPUT (skip merging baseline). "
+             "Use this when you want to filter one file against another instead of merging them.",
+    )
+    args = parser.parse_args()
+    deduplicate(input_file=args.input_file, output_file=args.output_file, filter_only=args.filter_only)

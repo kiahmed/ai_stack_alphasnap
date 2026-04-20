@@ -222,3 +222,171 @@ Run: `python3 dev-utils/test_append_race.py`
   - All 5 entries present in shard with sequential IDs `ROB-041726-001`..`005`
   - Zero data loss, zero duplicate IDs
 - Proves both (a) the retry path is actually exercised, and (b) it correctly recomputes counters to produce a contiguous ID sequence under real race conditions.
+
+---
+
+## 2026-04-19 — Prompt hygiene + per-agent debug dump
+
+### Field rename
+`insights_sentiment` → `sentiment_takeaways` across `market_team.py`, `values.yaml`, `CLAUDE.md`, and all `dev-utils/test_*.py`. All 9/9 + 2/2 + 9/9 tests pass. Historical `output.log` and `workbench.md` entries left untouched.
+
+### Debug dump on every state-writing agent
+New `_dump_agent_output` after_agent_callback in `market_team.py`. Prints `[AGENT_RAW_BEGIN|END]` framed blocks carrying `session.state[output_key]` to stdout (→ Cloud Logging). Wired on Scout/DE/Strategist in both main-build and rebuild paths. Skipped on `Strategist_Retry` and `Shard_Merger` (no `output_key`).
+
+### Prompt tightening — cross-agent name leakage
+LLMs see only their own instruction string; references to "the DE" / "the scout" mean nothing to them. Re-anchored every cross-agent reference on the `REQUIRED DATA:` token that literally appears in the prompt, and on step numbers for self-references. Changes:
+- `values.yaml:81` — "scout's numbered list" → "`REQUIRED DATA:` block contains a numbered list"
+- `values.yaml:84,86` — "scout did not provide" → "no URL present in that item" / "no URL was found in `REQUIRED DATA:`"
+- `values.yaml:92` — removed downstream-leaking "so the Strategist can pass it later"
+- `values.yaml:128` — `guidance_play` now labeled as `guidance_play[<topic>]` in step 2 for later pass-through
+- `values.yaml:137` — "Send Call to action" → "Pass the exact `guidance_play[<topic>]` string from step 2 — verbatim"
+- `values.yaml:139` — `source_url` reference switched from "DE's analyzed output" to "in `REQUIRED DATA:`"
+
+### Remaining known leak (not touched; scope was DE + Strategist only)
+- Scout prompt line 74: "Pass findings to next agent." — scout has no concept of "next agent"; phrasing risks it emitting conversational framing into its state blob.
+
+---
+
+## 2026-04-19 — Live test of debug-dump pipeline + architectural finding
+
+### Run
+`GOOGLE_APPLICATION_CREDENTIALS=dev-utils/service_account.json PYTHONPATH=. python3 dev-utils/test_single_scout.py` (Robotics only). Exit 0, 1m40s, 141 lines in `/tmp/single_scout_run.log`. Three findings persisted: ROB-041926-001, ROB-041926-002, ROB-041826-001 — all with correct non-null source_urls.
+
+### What the dump revealed
+- **Scout output**: markdown-numbered list with backticked URLs (`Source: \`https://...\``). URLs survived into DE call because the prompt now tells DE to look inside each numbered item.
+- **DE output**: single 839-char blob. Sentiment label on first line, **one** Direct/Indirect/Market Dynamics triplet, then a trailing "Sources:" list. `Direct:` actually mixed findings #1 (Honor) + #3 (Zebra); `Indirect:` covered only #2 (funding round); `Market Dynamics:` was a macro paragraph touching all three. Collapsed cross-topic analysis, not per-topic.
+- **Strategist output**: a single markdown table where each row has a per-topic sentiment + per-topic takeaways. The Strategist quietly re-did DE's analysis per-topic — URL-to-topic mapping only worked because URL slugs contained topic keywords.
+
+### Root cause
+Each hop does LLM-prose↔structure conversion. DE has freedom to collapse three inputs into one analysis; Strategist has freedom to re-synthesize. Fragility compounds at every hop.
+
+### Fix direction (agreed): JSON-schema contract per hop, bottom-up
+Implement between DE → Strategist first (worst offender), then Scout → DE. DE emits a strict JSON array `[{finding, source_url, sentiment, direct, indirect, market_dynamics, price_levels}]`. A validation callback re-renders as canonical `=== TOPIC N ===` blocks into session state. Strategist iterates per-block and passes fields verbatim to `append_to_memory_log`. No LLM freedom to collapse, no URL-to-topic mapping guesswork.
+
+---
+
+## 2026-04-19 — Phase 4 (DE→Strategist JSON contract): IMPLEMENTED + live-validated
+
+### Changes shipped
+- **`values.yaml` DE `<output_constraints>`**: fully rewritten. DE's entire response must be a JSON array `[{finding, date, source_url, sentiment, direct, indirect, market_dynamics, price_levels}]`, one object per kept finding. Added explicit "ONE OBJECT PER TOPIC — do NOT collapse" rule and a two-topic worked example.
+- **`values.yaml` DE step 4**: "one analysis PER FINDING, never merged" language. Ticker research and URL preservation scoped to per-finding.
+- **`values.yaml` Strategist instructions**: rewritten. Opens by documenting the `=== TOPIC N ===` block schema as REQUIRED DATA. Step 2 iterates per block to author `guidance_play[<N>]`. Step 3 copies every field (`finding`, `timestamp`, `sentiment_takeaways`, `price_levels`, `source_url`) verbatim from the block — no regeneration.
+- **`market_team.py`**: new helpers `_parse_de_json`, `_fmt_field`, `_render_de_canonical`, `_resolve_output_key`, `_write_state`, and callback `_validate_and_render_de_output`. Tolerant of ```json fences. Validates per-topic schema, drops unusable topics (missing `finding`), warns on missing keys, re-renders survivors as labelled blocks, writes back to `session.state[output_key]`, then delegates to `_dump_agent_output`.
+- **DE wiring**: `after_agent_callback=_validate_and_render_de_output` on DE in both `build_sector_pipelines` (market_team.py:925) and `_rebuild_pipeline` (market_team.py:1034). Scout/Strategist still use `_dump_agent_output`.
+
+### Live test — `python3 dev-utils/test_single_scout.py` (Robotics)
+- Scout: 2 searches → 3 topics (1845-char output, today's scout emitted NO source URLs — test ran with null URLs).
+- DE: emitted valid JSON array, 3 per-topic objects. `[DE_VALIDATE]` confirmed `parsed 3 topics → rendered 3 canonical blocks to state[Robotics_Scout_analyzed]`. Rendered blob 3210 chars (vs last run's 839 chars that collapsed all topics).
+- Strategist: read canonical blocks, called `append_to_memory_log` exactly 3 times (one per block). Each call's `sentiment_takeaways` was pre-composed by the callback in `Sentiment: X | Direct: ... | Indirect: ... | Market Dynamics: ...` form, copied verbatim. Per-topic `price_levels`: Honor = None, Alibaba = BABA $142/$189, UBTech = 113.90/156.39 HKD — matches each topic's actual relevance.
+- Persisted `gs://marketresearch-agents/market_findings_log_Robotics.json`: 3 entries (ROB-041826-001, ROB-041926-001, ROB-041926-002) with correct per-topic fields. Total run 1m45s.
+
+### Residual issues (not blockers, noted for later)
+- `source_url` comes through as the Python string `"None"` rather than JSON `null` when DE passes nothing. Not a dedup correctness issue (URL fast-path skips null/"None" equivalently), but the persisted JSON is slightly off-spec.
+- DE copies `finding` text verbatim from the scout — the stored `finding` still includes the scout's markdown framing ("Signal: ... Details: ..."). Works, but extracting just the narrative would cleaner. Separate improvement — probably moves into Scout→DE hop when we tighten that contract next.
+- Scout doesn't reliably emit URLs (today's run: zero URLs even though prompt asks). Root cause for the next phase (Scout→DE JSON contract).
+
+### Next up
+Apply the same pattern to Scout → DE. Scout emits strict JSON `[{finding, date, source_url}]` with a post-scout validation/render callback. DE prompt simplifies since URL-extraction instructions go away. Should also bring URL emission reliability up since "Source:" becomes a required JSON key, not a markdown convention.
+
+---
+
+## 2026-04-19 — Phase 5 (Scout→DE JSON contract): IMPLEMENTED, pending live test
+
+### Changes shipped
+- **`values.yaml` Scout prompt**: step 4 **RUTHLESS OUTPUT** rewritten to require per-development capture of `finding` / `date` / `source_url`. Added `<output_constraints>` demanding a single JSON array `[{finding, date, source_url}]`, with per-key descriptions referencing the step 4 label and a two-entry worked example. No null-value instructions (Python handles absence).
+- **`values.yaml` DE step 2/3**: simplified. Step 2 now just says "REQUIRED DATA is a sequence of `=== FINDING N ===` labelled blocks with `finding`, `date`, `source_url` keys — treat each block as one input item". No more URL-hunting in prose, no "Source:" / parentheses / bare-URL heuristics. Step 3's dedup call instructs to copy block fields verbatim. DE `date` output constraint now points at the block's `date` field.
+- **`market_team.py`**: renamed `_parse_de_json` → `_parse_json_array` (generic, reused by both validators). Added `_SCOUT_REQUIRED_KEYS`, `_render_scout_canonical` (emits `=== FINDING N ===` blocks), `_validate_and_render_scout_output` (mirrors DE validator: parse → validate → re-render → write-back → delegate to _dump_agent_output).
+- **Scout wiring**: `after_agent_callback=_validate_and_render_scout_output` on Scout in both `build_sector_pipelines` and `_rebuild_pipeline`.
+
+### Offline verification
+- `python3 -c "import ast; ast.parse(open('market_team.py').read())"` → OK.
+- `python3 -c "yaml.safe_load(open('values.yaml'))"` → parses cleanly (scout_base 2238 chars, DE 4354 chars).
+- `python3 dev-utils/test_dedup_url.py` → 9/9 PASS. The parse-function rename didn't regress dedup behaviour.
+
+### Pending
+- Live `test_single_scout.py` Robotics end-to-end. Want to see: `[SCOUT_VALIDATE] Robotics_Scout: parsed N findings → rendered N canonical blocks`, followed by `[DE_VALIDATE] Robotics_Scout_DE: parsed N topics → rendered N canonical blocks`. Both must fire for the contract to hold across both hops. Scout URL emission should now be reliable since `source_url` is a required JSON key, not a markdown convention.
+
+---
+
+## 2026-04-19 — Phase 5 follow-up: URL resolution + null-URL fallback via grounding
+
+### Problem found in first live run (`/tmp/scout_live_test.log`)
+Both SCOUT_VALIDATE and DE_VALIDATE fired cleanly, 3 findings propagated. But all three `source_url` values were `vertexaisearch.cloud.google.com/grounding-api-redirect/...` proxy wrappers — unpublishable, decay in days. DE passed them through byte-for-byte (verified: Scout FINDING 1/2/3 URLs identical to DE TOPIC 1/2/3 URLs, same suffix). So DE is not at fault — the proxy came out of the LLM itself.
+
+### Google doesn't expose the real URL
+Wrote `dev-utils/test_grounding_fields.py`: direct `google.genai.Client(vertexai=True)` probe bypassing ADK. Dumped `grounding_metadata.model_dump()` and reverse-scanned the full response object for the real URL substring. Result: `grounding_chunks[*].web.uri` is always the proxy, `web.domain` is a bare hostname, and nowhere in the response is the original URL exposed. Only recovery path is HEAD + follow-redirects on the proxy.
+
+### Fix shipped (Scout side only — DE has no URL logic)
+- **`_resolve_grounding_url(url)`**: HEAD + `allow_redirects=True`, 4s timeout. Returns real URL on success; returns original (proxy) on any failure or if the redirect chain somehow still terminates at another grounding-redirect.
+- **`_resolve_scout_urls(items)`**: walks items in-place; skips non-proxy URLs, HEAD-resolves proxy URLs, mutates in place.
+- **`_capture_grounding` (after_model_callback)**: piggybacks on `_log_token_usage`. Stashes `grounding_chunks[*].{uri,domain,title}` + `grounding_supports[*].{segment.start,end, chunk_indices}` into `state[_scout_grounding]`. Overwrites only when the incoming turn has non-empty chunks — search-bearing turn wins over the final text-generation turn.
+- **`_fill_null_urls_from_grounding(items, blob, grounding)`**: for items whose LLM-emitted `source_url` is null/empty, uses regex-located `"finding"` key offsets in the raw JSON blob as finding spans, finds a grounding_support whose segment.start lies within the span, picks the first cited chunk, HEAD-resolves its proxy. **Only substitutes on verified success** — failed resolution leaves the null (we do NOT inject bare proxies via this path).
+- **Ordering inside `_validate_and_render_scout_output`**: parse JSON → validate → fill nulls from grounding → resolve emitted proxies → canonical render → `_write_state`. Mutations happen on the `validated` list, so the `=== FINDING N ===` blocks DE reads contain post-resolution URLs.
+
+### Prompt softening (user pushback: prior wording was overkill)
+`values.yaml` Scout step 4 final: `"the source URL for the finding from the search. Preferably a full URL."` Removed the earlier "copied verbatim, no reformatting, no reference numbers" clause — too aggressive, was causing the LLM to default to the proxy URL in grounding_chunks rather than extracting the real URL it saw in the article body.
+
+### Net behaviour DE sees
+- LLM emitted real URL → passes through untouched (non-proxy skip path).
+- LLM emitted proxy URL → HEAD-resolved to real URL; falls back to proxy only if HEAD fails.
+- LLM emitted null → grounding-map + HEAD; falls back to null if either step fails. No bare proxies.
+
+### Next live test expectations
+`[SCOUT_URL_RESOLVE]` when proxies are unwrapped. `[SCOUT_URL_FILL]` only when nulls exist AND grounding yields a citing chunk AND HEAD resolves. Neither marker is required to fire — zero emitted proxies / zero nulls is also a valid outcome. The fail state is any `vertexaisearch.cloud.google.com/grounding-api-redirect/` URL surviving into the rendered DE block.
+
+### Live test — `dev-utils/run-logs/live_phase5_verify_20260419_143235.log`
+Clean pass. Robotics scout, 121 lines, exit 0.
+- **Scout**: 2 findings. Both emitted with real canonical article URLs directly — `kiripost.com/news/humanoid-robots-take-over-beijing-half-marathon` and `malaymail.com/news/tech-gadgets/2026/04/18/embodied-ai-robotics-market-update`. Zero proxies.
+- **`[SCOUT_VALIDATE]`** fired: `parsed 2 findings → rendered 2 canonical blocks`.
+- **`[SCOUT_URL_RESOLVE]` / `[SCOUT_URL_FILL]`** did NOT fire — correct outcome: no proxies to unwrap, no nulls to fill. Safety-net layer stayed dormant as designed.
+- **DE**: passed URLs through byte-for-byte (scout canonical FINDING 1/2 URLs identical to DE TOPIC 1/2 URLs).
+- **`[DE_VALIDATE]`** fired: `parsed 2 topics → rendered 2 canonical blocks`.
+- **Strategist**: 2 `append_to_memory_log` calls, both returned entry IDs (ROB-041926-001, ROB-041826-001). Per-topic price_levels well-targeted: Honor (private) → `N/A (Private)`, UBTech → `9880.HK Pivot: $115, Call Wall: $130, Analyst PT: $140`.
+
+### Takeaway
+Softened prompt ("Preferably a full URL") + strict JSON key requirement is enough to get real URLs out of the LLM in the common case. The grounding-fallback layer is a safety net for the rare run where the LLM defaults to proxies or emits nulls — worth keeping, but not load-bearing when the prompt works.
+
+---
+
+## 2026-04-19 — Local dedup tooling: `dedup_single_or_double_file.py` (renamed from `dedupe_lts.py`)
+
+### Changes
+- CLI args: `dedup_single_or_double_file.py [INPUT] [OUTPUT] [--filter-only]`. Positional args with hardcoded defaults.
+- Added `_load_entries(path)` normalizer — handles master-log list format AND shard dict `{"deduped":..., "enriched":[...]}`. Shard path returns `data["enriched"]` (master-log-shaped entries); list path returns as-is. Error on unrecognized shape.
+- Added `--filter-only` flag. Default MERGE: output = `input_entries + unique_output_entries`. Filter-only: output = `unique_output_entries` alone (drops INPUT entries from output file entirely).
+- Semantics clarified in banner: INPUT = baseline (read-only), OUTPUT = file being filtered. An entry from OUTPUT is dropped if it collides with any entry from INPUT OR any earlier entry in OUTPUT.
+
+### Entity extractor fix (option 1)
+Original regexes missed camelCase company names. Root cause: `UBTech` failed both `\b[A-Z]{2,5}\b` (word boundary broken by adjacent `T`) and `[A-Z][a-z]+(?:\s+[A-Z][a-z]+)+` (no space). Two duplicate UBTech entries slipped through at tfidf=0.270 / entity_score=0.000.
+
+Added to `_extract_entities()`:
+```python
+# Intra-word camelCase / PascalCase (OpenAI, DeepMind, LinkedIn, McDonald)
+entities.update(re.findall(r'\b[A-Z][a-z]+(?:[A-Z][a-z]*)+\b', text))
+# Acronym-prefix names (UBTech, NASAStudy) — 2+ uppercase run then lowercase tail
+entities.update(re.findall(r'\b[A-Z]{2,}[a-z][A-Za-z]*\b', text))
+```
+Doesn't capture pure acronyms (USA/NASA/HTML) nor single-capitalized words (Lightning/Beijing). Verified: UBTech pair now caught at entity=1.00, Honor pair caught at tfidf=0.46. 8→6 entries on `backups_market_findings_log_Robotics_back2.json`.
+
+---
+
+## 2026-04-19 — Full-sector e2e test
+
+### Harness
+`dev-utils/run_local_test.sh`. Runs `market_team.py` (MarketSweepApp orchestrator — sidesteps the ParallelMarketSweep Pydantic issue by using per-sector AdkApp instances). Logs to `dev-utils/run-logs/live_full_sweep_<timestamp>.log`.
+
+### Scope
+All 6 scouts enabled in `values.yaml`: Robotics, Crypto, AI_Stack, Space_Defense, Power_Energy, Strategic_Minerals. `storage.use_gcs: true`, `memory_limit: 10`.
+
+### Markers to watch per sector
+- `[SCOUT_VALIDATE] parsed N findings → rendered N canonical blocks`
+- `[SCOUT_URL_RESOLVE]` — fires only if LLM emitted proxy URLs.
+- `[SCOUT_URL_FILL]` — fires only if LLM emitted nulls AND grounding resolved them.
+- `[DE_VALIDATE] parsed N topics → rendered N canonical blocks`
+- `[APPEND_MEMORY] entry_id=<CAT>-MMDDYY-NNN` × N per sector
+
+### Fail states
+- Any `vertexaisearch.cloud.google.com/grounding-api-redirect/` URL surviving into DE's TOPIC blocks.
+- Scout/DE validate failures → canonical block render skipped.
+- ParallelMarketSweep Pydantic crash (known; we're not invoking it).
+

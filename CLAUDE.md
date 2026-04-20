@@ -77,7 +77,7 @@ Both modes use the same `read_memory_log` / `append_to_memory_log` tool interfac
   "timestamp": "ISO-8601",
   "category": "Robotics",
   "finding": "...",
-  "insights_sentiment": "Direct: ... | Indirect: ... | Sentiment: Bullish",
+  "sentiment_takeaways": "Sentiment: Bullish | Direct: ... | Indirect: ... | Market Dynamics: ...",
   "guidance_play": "...",
   "price_levels": "..."
 }

@@ -252,7 +252,7 @@ def read_memory_log(category: str = "all", memory_limit: int = 10) -> str:
         return json.dumps(baseline, indent=2)
 
 def append_to_memory_log(category: str, finding: str, timestamp: str,
-                         insights_sentiment: str, guidance_play: str,
+                         sentiment_takeaways: str, guidance_play: str,
                          price_levels: str, source_url: str = None) -> str:
     """Appends a single finding to the per-sector shard with a unique entry_id.
 
@@ -262,7 +262,7 @@ def append_to_memory_log(category: str, finding: str, timestamp: str,
         timestamp: Finding date. Accepts YYYY-MM-DD, ISO with time, or human-readable
                    (e.g., 'March 24, 2026'). Range-shaped values (e.g., 'March 21-22, 2026')
                    are rejected — pass a single date only.
-        insights_sentiment: Layered takeaways + sentiment (Very Bullish/Bullish/Neutral/Bearish/Very Bearish).
+        sentiment_takeaways: Sentiment label (Very Bullish/Bullish/Neutral/Bearish/Very Bearish) + layered takeaways.
         guidance_play: Near-term trade idea.
         price_levels: Tickers, PTs, institutional levels.
         source_url: Primary source URL for this finding. Pass None if unavailable.
@@ -277,7 +277,7 @@ def append_to_memory_log(category: str, finding: str, timestamp: str,
         "timestamp": date_iso,
         "category": category,
         "finding": finding,
-        "insights_sentiment": insights_sentiment,
+        "sentiment_takeaways": sentiment_takeaways,
         "guidance_play": guidance_play,
         "price_levels": price_levels,
         "source_url": source_url,
@@ -652,6 +652,454 @@ def dedup_findings(scout_findings_json: str, category: str) -> str:
 # Global accumulation for local execution
 TOKEN_METRICS = {"input": 0, "output": 0, "total": 0}
 
+# Per-topic JSON schema expected from the DE. Callback validates against this —
+# missing keys get WARNed but we still render what we have so a partial blob
+# doesn't kill the pipeline.
+_DE_REQUIRED_KEYS = ("finding", "date", "source_url", "sentiment",
+                     "direct", "indirect", "market_dynamics", "price_levels")
+
+_SCOUT_REQUIRED_KEYS = ("finding", "date", "source_url")
+
+# Gemini's built-in google_search tool exposes only these proxy URLs to the LLM —
+# the real source URL is hidden behind a 302 redirect. The tokens expire after
+# ~a few days (community-reported, not documented), so persisting them makes
+# downstream entries decay. Resolve eagerly before rendering.
+_GROUNDING_REDIRECT_PREFIX = "https://vertexaisearch.cloud.google.com/grounding-api-redirect/"
+
+
+def _resolve_grounding_url(url, timeout=4.0):
+    """Follow a vertexaisearch grounding-api-redirect URL to its real destination.
+    Returns the resolved URL on success, the original on any failure (network,
+    timeout, non-redirect response) so we degrade gracefully."""
+    try:
+        import requests
+        resp = requests.head(url, allow_redirects=True, timeout=timeout)
+        final = resp.url or url
+        if final.startswith(_GROUNDING_REDIRECT_PREFIX):
+            return url
+        return final
+    except Exception as e:
+        print(f"[SCOUT_URL_RESOLVE] HEAD failed for grounding redirect: {type(e).__name__}", flush=True)
+        return url
+
+
+def _resolve_scout_urls(items):
+    """Walk scout findings in-place and resolve any grounding-redirect URLs to
+    their real destinations. Non-proxy URLs and missing URLs are untouched.
+    Returns (resolved_count, skipped_non_proxy, failed_count)."""
+    resolved = failed = skipped = 0
+    for it in items:
+        u = it.get("source_url")
+        if not u or not isinstance(u, str):
+            continue
+        if not u.startswith(_GROUNDING_REDIRECT_PREFIX):
+            skipped += 1
+            continue
+        new_u = _resolve_grounding_url(u)
+        if new_u == u:
+            failed += 1
+        else:
+            it["source_url"] = new_u
+            resolved += 1
+    return resolved, skipped, failed
+
+
+# ── Grounding-chunk capture + null-URL fallback ──
+# When the scout LLM returns source_url: null (or omits it) for a finding, we
+# can still recover a URL via Gemini's grounding metadata: every search turn
+# attaches `grounding_chunks[*].web.uri` (proxy URLs) and `grounding_supports`
+# that map text character ranges to the chunks that support them. By finding
+# which grounding_support ranges overlap each finding's JSON span in the raw
+# model output, we can pick the citing chunk and resolve its proxy.
+
+_SCOUT_GROUNDING_KEY = "_scout_grounding"
+
+
+def _capture_grounding(callback_context, llm_response):
+    """after_model_callback for the scout. Piggybacks on _log_token_usage, then
+    stashes the most recent grounding_metadata (chunks + supports) into session
+    state for _validate_and_render_scout_output to use as a null-URL fallback.
+
+    Gemini's grounding metadata rides on the turn where search happened, which
+    may not be the final text-generation turn — so we overwrite only when the
+    incoming turn has non-empty chunks. Last non-empty wins."""
+    _log_token_usage(callback_context, llm_response)
+
+    try:
+        cands = getattr(llm_response, "candidates", None) or []
+        if not cands:
+            return None
+        gm = getattr(cands[0], "grounding_metadata", None)
+        if gm is None:
+            return None
+        chunks = getattr(gm, "grounding_chunks", None) or []
+        if not chunks:
+            return None
+
+        chunk_dicts = []
+        for c in chunks:
+            web = getattr(c, "web", None)
+            chunk_dicts.append({
+                "uri": getattr(web, "uri", None) if web else None,
+                "domain": getattr(web, "domain", None) if web else None,
+                "title": getattr(web, "title", None) if web else None,
+            })
+
+        support_dicts = []
+        for s in (getattr(gm, "grounding_supports", None) or []):
+            seg = getattr(s, "segment", None)
+            support_dicts.append({
+                "start": getattr(seg, "start_index", None) if seg else None,
+                "end": getattr(seg, "end_index", None) if seg else None,
+                "chunk_indices": list(getattr(s, "grounding_chunk_indices", None) or []),
+            })
+
+        _write_state(callback_context, _SCOUT_GROUNDING_KEY, {
+            "chunks": chunk_dicts,
+            "supports": support_dicts,
+        })
+    except Exception as e:
+        print(f"[SCOUT_GROUNDING] capture failed: {type(e).__name__}: {e}", flush=True)
+    return None
+
+
+def _finding_spans_in_blob(blob):
+    """Return [(start, end), ...] for each `"finding"` key occurrence in the raw
+    JSON blob. Finding N covers chars [spans[N].start, spans[N+1].start), or to
+    end-of-blob for the last one. These offsets align with grounding_supports
+    segment indices because the blob IS the raw model text output."""
+    spans = []
+    for m in re.finditer(r'"finding"\s*:', blob):
+        spans.append(m.start())
+    ranges = []
+    for i, s in enumerate(spans):
+        e = spans[i + 1] if i + 1 < len(spans) else len(blob)
+        ranges.append((s, e))
+    return ranges
+
+
+def _fill_null_urls_from_grounding(items, blob, grounding):
+    """For each item with null/empty source_url, find grounding_supports whose
+    segment range falls within that finding's blob span, pick the first cited
+    chunk, resolve its proxy via HEAD. Only substitutes if resolution succeeds
+    (we don't want to fill nulls with proxies that may decay).
+    Returns (filled, attempted_but_failed)."""
+    if not grounding or not items:
+        return 0, 0
+    chunks = grounding.get("chunks") or []
+    supports = grounding.get("supports") or []
+    if not chunks or not supports:
+        return 0, 0
+
+    ranges = _finding_spans_in_blob(blob)
+    filled = 0
+    failed = 0
+    for i, it in enumerate(items):
+        u = it.get("source_url")
+        if u:  # already has a URL — don't override
+            continue
+        if i >= len(ranges):
+            continue
+        start, end = ranges[i]
+        chunk_idx = None
+        for sup in supports:
+            s_start = sup.get("start")
+            if s_start is None:
+                continue
+            if start <= s_start < end:
+                for ci in sup.get("chunk_indices", []):
+                    if 0 <= ci < len(chunks):
+                        chunk_idx = ci
+                        break
+                if chunk_idx is not None:
+                    break
+        if chunk_idx is None:
+            continue
+        proxy = chunks[chunk_idx].get("uri")
+        if not proxy or not proxy.startswith(_GROUNDING_REDIRECT_PREFIX):
+            continue
+        resolved = _resolve_grounding_url(proxy)
+        if resolved == proxy:
+            failed += 1
+            continue
+        it["source_url"] = resolved
+        filled += 1
+    return filled, failed
+
+
+def _parse_json_array(blob):
+    """Tolerant JSON-array parse. Strips ```json ...``` or ``` ...``` fences the
+    LLM sometimes wraps around JSON even when instructed not to. Returns a list
+    of dicts, or None if unrecoverable."""
+    s = str(blob).strip()
+    if s.startswith("```"):
+        first_nl = s.find("\n")
+        if first_nl > 0:
+            s = s[first_nl + 1:]
+        if s.rstrip().endswith("```"):
+            s = s.rstrip()[:-3].rstrip()
+    try:
+        data = json.loads(s)
+    except json.JSONDecodeError:
+        return None
+    if not isinstance(data, list):
+        return None
+    return [x for x in data if isinstance(x, dict)]
+
+
+def _fmt_field(v):
+    """Render None / empty → "None" (matches the Python literal the Strategist
+    prompt tells it to pass through). All other values → str()."""
+    if v is None or v == "":
+        return "None"
+    return str(v)
+
+
+def _render_de_canonical(topics):
+    """Render validated topic dicts into labelled `=== TOPIC N ===` blocks.
+    Strategist reads these directly — sentiment_takeaways is pre-composed as a
+    single one-liner matching CLAUDE.md's schema so the Strategist can copy it
+    verbatim into append_to_memory_log without re-synthesizing."""
+    if not topics:
+        return "No new findings."
+    blocks = []
+    for i, t in enumerate(topics, start=1):
+        sentiment_takeaways = (
+            f"Sentiment: {_fmt_field(t.get('sentiment'))} | "
+            f"Direct: {_fmt_field(t.get('direct'))} | "
+            f"Indirect: {_fmt_field(t.get('indirect'))} | "
+            f"Market Dynamics: {_fmt_field(t.get('market_dynamics'))}"
+        )
+        blocks.append(
+            f"=== TOPIC {i} ===\n"
+            f"finding: {_fmt_field(t.get('finding'))}\n"
+            f"date: {_fmt_field(t.get('date'))}\n"
+            f"source_url: {_fmt_field(t.get('source_url'))}\n"
+            f"sentiment_takeaways: {sentiment_takeaways}\n"
+            f"price_levels: {_fmt_field(t.get('price_levels'))}"
+        )
+    return "\n\n".join(blocks)
+
+
+def _resolve_output_key(callback_context, agent_name):
+    """Derive the agent's output_key. Primary: pull from the bound agent. Fallback:
+    infer from the agent_name suffix (`_DE` → `_analyzed`, else `_findings`)."""
+    try:
+        k = callback_context._invocation_context.agent.output_key
+        if k:
+            return k
+    except Exception:
+        pass
+    if agent_name.endswith("_DE"):
+        return f"{agent_name[:-3]}_analyzed"
+    return f"{agent_name}_findings"
+
+
+def _render_scout_canonical(items):
+    """Render validated scout finding dicts into `=== FINDING N ===` blocks.
+    The DE reads these directly — no URL-hunting in prose, no date-line parsing."""
+    if not items:
+        return "No new findings."
+    blocks = []
+    for i, it in enumerate(items, start=1):
+        blocks.append(
+            f"=== FINDING {i} ===\n"
+            f"finding: {_fmt_field(it.get('finding'))}\n"
+            f"date: {_fmt_field(it.get('date'))}\n"
+            f"source_url: {_fmt_field(it.get('source_url'))}"
+        )
+    return "\n\n".join(blocks)
+
+
+def _validate_and_render_scout_output(callback_context):
+    """after_agent_callback for the Scout agent.
+
+    Flow mirrors `_validate_and_render_de_output`:
+      1. Read Scout's raw output from state[output_key] — should be a JSON array.
+      2. Parse (tolerant to ```json fences).
+      3. Validate per-finding schema — missing keys WARNed, items without
+         `finding` dropped.
+      4. Render survivors as `=== FINDING N ===` blocks and write back to
+         state[output_key] so the DE sees a stable labelled structure.
+      5. Delegate to `_dump_agent_output` so the AGENT_RAW dump still lands in
+         Cloud Logging.
+
+    On unrecoverable parse failure the raw blob is left in place so the DE can
+    still do a best-effort prose pass — same as pre-schema behaviour.
+    """
+    agent_name = getattr(callback_context, 'agent_name', 'unknown')
+    key = _resolve_output_key(callback_context, agent_name)
+
+    try:
+        blob = callback_context.state.get(key)
+    except Exception:
+        blob = None
+
+    if not blob:
+        print(f"[SCOUT_VALIDATE] {agent_name}: state[{key}] empty — leaving as-is.", flush=True)
+        return _dump_agent_output(callback_context)
+
+    items = _parse_json_array(blob)
+    if items is None:
+        print(
+            f"[SCOUT_VALIDATE] {agent_name}: output NOT valid JSON array — leaving raw blob "
+            f"in place (DE will attempt prose fallback).",
+            flush=True,
+        )
+        return _dump_agent_output(callback_context)
+
+    validated = []
+    for i, it in enumerate(items, start=1):
+        missing = [k for k in _SCOUT_REQUIRED_KEYS if k not in it]
+        if missing:
+            print(f"[SCOUT_VALIDATE] {agent_name}: WARN finding #{i} missing keys: {missing}", flush=True)
+        if not it.get("finding"):
+            print(f"[SCOUT_VALIDATE] {agent_name}: WARN finding #{i} has no `finding` — dropping.", flush=True)
+            continue
+        validated.append(it)
+
+    try:
+        grounding = callback_context.state.get(_SCOUT_GROUNDING_KEY)
+    except Exception:
+        grounding = None
+    if grounding:
+        filled, fill_failed = _fill_null_urls_from_grounding(validated, str(blob), grounding)
+        if filled or fill_failed:
+            print(
+                f"[SCOUT_URL_FILL] {agent_name}: filled {filled} null URLs from grounding chunks "
+                f"({fill_failed} failed).",
+                flush=True,
+            )
+
+    resolved, skipped, failed = _resolve_scout_urls(validated)
+    if resolved or failed:
+        print(
+            f"[SCOUT_URL_RESOLVE] {agent_name}: resolved {resolved} grounding redirects "
+            f"({failed} failed, {skipped} non-proxy URLs untouched).",
+            flush=True,
+        )
+
+    rendered = _render_scout_canonical(validated)
+    _write_state(callback_context, key, rendered)
+    print(
+        f"[SCOUT_VALIDATE] {agent_name}: parsed {len(items)} findings → rendered {len(validated)} canonical blocks to state[{key}].",
+        flush=True,
+    )
+    return _dump_agent_output(callback_context)
+
+
+def _write_state(callback_context, key, value):
+    """Write a value back into session state. Prefer `callback_context.state[key]`
+    (the standard ADK API); fall back to `_invocation_context.session.state` if
+    the wrapper doesn't accept __setitem__ on this ADK version."""
+    try:
+        callback_context.state[key] = value
+        return True
+    except Exception:
+        pass
+    try:
+        callback_context._invocation_context.session.state[key] = value
+        return True
+    except Exception as e:
+        print(f"[DE_VALIDATE] FAILED to write state[{key}]: {e}", flush=True)
+        return False
+
+
+def _validate_and_render_de_output(callback_context):
+    """after_agent_callback for the DE agent.
+
+    Flow:
+      1. Read DE's raw output from state[output_key] — should be a JSON array.
+      2. Parse (tolerant to ```json fences).
+      3. Validate per-topic schema — missing keys logged as WARN, topics
+         without `finding` dropped as unusable.
+      4. Render the survivors into `=== TOPIC N ===` blocks and write back to
+         state[output_key] so the Strategist sees a stable labelled structure.
+      5. Delegate to `_dump_agent_output` so the AGENT_RAW dump still lands in
+         Cloud Logging (now showing the rendered canonical form, not raw JSON).
+
+    On any irrecoverable parse failure we leave the raw blob intact — Strategist
+    will do its best with prose, same as pre-schema behaviour — and surface
+    a [DE_VALIDATE] warning so the failure is visible in logs.
+    """
+    agent_name = getattr(callback_context, 'agent_name', 'unknown')
+    key = _resolve_output_key(callback_context, agent_name)
+
+    try:
+        blob = callback_context.state.get(key)
+    except Exception:
+        blob = None
+
+    if not blob:
+        print(f"[DE_VALIDATE] {agent_name}: state[{key}] empty — leaving as-is.", flush=True)
+        return _dump_agent_output(callback_context)
+
+    topics = _parse_json_array(blob)
+    if topics is None:
+        print(
+            f"[DE_VALIDATE] {agent_name}: output NOT valid JSON array — leaving raw blob "
+            f"in place (Strategist will attempt prose fallback).",
+            flush=True,
+        )
+        return _dump_agent_output(callback_context)
+
+    validated = []
+    for i, t in enumerate(topics, start=1):
+        missing = [k for k in _DE_REQUIRED_KEYS if k not in t]
+        if missing:
+            print(f"[DE_VALIDATE] {agent_name}: WARN topic #{i} missing keys: {missing}", flush=True)
+        if not t.get("finding"):
+            print(f"[DE_VALIDATE] {agent_name}: WARN topic #{i} has no `finding` — dropping.", flush=True)
+            continue
+        validated.append(t)
+
+    rendered = _render_de_canonical(validated)
+    _write_state(callback_context, key, rendered)
+    print(
+        f"[DE_VALIDATE] {agent_name}: parsed {len(topics)} topics → rendered {len(validated)} canonical blocks to state[{key}].",
+        flush=True,
+    )
+    return _dump_agent_output(callback_context)
+
+
+def _dump_agent_output(callback_context):
+    """after_agent_callback: prints the agent's raw output blob (session.state[output_key])
+    to stdout so we can audit the exact format Gemini produced at each stage. Lands
+    in Cloud Logging when deployed, framed by BEGIN/END markers for easy grep.
+
+    Works for any agent with a discoverable output_key. Derivation order:
+      1. Direct lookup via callback_context._invocation_context.agent.output_key
+      2. Fallback: infer from agent_name suffix (`_DE` → `_analyzed`,
+         `_Strategist` → `_report`, otherwise `_findings`).
+    """
+    agent_name = getattr(callback_context, 'agent_name', 'unknown')
+
+    key = None
+    try:
+        key = callback_context._invocation_context.agent.output_key
+    except Exception:
+        pass
+    if not key:
+        if agent_name.endswith("_DE"):
+            key = f"{agent_name[:-3]}_analyzed"
+        elif agent_name.endswith("_Strategist"):
+            key = f"{agent_name[:-len('_Strategist')]}_report"
+        else:
+            key = f"{agent_name}_findings"
+
+    try:
+        blob = callback_context.state.get(key)
+    except Exception:
+        blob = None
+    if not blob:
+        print(f"[AGENT_RAW] {agent_name}: <empty or missing state[{key}]>", flush=True)
+        return None
+    print(f"[AGENT_RAW_BEGIN] {agent_name} | key={key} | len={len(str(blob))}", flush=True)
+    print(str(blob), flush=True)
+    print(f"[AGENT_RAW_END] {agent_name}", flush=True)
+    return None
+
+
 def _log_token_usage(callback_context, llm_response):
     """after_model_callback: prints token usage to stdout (captured by Cloud Logging when deployed)."""
     um = llm_response.usage_metadata
@@ -722,7 +1170,8 @@ def build_sector_pipelines():
             tools=[safe_google_search, url_context, log_progress],
             output_key=f"{scout_name}_findings",
             instruction=SCOUT_BASE_PROMPT.replace("{sector}", sector),
-            after_model_callback=_log_token_usage
+            after_model_callback=_capture_grounding,
+            after_agent_callback=_validate_and_render_scout_output
         )
 
         # DE
@@ -733,7 +1182,8 @@ def build_sector_pipelines():
             tools=[dedup_findings, safe_google_search, log_progress],
             output_key=f"{scout_name}_analyzed",
             instruction=f"<persona>\nYou are the Data Engineer for {sector}.\nREQUIRED DATA: {{{scout_name}_findings}}\n\n" + DE_INSTRUCTIONS.replace("{category}", category).replace("{sector}", sector),
-            after_model_callback=_log_token_usage
+            after_model_callback=_log_token_usage,
+            after_agent_callback=_validate_and_render_de_output
         )
 
         # STRATEGIST
@@ -744,7 +1194,8 @@ def build_sector_pipelines():
             tools=[append_to_memory_log, safe_google_search, log_progress],
             output_key=f"{scout_name}_report",
             instruction=f"<persona>\nYou are the Strategist for {sector}.\nREQUIRED DATA: {{{scout_name}_analyzed}}\n\n" + ST_INSTRUCTIONS.replace("{category}", category).replace("{sector}", sector),
-            after_model_callback=_log_token_usage
+            after_model_callback=_log_token_usage,
+            after_agent_callback=_dump_agent_output
         )
 
         sector_pipelines.append(SequentialAgent(
@@ -830,7 +1281,8 @@ def _rebuild_pipeline(pipeline) -> "SequentialAgent":
                 tools=[safe_google_search, url_context, log_progress],
                 output_key=f"{scout_name}_findings",
                 instruction=SCOUT_BASE_PROMPT.replace("{sector}", sector),
-                after_model_callback=_log_token_usage
+                after_model_callback=_capture_grounding,
+                after_agent_callback=_validate_and_render_scout_output
             )
             data_engineer = Agent(
                 name=f"{scout_name}_DE",
@@ -839,7 +1291,8 @@ def _rebuild_pipeline(pipeline) -> "SequentialAgent":
                 tools=[dedup_findings, safe_google_search, log_progress],
                 output_key=f"{scout_name}_analyzed",
                 instruction=f"<persona>\nYou are the Data Engineer for {sector}.\nREQUIRED DATA: {{{scout_name}_findings}}\n\n" + DE_INSTRUCTIONS.replace("{category}", category).replace("{sector}", sector),
-                after_model_callback=_log_token_usage
+                after_model_callback=_log_token_usage,
+                after_agent_callback=_validate_and_render_de_output
             )
             strategist = Agent(
                 name=f"{scout_name}_Strategist",
@@ -848,7 +1301,8 @@ def _rebuild_pipeline(pipeline) -> "SequentialAgent":
                 tools=[append_to_memory_log, safe_google_search, log_progress],
                 output_key=f"{scout_name}_report",
                 instruction=f"<persona>\nYou are the Strategist for {sector}.\nREQUIRED DATA: {{{scout_name}_analyzed}}\n\n" + ST_INSTRUCTIONS.replace("{category}", category).replace("{sector}", sector),
-                after_model_callback=_log_token_usage
+                after_model_callback=_log_token_usage,
+                after_agent_callback=_dump_agent_output
             )
             return SequentialAgent(
                 name=f"{scout_name}_Pipeline",

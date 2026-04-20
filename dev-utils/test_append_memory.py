@@ -100,7 +100,7 @@ def test_5_schema_completeness():
     mt.append_to_memory_log("Robotics", "f", "2026-04-17", "sent", "play", "lvl", "https://src")
     entry = _last_entry("Robotics")
     required = {"entry_id", "timestamp", "category", "finding",
-                "insights_sentiment", "guidance_play", "price_levels", "source_url"}
+                "sentiment_takeaways", "guidance_play", "price_levels", "source_url"}
     assert set(entry.keys()) == required, f"keys={set(entry.keys())}, missing={required - set(entry.keys())}"
 
 
