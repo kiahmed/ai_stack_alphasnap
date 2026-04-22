@@ -2,9 +2,9 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
-## What is AlphaSnap
+## What is Arboryx
 
-AlphaSnap is an AI-powered daily market intelligence system deployed on Google Cloud's Vertex AI Agent Engines (ADK framework). It runs 6 parallel sector pipelines — Robotics, Crypto, AI Stack, Space & Defense, Power & Energy, and Strategic Minerals — each using a three-stage Scout → Data Engineer → Strategist pipeline to gather, deduplicate, and report market findings. Findings are persisted to a rolling JSON log (local or GCS) for next-day deduplication.
+Arboryx is an AI-powered daily market intelligence system deployed on Google Cloud's Vertex AI Agent Engines (ADK framework). It runs 6 parallel sector pipelines — Robotics, Crypto, AI Stack, Space & Defense, Power & Energy, and Strategic Minerals — each using a three-stage Scout → Data Engineer → Strategist pipeline to gather, deduplicate, and report market findings. Findings are persisted to a rolling JSON log (local or GCS) for next-day deduplication.
 
 ## Common Commands
 

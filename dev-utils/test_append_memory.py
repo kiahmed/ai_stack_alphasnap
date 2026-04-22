@@ -1,11 +1,11 @@
 """Acceptance tests for the hardened `append_to_memory_log`.
 
 Runs the 8 acceptance tests from
-../catalyst-knowledge-graph/docs/proposed_alphasnap_changes.md against a
+../catalyst-knowledge-graph/docs/proposed_arboryx_changes.md against a
 temporary local-mode path (never touches GCS or the real master log).
 
 Run:
-    cd alphasnap
+    cd arboryx
     python3 dev-utils/test_append_memory.py
 
 Writes pass/fail report to stdout (tee into dev-utils/output.log).
@@ -22,7 +22,7 @@ import market_team as mt
 
 
 # ── Isolation: redirect the module to a throwaway local path ──
-_TMP = tempfile.mkdtemp(prefix="alphasnap_test_")
+_TMP = tempfile.mkdtemp(prefix="arboryx_test_")
 _LOG = os.path.join(_TMP, "market_findings_log.json")
 
 mt.USE_GCS = False

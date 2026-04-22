@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Post-run token usage utility for AlphaSnap Agent Engine.
+"""Post-run token usage utility for Arboryx Agent Engine.
 
 Pulls stats from three sources:
   1. Cloud Monitoring — Gemini publisher token metrics (all locations)
@@ -349,7 +349,7 @@ def get_prediction_token_usage(start_time, end_time):
 # ══════════════════════════════════════════════════════════════
 
 def parse_args():
-    parser = argparse.ArgumentParser(description="AlphaSnap post-run token usage stats")
+    parser = argparse.ArgumentParser(description="Arboryx post-run token usage stats")
     parser.add_argument("--hours", type=float, default=None, help="Look back N hours")
     parser.add_argument("--date", type=str, help="Specific date YYYY-MM-DD (default: today)")
     parser.add_argument("--discover", action="store_true", help="List all available aiplatform metrics")
@@ -375,7 +375,7 @@ def main():
         window_label = date_str
 
     print(f"\n{BOLD}{CYAN}{'='*60}")
-    print(f"  AlphaSnap Run Stats — {window_label}")
+    print(f"  Arboryx Run Stats — {window_label}")
     print(f"  Engine: {ENGINE_ID} | Project: {PROJECT_ID}")
     print(f"{'='*60}{RESET}\n")
 

@@ -94,3 +94,5 @@ source ae_config.config && echo "shell sees: $ENGINE_ID"
       --project=marketresearch-agents \                                                                                              
       --region=us-central1 \                                
       --format='table(name.basename(),displayName,createTime.date("%Y-%m-%d %H:%M"))' 
+claude --resume b8ac7c4d-0b72-4201-859a-b7e072e3b8cb  
+ 

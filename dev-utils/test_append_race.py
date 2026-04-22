@@ -15,7 +15,7 @@ Expected with the fix:
    did not exercise the race path)
 
 Run:
-    cd alphasnap
+    cd arboryx
     python3 dev-utils/test_append_race.py
 """
 import os

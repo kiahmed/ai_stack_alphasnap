@@ -11,7 +11,7 @@ Verifies:
  8. Historical entries without entry_id / source_url still get matched via tfidf
 
 Run:
-    cd alphasnap
+    cd arboryx
     python3 dev-utils/test_dedup_url.py
 """
 import os
@@ -23,7 +23,7 @@ import tempfile
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 import market_team as mt
 
-_TMP = tempfile.mkdtemp(prefix="alphasnap_dedup_test_")
+_TMP = tempfile.mkdtemp(prefix="arboryx_dedup_test_")
 _LOG = os.path.join(_TMP, "market_findings_log.json")
 
 mt.USE_GCS = False

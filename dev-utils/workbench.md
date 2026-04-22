@@ -390,3 +390,23 @@ All 6 scouts enabled in `values.yaml`: Robotics, Crypto, AI_Stack, Space_Defense
 - Scout/DE validate failures → canonical block render skipped.
 - ParallelMarketSweep Pydantic crash (known; we're not invoking it).
 
+---
+
+## 2026-04-21 — Power & Energy single-scout runs
+
+### Prior isolated run
+`dev-utils/run-logs/power_energy_test_20260421_215902.log`. `test_single_scout.py --scout Power_Energy_Scout` in default (isolated local) mode. 2 enriched entries written to shard, merged into tempdir master: `PWE-042226-001`, `PWE-042226-002`. Strategist self-dated entries **2026-04-22** (one day ahead of system date 2026-04-21) — older verify script flagged that as a mismatch, but pipeline itself was clean. Findings: CATL Naxtra sodium-ion mass-production target + Botswana solar/BESS project backed by Gulf SWFs. Tempdir cleaned up after run; entries never reached real GCS.
+
+### Next run — merge to real GCS
+Added `--use-gcs` flag to `test_single_scout.py`: skips tempdir isolation, verify() reads master + shard via `mt._get_gcs_blob` from GCS. First GCS attempt failed auth — `service_account.json` lives at `dev-utils/service_account.json`, not repo root.
+
+### Live GCS run — `dev-utils/run-logs/power_energy_gcs_20260421_232032.log`
+Pipeline clean. Auth ok (project `marketresearch-agents`). Duration ~3min (23:20:47 → 23:22:49).
+- Scout: 7 findings. `[SCOUT_VALIDATE]` parsed 7 → 7 canonical blocks. No `[SCOUT_URL_RESOLVE]` / `[SCOUT_URL_FILL]` — no proxies, no nulls.
+- DE: 7 topics, `[DE_VALIDATE]` parsed 7 → 7 canonical blocks. URLs passed through.
+- Strategist: 7 `append_to_memory_log` calls returning `PWE-042026-004/005/006` (2026-04-20) + `PWE-042126-002/003/004/005` (2026-04-21). Split across two dates since scout prompt is "last 24 hours".
+- Merge: `merge_sector_shards()` → **master log 745 → 752** (7/7 merged). Shard at `gs://marketresearch-agents/market_findings_log_Power & Energy.json`.
+
+### verify() limitation exposed
+`verify()` in `test_single_scout.py` assumes all enriched entries share `run_date = enriched[0].get("timestamp")` and that counter continues `start..start+N-1` from a single baseline. The 2-date-split real-world output trips ❌ spam on all entries whose timestamp ≠ enriched[0]. Pipeline is unaffected; fix is to group by (category, timestamp) and compute per-group counter continuity before comparing. Parked — not load-bearing for the actual run.
+

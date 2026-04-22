@@ -109,7 +109,7 @@ def _normalize_category(input_string: str) -> str:
     return input_string
 
 # Locked 3-letter abbreviations for entry_id generation.
-# If a new category is added, define its abbreviation here AND in proposed_alphasnap_changes.md.
+# If a new category is added, define its abbreviation here AND in proposed_arboryx_changes.md.
 CATEGORY_ABBR = {
     "Robotics": "ROB",
     "Crypto": "CRY",
