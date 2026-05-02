@@ -160,10 +160,20 @@ def _load_entries(path):
 
 
 # ── Main dedup logic ───────────────────────────────────────────
-def deduplicate(input_file=DEFAULT_INPUT_FILE, output_file=DEFAULT_OUTPUT_FILE, filter_only=False):
+def deduplicate(input_file=DEFAULT_INPUT_FILE, output_file=DEFAULT_OUTPUT_FILE,
+                filter_only=False, overwrite_output=False):
+    """Dedup semantics on an OUTPUT-vs-INPUT match (no novelty):
+      - default              → OUTPUT wins. OUTPUT entry is kept; the matching
+                                INPUT entry is dropped from the merged result.
+      - --overwrite-output   → INPUT wins. The OUTPUT entry is dropped (overwritten
+                                by the INPUT version). Original behavior.
+    Intra-batch dedup (OUTPUT vs already-accepted OUTPUT) and Phase-0 self-dedup
+    within INPUT are unaffected — both keep first-seen."""
     mode = "FILTER-ONLY (output = unique OUTPUT entries only)" if filter_only else "MERGE (output = INPUT + unique OUTPUT entries)"
+    winner = "INPUT (old behavior: drop OUTPUT duplicate)" if overwrite_output else "OUTPUT (default: drop INPUT duplicate)"
     print(f"{CYAN}--- Dedup: comparing {output_file} against {input_file} ---")
     print(f"    Mode: {mode}")
+    print(f"    Cross-file dup winner: {winner}")
     print(f"    Thresholds: TF-IDF={TFIDF_THRESHOLD}, Entity={ENTITY_THRESHOLD}, Novelty≥{NOVELTY_MIN}{RESET}\n")
 
     input_data, err = _load_entries(input_file)
@@ -242,6 +252,7 @@ def deduplicate(input_file=DEFAULT_INPUT_FILE, output_file=DEFAULT_OUTPUT_FILE, 
 
         unique_entries = []
         dup_count = 0
+        matched_input_indices: set = set()  # INPUT entries supplanted by OUTPUT (default mode)
 
         for entry in output_entries:
             finding = entry.get("finding", "").strip()
@@ -262,11 +273,19 @@ def deduplicate(input_file=DEFAULT_INPUT_FILE, output_file=DEFAULT_OUTPUT_FILE, 
                         print(f"{YELLOW}  [NOVELTY] Keeping despite match (tfidf={tfidf_score:.2f}, entity={ent_score:.2f}), {len(novel_entities)} novel entities: {novel_entities}{RESET}")
                         continue
 
-                    is_duplicate = True
                     dup_count += 1
-                    print(f"{RED}  [DUP #{dup_count}] {cat} (tfidf={tfidf_score:.2f}, entity={ent_score:.2f}){RESET}")
-                    print(f"    input : {existing_finding[:140]}")
-                    print(f"    output: {finding[:140]}")
+                    if overwrite_output:
+                        # INPUT wins — drop the OUTPUT entry
+                        is_duplicate = True
+                        print(f"{RED}  [DUP #{dup_count} | INPUT wins] {cat} (tfidf={tfidf_score:.2f}, entity={ent_score:.2f}){RESET}")
+                        print(f"    kept   (input) : {existing_finding[:140]}")
+                        print(f"    removed(output): {finding[:140]}")
+                    else:
+                        # OUTPUT wins (default) — keep OUTPUT, mark INPUT for exclusion
+                        matched_input_indices.add(i)
+                        print(f"{CYAN}  [DUP #{dup_count} | OUTPUT wins] {cat} (tfidf={tfidf_score:.2f}, entity={ent_score:.2f}){RESET}")
+                        print(f"    kept   (output): {finding[:140]}")
+                        print(f"    removed(input) : {existing_finding[:140]}")
                     break
 
             # ── Intra-batch dedup: compare against already-accepted entries ──
@@ -287,16 +306,33 @@ def deduplicate(input_file=DEFAULT_INPUT_FILE, output_file=DEFAULT_OUTPUT_FILE, 
             if not is_duplicate:
                 unique_entries.append(entry)
 
-        # Filter-only: write only OUTPUT's unique entries. Merge: INPUT + uniques.
+        # Build the surviving INPUT list. In default (OUTPUT wins) mode, INPUT
+        # entries that were supplanted by an OUTPUT entry are excluded.
+        if overwrite_output:
+            surviving_input = input_entries
+        else:
+            surviving_input = [e for idx, e in enumerate(input_entries) if idx not in matched_input_indices]
+
+        # Filter-only: write only OUTPUT's unique entries. Merge: surviving INPUT + uniques.
         if filter_only:
             combined = list(unique_entries)
         else:
-            combined = input_entries + unique_entries
+            combined = surviving_input + unique_entries
         combined.sort(key=lambda x: x.get("timestamp", ""), reverse=True)
         merged_list.extend(combined)
 
-        summary[cat] = {"input_self_dups": input_self_dups, "cross_dups": dup_count, "new": len(unique_entries), "total": len(combined)}
-        print(f"{GREEN}  Finished {cat}: {input_self_dups} input self-dups, {dup_count} cross-dups removed, kept {len(unique_entries)} new entries. Final: {len(combined)}{RESET}\n")
+        input_replaced = len(matched_input_indices)
+        summary[cat] = {
+            "input_self_dups": input_self_dups,
+            "cross_dups": dup_count,
+            "input_replaced": input_replaced,
+            "new": len(unique_entries),
+            "total": len(combined),
+        }
+        if overwrite_output:
+            print(f"{GREEN}  Finished {cat}: {input_self_dups} input self-dups, {dup_count} cross-dups (OUTPUT dropped), kept {len(unique_entries)} new entries. Final: {len(combined)}{RESET}\n")
+        else:
+            print(f"{GREEN}  Finished {cat}: {input_self_dups} input self-dups, {dup_count} cross-dups (INPUT dropped for {input_replaced}), kept {len(unique_entries)} OUTPUT entries. Final: {len(combined)}{RESET}\n")
 
 
     # Save merged result back to output_file
@@ -314,12 +350,14 @@ def deduplicate(input_file=DEFAULT_INPUT_FILE, output_file=DEFAULT_OUTPUT_FILE, 
     print(f"\n{CYAN}--- Final Dedup Summary ---{RESET}")
     total_self_dups = 0
     total_cross_dups = 0
+    total_input_replaced = 0
     total_new = 0
     total_merged = 0
     for cat, stats in summary.items():
-        print(f"Category: {cat:20} | Self-Dups: {stats['input_self_dups']:3} | Cross-Dups: {stats['cross_dups']:3} | New Kept: {stats['new']:3} | Total: {stats['total']:3}")
+        print(f"Category: {cat:20} | Self-Dups: {stats['input_self_dups']:3} | Cross-Dups: {stats['cross_dups']:3} | Input Replaced: {stats['input_replaced']:3} | New Kept: {stats['new']:3} | Total: {stats['total']:3}")
         total_self_dups += stats["input_self_dups"]
         total_cross_dups += stats["cross_dups"]
+        total_input_replaced += stats["input_replaced"]
         total_new += stats["new"]
         total_merged += stats["total"]
     print(f"{CYAN}--------------------------------------------------------")
@@ -327,6 +365,8 @@ def deduplicate(input_file=DEFAULT_INPUT_FILE, output_file=DEFAULT_OUTPUT_FILE, 
     print(f"Output Entries:        {len(output_data)}")
     print(f"Input Self-Dups:       {total_self_dups}")
     print(f"Cross-File Dups:       {total_cross_dups}")
+    if not overwrite_output:
+        print(f"Input Replaced by Out: {total_input_replaced}")
     print(f"New Entries Merged:     {total_new}")
     print(f"Final Total:           {total_merged}{RESET}")
 
@@ -350,5 +390,16 @@ if __name__ == "__main__":
         help="Write ONLY OUTPUT's non-dup entries back to OUTPUT (skip merging baseline). "
              "Use this when you want to filter one file against another instead of merging them.",
     )
+    parser.add_argument(
+        "--overwrite-output", action="store_true",
+        help="On a cross-file duplicate, keep the INPUT entry and drop the OUTPUT entry "
+             "(original behavior). Default now is the opposite: OUTPUT wins — the matching "
+             "INPUT entry is dropped and the OUTPUT entry is preserved.",
+    )
     args = parser.parse_args()
-    deduplicate(input_file=args.input_file, output_file=args.output_file, filter_only=args.filter_only)
+    deduplicate(
+        input_file=args.input_file,
+        output_file=args.output_file,
+        filter_only=args.filter_only,
+        overwrite_output=args.overwrite_output,
+    )

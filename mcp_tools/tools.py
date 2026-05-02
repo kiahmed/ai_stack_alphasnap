@@ -141,6 +141,19 @@ class MCPTools:
             args["strike_range"] = strike_range
         return await self._client.call_tool("Net-Theta-Exposure-Chart", args)
 
+    # ── Brokerage / Accounts ─────────────────────────────────────────
+    async def broker_connections(self):
+        """List all connected brokerage accounts for the authenticated user."""
+        result = await self._client.call_tool("Broker-Connections", {})
+        return _parse_text(result)
+
+    async def account_balances(self, snaptrade_account_id: str):
+        """Cash balance, buying power, and equity for a specific brokerage account."""
+        result = await self._client.call_tool(
+            "Account-Balances", {"snaptrade_account_id": snaptrade_account_id},
+        )
+        return _parse_text(result)
+
     # ── Convenience: all data for a ticker in one shot ───────────────
     async def ticker_snapshot(self, symbol: str) -> dict:
         """

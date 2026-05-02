@@ -6,8 +6,11 @@ Usage:
     python3 -m mcp_tools.test_tools SPY                   # custom ticker
     python3 -m mcp_tools.test_tools NVDA --all            # include chart tools
     python3 -m mcp_tools.test_tools GOOGL --only greeks   # run a single step
+    python3 -m mcp_tools.test_tools --only brokers        # list connected brokerage accounts
+    python3 -m mcp_tools.test_tools --only balances       # balances for first account
+    python3 -m mcp_tools.test_tools --only balances --account <snaptrade_account_id>
 
-Step names: quote, greeks, top_vol, top_oi, exps, ohlcv, snapshot, gex, dex, vex, tex
+Step names: quote, greeks, top_vol, top_oi, exps, ohlcv, snapshot, brokers, balances, gex, dex, vex, tex
 Full untruncated output is always written to mcp_tools/tools_output.log.
 """
 import sys
@@ -71,10 +74,49 @@ def _emit_chart(log_fh, header: str, result: dict):
     log_fh.flush()
 
 
+def _extract_account_id(connections) -> str | None:
+    """Pull first snaptrade_account_id from whatever shape Broker-Connections returns."""
+    candidates = connections
+    if isinstance(candidates, dict):
+        for key in ("accounts", "connections", "data"):
+            if isinstance(candidates.get(key), list):
+                candidates = candidates[key]
+                break
+    if not isinstance(candidates, list):
+        return None
+    for item in candidates:
+        if not isinstance(item, dict):
+            continue
+        for key in ("snaptrade_account_id", "account_id", "id"):
+            if item.get(key):
+                return item[key]
+    return None
+
+
+async def _run_balances(t, explicit_id: str | None):
+    """Resolve an account id (explicit or via Broker-Connections) and fetch balances."""
+    account_id = explicit_id
+    if not account_id:
+        conns = await t.broker_connections()
+        account_id = _extract_account_id(conns)
+        if not account_id:
+            return {"error": "no account id provided and none discoverable via Broker-Connections",
+                    "broker_connections": conns}
+    return {"account_id": account_id, "balances": await t.account_balances(account_id)}
+
+
 async def main():
     args = sys.argv[1:]
     symbol = args[0] if args and not args[0].startswith("-") else "NVDA"
     run_charts = "--all" in args
+
+    account_id = None
+    if "--account" in args:
+        i = args.index("--account")
+        if i + 1 >= len(args):
+            print("error: --account requires a snaptrade_account_id", file=sys.stderr)
+            sys.exit(2)
+        account_id = args[i + 1]
 
     only = None
     if "--only" in args:
@@ -105,12 +147,14 @@ async def main():
                 "exps":     ("[5] Option Expirations",             lambda: t.option_expirations(symbol)),
                 "ohlcv":    ("[6] Price OHLCV (5d @ 1d)",          lambda: t.price_ohlcv(symbol, interval="1d", period="5d")),
                 "snapshot": ("[7] Ticker Snapshot",                lambda: t.ticker_snapshot(symbol)),
+                "brokers":  ("[8] Broker Connections",             lambda: t.broker_connections()),
+                "balances": ("[9] Account Balances",               lambda: _run_balances(t, account_id)),
             }
             chart_steps = {
-                "gex": ("[8] NET GEX Chart",  lambda: t.net_gex_chart(symbol)),
-                "dex": ("[9] NET DEX Chart",  lambda: t.net_dex_chart(symbol)),
-                "vex": ("[10] NET VEX Chart", lambda: t.net_vex_chart(symbol)),
-                "tex": ("[11] NET TEX Chart", lambda: t.net_tex_chart(symbol)),
+                "gex": ("[10] NET GEX Chart", lambda: t.net_gex_chart(symbol)),
+                "dex": ("[11] NET DEX Chart", lambda: t.net_dex_chart(symbol)),
+                "vex": ("[12] NET VEX Chart", lambda: t.net_vex_chart(symbol)),
+                "tex": ("[13] NET TEX Chart", lambda: t.net_tex_chart(symbol)),
             }
 
             if only:

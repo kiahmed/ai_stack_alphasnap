@@ -11,7 +11,7 @@ set -e
 
 # Re-read ae_config.config bypassing any WSL /mnt/c page-cache staleness.
 # `source` on /mnt/c can serve cached bytes when the file was just written
-# from Windows (deploy_agent.py / VS Code). Parse via grep on a fresh open.
+# from Windows (deploy_arboryx.ai_engine.py / VS Code). Parse via grep on a fresh open.
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 CONFIG_FILE="$SCRIPT_DIR/ae_config.config"
 source "$CONFIG_FILE"
@@ -27,7 +27,7 @@ FUNCTION_MEMORY="512Mi"
 
 # ==========================================
 # Helper: verify ENGINE_ID actually exists in Vertex AI before we deploy.
-# Catches both stale config (deploy_agent.py write failed) and stale shell
+# Catches both stale config (deploy_arboryx.ai_engine.py write failed) and stale shell
 # reads (WSL /mnt/c cache). Fails loud with the offending ID + a list of
 # what's actually live, instead of silently deploying a dead pointer.
 # ==========================================
@@ -103,7 +103,7 @@ echo "  Deploying Cloud Function + Scheduler"
 echo "============================================"
 
 if [ -z "$ENGINE_ID" ] || [ "$ENGINE_ID" == '""' ]; then
-    echo "Error: ENGINE_ID is not set in ae_config.config. Please run deploy_agent.py first."
+    echo "Error: ENGINE_ID is not set in ae_config.config. Please run deploy_arboryx.ai_engine.py first."
     exit 1
 fi
 

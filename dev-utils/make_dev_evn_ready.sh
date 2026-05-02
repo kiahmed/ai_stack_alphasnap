@@ -35,16 +35,21 @@ fi
 #     --location="us-central1" \
 #     --uri="https://us-central1-aiplatform.googleapis.com/v1beta1/projects/marketresearch-agents/locations/us-central1/reasoningEngines/8053420196645306368:streamQuery" \
 #     --message-body='{"class_method": "stream_query", "input": {"user_id": "cron_scheduler", "message": "Execute the daily market sweep. Gather findings from scouts, log them, and print the tabular report."}}'
+
 # List enabled services for the project
 #gcloud services list --enabled --project marketresearch-agents
-#get logging from gcloud
+
+#get logging in combination of reasoning engine id, datetime, and textpayload then outputs it in table format or file
 # gcloud logging read "resource.type=aiplatform.googleapis.com/ReasoningEngine AND resource.labels.location=us-central1" --limit=50 --project=marketresearch-agents --format="value(textPayload)"
 # gcloud logging read "resource.type=aiplatform.googleapis.com/ReasoningEngine AND resource.labels.location=us-central1 AND resource.labels.reasoning_engine_id="3968674576073752576" AND timestamp>="2026-03-30T00:00:00Z"' --limit=5000 --project=marketresearch-agents --format="value(textPayload)" > output.log
+#gcloud logging read 'resource.type="aiplatform.googleapis.com/ReasoningEngine" AND resource.labels.location="us-central1" AND resource.labels.reasoning_engine_id="5859280421988073472" AND timestamp>="2026-04-27T00:00:00Z"' --limit=5000 --project=marketresearch-agents --format="value(textPayload)" > output.log
+
 #Get individual TOKEN_USAGE entries from yesterday
 # gcloud logging read 'resource.type="aiplatform.googleapis.com/ReasoningEngine" AND resource.labels.location="us-central1" AND      
 #   timestamp>="2026-03-29T00:00:00Z" AND timestamp<"2026-03-30T00:00:00Z" AND textPayload:"TOKEN_USAGE"' --limit=500                  
 #   --project=marketresearch-agents --format="value(textPayload,resource.labels.reasoning_engine_id)" 2>&1 | head -60 
-# Filter by LQL 
+
+# Filter RECENT Logs using LQL 
 # resource.type="aiplatform.googleapis.com/ReasoningEngine"
 # resource.labels.location="us-central1"
 # timestamp >= "2026-03-20T00:00:00Z"
@@ -53,16 +58,17 @@ fi
 
 #gcloud auth list //shows all auth users that were configured
 #gcloud config list //shows the active user and project
+
 #GIVE PERMISSION TO THE SERVICE ACCOUNT TO USE THE API
 # gcloud projects add-iam-policy-binding marketresearch-agents \
 #     --member="serviceAccount:market-agent-sa@marketresearch-agents.iam.gserviceaccount.com" \
 #     --role="roles/serviceusage.serviceUsageConsumer"
-#
+
 # INCREASE THE TIMEOUT FOR THE SCHEDULER
 # gcloud scheduler jobs update http market-team-daily-sweep \
 #     --location="us-central1" \
 #     --attempt-deadline=30m
-#
+
 #GIVE PERMISSION TO THE SERVICE ACCOUNT TO USE THE TRACING API
 # gcloud projects add-iam-policy-binding marketresearch-agents \
 #     --member="serviceAccount:market-agent-sa@marketresearch-agents.iam.gserviceaccount.com" \
@@ -70,7 +76,7 @@ fi
 
 #COPY THE LONG TERM STORAGE FILE TO THE WORKING DIRECTORY
 #gcloud storage cp market_findings_log_lts.json gs://marketresearch-agents/market_findings_log.json
-# 
+
 #GIVE PERMISSION TO THE SERVICE ACCOUNT TO USE THE LOGGING API
 #gcloud projects add-iam-policy-binding marketresearch-agents --member="serviceAccount:market-agent-sa@marketresearch-agents.iam.gserviceaccount.com" --role="roles/logging.viewer"  
 
@@ -86,13 +92,17 @@ fi
 # gcloud logging read 'resource.type="aiplatform.googleapis.com/ReasoningEngine" AND resource.labels.location="us-central1" AND      
 #   timestamp>="2026-03-31T00:00:00Z" AND timestamp<"2026-04-01T00:00:00Z" AND textPayload:"TOKEN_USAGE"' --limit=500                  
 #   --project=marketresearch-agents --format="value(textPayload,resource.labels.reasoning_engine_id)" 2>&1 | head -60 
-#get logs for a pariticular agent engine from yesterday and output to a file
-#gcloud logging read 'resource.type="aiplatform.googleapis.com/ReasoningEngine" AND resource.labels.location="us-central1" AND resource.labels.reasoning_engine_id="3197987293746954240" AND timestamp>="2026-04-13T00:00:00Z"' --limit=5000 --project=marketresearch-agents --format="value(textPayload)" > output.log
-source ae_config.config && echo "shell sees: $ENGINE_ID" 
 
-  gcloud ai reasoning-engines list \
-      --project=marketresearch-agents \                                                                                              
-      --region=us-central1 \                                
-      --format='table(name.basename(),displayName,createTime.date("%Y-%m-%d %H:%M"))' 
-claude --resume b8ac7c4d-0b72-4201-859a-b7e072e3b8cb  
- 
+# gcloud ai reasoning-engines list \
+#       --project=marketresearch-agents \                                                                                              
+#       --region=us-central1 \                                
+#       --format='table(name.basename(),displayName,createTime.date("%Y-%m-%d %H:%M"))' 
+
+# source ae_config.config && echo "shell sees: $ENGINE_ID" 
+# gcloud services enable secretmanager.googleapis.com cloudscheduler.googleapis.com --project="$PROJECT_ID" 
+# gcloud projects add-iam-policy-binding "$PROJECT_ID" --member="serviceAccount:$SA_EMAIL" --role="roles/secretmanager.secretAccessor" --condition=None 
+
+# Update claude or swtich to the latest statble version
+#npm update -g @anthropic-ai/claude-code
+
+claude --resume fc8c3b74-62a0-4703-8552-c2c77bd9c02b

@@ -24,7 +24,7 @@ python3 test_single_scout.py   # Tests Robotics pipeline only
 
 ### Deploy to Vertex AI Agent Engines
 ```bash
-python3 deploy_agent.py        # Creates remote engine, writes ENGINE_ID back to ae_config.config
+python3 deploy_arboryx.ai_engine.py        # Creates remote engine, writes ENGINE_ID back to ae_config.config
 ```
 
 ### Set up / update Cloud Scheduler
@@ -84,7 +84,7 @@ Both modes use the same `read_memory_log` / `append_to_memory_log` tool interfac
 ```
 
 ### Deployment flow
-`deploy_agent.py` → Vertex AI Reasoning Engine (host) → Cloud Scheduler triggers `streamQuery` daily → `AdkApp` dispatches to `ParallelMarketSweep` orchestrator.
+`deploy_arboryx.ai_engine.py` → Vertex AI Reasoning Engine (host) → Cloud Scheduler triggers `streamQuery` daily → `AdkApp` dispatches to `ParallelMarketSweep` orchestrator.
 
 ## Known Issue: Pydantic Validation Error
 

@@ -224,8 +224,8 @@ def read_memory_log(category: str = "all", memory_limit: int = 10) -> str:
     if category != "all":
         category = _normalize_category(category)
         filtered = [e for e in data if e.get("category", "").lower() == category.lower()]
-        # Select the requested number of entries
-        result = filtered[-memory_limit:]
+        # Master log is desc-sorted (newest first), so newest N is [:N], not [-N:].
+        result = filtered[:memory_limit]
         
         # 1. First dump the data its returning
         print(f"```json\n{json.dumps(result, indent=2)}\n```\n", flush=True)
@@ -241,7 +241,8 @@ def read_memory_log(category: str = "all", memory_limit: int = 10) -> str:
         baseline = {}
         for cat in categories:
             cat_data = [e for e in data if e.get("category", "").lower() == cat.lower() or cat.lower() in e.get("category", "").lower()]
-            baseline[cat] = cat_data[-memory_limit:]
+            # Master log is desc-sorted (newest first), so newest N is [:N], not [-N:].
+            baseline[cat] = cat_data[:memory_limit]
         
         # 1. First dump the data its returning
         print(f"```json\n{json.dumps(baseline, indent=2)}\n```\n", flush=True)
@@ -250,6 +251,42 @@ def read_memory_log(category: str = "all", memory_limit: int = 10) -> str:
         print(f"### [Global Baseline] Categories: {len(baseline)} | Total Entries: {total_entries}", flush=True)
         
         return json.dumps(baseline, indent=2)
+
+# Tooltip generation — short subtitle shown by the cloud-function reader.
+# Logic ported from arboryx-admin/dev-utils/backfill_tooltips.py: prefer the
+# Direct/Indirect/Market Dynamics line from sentiment_takeaways, fall back to
+# the finding text. Markers are optional — entries without them just fall back.
+_TOOLTIP_MAX_CHARS = 30
+_TOOLTIP_MARKERS = ("direct:", "market dynamics:", "indirect:")
+_TOOLTIP_SPLIT_RE = re.compile(r"\s*\|\s*|\n")
+
+
+def _truncate_tooltip(text: str) -> str:
+    text = (text or "").strip()
+    if len(text) > _TOOLTIP_MAX_CHARS:
+        return text[:_TOOLTIP_MAX_CHARS].rstrip() + "…"
+    return text
+
+
+def generate_tooltip(entry: dict) -> str:
+    """Compute a short tooltip for an entry.
+
+    Splits `sentiment_takeaways` on `|` / newlines and uses the first piece that
+    starts with Direct:/Indirect:/Market Dynamics: (case-insensitive). If none
+    are present, falls back to the truncated `finding` text.
+    """
+    st = entry.get("sentiment_takeaways") or ""
+    for piece in _TOOLTIP_SPLIT_RE.split(st):
+        piece = piece.strip()
+        if not piece:
+            continue
+        lower = piece.lower()
+        for marker in _TOOLTIP_MARKERS:
+            if lower.startswith(marker):
+                text = piece.split(":", 1)[1].strip() if ":" in piece else piece
+                return _truncate_tooltip(text)
+    return _truncate_tooltip(entry.get("finding") or "")
+
 
 def append_to_memory_log(category: str, finding: str, timestamp: str,
                          sentiment_takeaways: str, guidance_play: str,
@@ -282,6 +319,7 @@ def append_to_memory_log(category: str, finding: str, timestamp: str,
         "price_levels": price_levels,
         "source_url": source_url,
     }
+    base_entry["tooltip"] = generate_tooltip(base_entry)
 
     if USE_GCS:
         return _append_gcs(category, date_iso, base_entry)
@@ -391,6 +429,12 @@ DEDUP_CFG = config.get("dedup", {})
 TFIDF_THRESHOLD = DEDUP_CFG.get("tfidf_threshold", 0.45)
 ENTITY_THRESHOLD = DEDUP_CFG.get("entity_threshold", 0.6)
 NOVELTY_MIN = DEDUP_CFG.get("novelty_min_entities", 2)
+# Sanity floor for the entity-only drop path. When entity_overlap >= threshold
+# but tfidf is essentially zero, the texts are usually about totally different
+# events that just happen to share one entity (e.g. two unrelated Bitcoin
+# headlines, both Tesla stories on different topics). Require at least this
+# much text similarity before letting entity overlap alone trigger a drop.
+TFIDF_FLOOR_FOR_ENTITY = DEDUP_CFG.get("tfidf_floor_for_entity", 0.15)
 
 # Common uppercase words to exclude from ticker detection
 _STOP_UPPER = {
@@ -404,6 +448,25 @@ _STOP_UPPER = {
     'OVER', 'SUCH', 'JUST', 'NEAR', 'TERM', 'PER', 'VIA', 'KEY', 'PRE',
     'PRO', 'BOTH', 'ONLY', 'SAME', 'MORE', 'LESS', 'FULL', 'HIGH', 'LOW',
     'NEXT', 'LAST', 'WEEK', 'YEAR', 'NEWS', 'PLUS', 'DEAL'
+}
+
+# Lowercase stopwords for SINGLE-token capitalized proper noun extraction.
+# These are common sentence-leading or generic words that get capitalized but
+# aren't named entities. Without this list, "The", "Recent", weekday/month
+# names, etc. would inflate the novel-entity count and let real duplicates
+# slip through the novelty escape.
+_CAP_STOP = {
+    'the','this','that','these','those','an','a','and','or','but','of','to',
+    'in','on','at','by','for','with','from','into','as','is','was','were',
+    'will','would','could','should','can','may','might','must','it','its',
+    'their','they','them','our','us','we','he','she','his','her','him',
+    'while','though','although','because','since','until','before','after',
+    'recent','recently','new','newer','newest','near','far','more','most',
+    'first','last','later','earlier','today','yesterday','tomorrow',
+    'monday','tuesday','wednesday','thursday','friday','saturday','sunday',
+    'january','february','march','april','june','july','august',
+    'september','october','november','december',
+    'inc','corp','co','ltd','llc','plc','group','holdings','company','companies',
 }
 
 def _tokenize(text):
@@ -451,7 +514,27 @@ def _extract_entities(text):
             tickers.add(t)
     # Multi-word capitalized names (company/product names)
     entities.update(re.findall(r'[A-Z][a-z]+(?:\s+[A-Z][a-z]+)+', text))
-    # All entities includes tickers (for overlap scoring), but tickers tracked separately for novelty
+    # camelCase / PascalCase (OpenAI, DeepMind, LinkedIn)
+    entities.update(re.findall(r'\b[A-Z][a-z]+(?:[A-Z][a-z]*)+\b', text))
+    # Acronym-prefix names (UBTech, NASAStudy)
+    entities.update(re.findall(r'\b[A-Z]{2,}[a-z][A-Za-z]*\b', text))
+    # Dotted abbreviations: U.S., U.K., U.N., E.U., U.S.A. — these are real
+    # disambiguating entities (geographies, organizations) and the prior regex
+    # set missed them entirely because of the embedded periods.
+    entities.update(re.findall(r'\b(?:[A-Z]\.){2,}', text))
+    # Single-token capitalized proper nouns (Dallas, Tokyo, Anthropic, Brazil).
+    # Length ≥ 4 to skip noisy short caps; exclude tokens already covered by
+    # multi-word entities, the ticker stopword list, or the lowercase stopword
+    # list. This is the change that lets the novelty escape recognize a
+    # follow-up story (e.g. "Pudu opens Dallas HQ") as topically distinct from
+    # the original event ("Pudu raises $150M") even when the headline names
+    # don't change.
+    multiword_tokens = {tok for ent in entities for tok in ent.split()}
+    for t in re.findall(r'\b([A-Z][a-z]{3,})\b', text):
+        if t in multiword_tokens: continue
+        if t.upper() in _STOP_UPPER: continue
+        if t.lower() in _CAP_STOP: continue
+        entities.add(t)
     all_entities = entities | tickers
     return all_entities, tickers
 
@@ -526,13 +609,17 @@ def dedup_findings(scout_findings_json: str, category: str) -> str:
     # Load baseline from master log — capture entry_id + source_url alongside text
     baseline_entries = []
     mem_limit = config.get("storage", {}).get("memory_limit", 10)
+    # Master log is sorted newest-first by merge_sector_shards (reverse=True),
+    # so the newest mem_limit entries are at the FRONT of the list ([:N]), not
+    # the back. [-N:] would return the OLDEST N — making dedup compare today's
+    # findings against month-old entries and miss every recent duplicate.
     if USE_GCS:
         try:
             blob = _get_gcs_blob(GCS_PATH)
             if blob.exists():
                 data = json.loads(blob.download_as_text())
                 baseline_entries = [e for e in data if e.get("category", "").lower() == category.lower()]
-                baseline_entries = baseline_entries[-mem_limit:]
+                baseline_entries = baseline_entries[:mem_limit]
         except Exception:
             pass
     else:
@@ -541,7 +628,7 @@ def dedup_findings(scout_findings_json: str, category: str) -> str:
                 with open(LOCAL_PATH, "r") as f:
                     data = json.load(f)
                 baseline_entries = [e for e in data if e.get("category", "").lower() == category.lower()]
-                baseline_entries = baseline_entries[-mem_limit:]
+                baseline_entries = baseline_entries[:mem_limit]
             except Exception:
                 pass
 
@@ -595,9 +682,21 @@ def dedup_findings(scout_findings_json: str, category: str) -> str:
                 tfidf_score = _tfidf_similarity(finding_text, base_text, idf)
                 ent_score = _entity_overlap(finding_entities, base_entities)
 
-                if tfidf_score >= TFIDF_THRESHOLD or ent_score >= ENTITY_THRESHOLD:
-                    # Novelty check: exclude tickers — they're alt identifiers, not new info
-                    novel = (finding_entities - base_entities) - finding_tickers
+                # Entity-only drops also require a weak tfidf signal (FLOOR)
+                # to guard against spurious 1.0 entity_overlap on tiny entity
+                # sets where one shared word ("Bitcoin", "Tesla") gives a 100%
+                # match between unrelated stories.
+                tfidf_hit = tfidf_score >= TFIDF_THRESHOLD
+                entity_hit = ent_score >= ENTITY_THRESHOLD and tfidf_score >= TFIDF_FLOOR_FOR_ENTITY
+                if tfidf_hit or entity_hit:
+                    # Novelty check (case-insensitive): exclude tickers — they
+                    # are alt identifiers, not new info. Lowercase comparison
+                    # so '$150M' vs '$150 MILLION' or 'AI' vs 'ai' are not
+                    # spuriously counted as novel.
+                    base_lc = {e.lower() for e in base_entities}
+                    tickers_lc = {t.lower() for t in finding_tickers}
+                    novel = {e for e in finding_entities
+                             if e.lower() not in base_lc and e.lower() not in tickers_lc}
                     if len(novel) >= NOVELTY_MIN:
                         continue  # update on same topic — keep
 

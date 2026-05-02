@@ -1,111 +1,920 @@
-[test_append_race] Starting race simulation
-
-
-### [Saving to Memory] Category: Robotics | ID: ROB-041726-001
-```json
-{
-  "entry_id": "ROB-041726-001",
-  "timestamp": "2026-04-17",
-  "category": "Robotics",
-  "finding": "solo finding",
-  "insights_sentiment": "Direct: X. Indirect: Y. Market Dynamics: Z. Sentiment: Neutral",
-  "guidance_play": "solo play",
-  "price_levels": "X",
-  "source_url": "https://example.com/solo"
-}
+========================================
+Token Usage — Input: 143,530 | Output: 17,702 | Total: 204,166
+SWEEP COMPLETE — Total time: 0h 5m 42s
+========================================
+[TOKEN_USAGE] Shard_Merger | input=187 | output=19 | total=219
+[14]      INFO:     Response received from the model.
+[14]      INFO:     Sending out request, model: gemini-3.1-pro-preview, backend: GoogleLLMVariant.VERTEX_AI, stream: False
+[PROGRESS] 11:20:42 | Sector shards merged successfully. 838 total entries in master log.
+[TOKEN_USAGE] Shard_Merger | input=146 | output=23 | total=239
+[14]      INFO:     Response received from the model.
+[14]      INFO:     Sending out request, model: gemini-3.1-pro-preview, backend: GoogleLLMVariant.VERTEX_AI, stream: False
+[MERGE] Successfully merged 21 new entries into master log (817 existing + 21 new = 838 total).
+========================================
+  TOTAL                  deduped: 21  merged: 21
+  ──────────────────────────────────────
+  Strategic Minerals     deduped: 3  merged: 3
+  Power & Energy         deduped: 5  merged: 5
+  Space & Defense        deduped: 4  merged: 4
+  AI Stack               deduped: 3  merged: 3
+  Crypto                 deduped: 3  merged: 3
+  Robotics               deduped: 3  merged: 3
+========================================
+  MERGE STATS (per category)
+========================================
+[MERGE] Shard 'Strategic Minerals': 3/3 enriched — complete
+[MERGE] Shard 'Power & Energy': 5/5 enriched — complete
+[MERGE] Shard 'Space & Defense': 4/4 enriched — complete
+[MERGE] Shard 'AI Stack': 3/3 enriched — complete
+[MERGE] Shard 'Crypto': 3/3 enriched — complete
+[MERGE] Shard 'Robotics': 3/3 enriched — complete
+[TOKEN_USAGE] Shard_Merger | input=106 | output=10 | total=390
+[14]      INFO:     Response received from the model.
+[14]      INFO:     Sending out request, model: gemini-3.1-pro-preview, backend: GoogleLLMVariant.VERTEX_AI, stream: False
+========================================
+  STARTING MERGE PHASE
+========================================
+[CHECK] Strategic_Minerals_Scout_Pipeline (Strategic Minerals) — shard OK.
+[SHARD] Strategic Minerals: 3/3 enriched — complete.
+[CHECK] Power_Energy_Scout_Pipeline (Power & Energy) — shard OK.
+[SHARD] Power & Energy: 5/5 enriched — complete.
+[CHECK] Space_Defense_Scout_Pipeline (Space & Defense) — shard OK.
+[SHARD] Space & Defense: 4/4 enriched — complete.
+[AGENT_RAW_END] Power_Energy_Scout_Strategist
+| **2026-04-26** | Ace Green Recycling secured a $32 million PIPE financing round to support its upcoming SPAC merger with Athena Technology Acquisition Corp. II. | **Sentiment:** Bullish <br><br>**Direct:** The $32 million PIPE strongly derisks Ace Green Recycling's public market debut by ensuring baseline liquidity post-merger.<br><br>**Indirect:** Successful close of a recycling-focused SPAC signals rebounding investor appetite for circular economy technology.<br><br>**Market Dynamics:** SPACs targeting clean-tech must secure significant pre-merger capital to offset anticipated high redemption rates. | Trade ATEK cautiously around the $9.00 pivot; consider writing $10.00 calls or deploying short-term neutral-to-bullish structures to capture pre-merger volatility premium. | ATEK $9.00 pivot / $10.00 call wall |
+| **2026-04-26** | Inspired Evolution announced a $40 million investment into CrossBoundary Energy to fund solar and battery storage systems for mining operations in the DRC and Sierra Leone. | **Sentiment:** Bullish <br><br>**Direct:** CrossBoundary's capital injection directly accelerates the deployment of microgrids for off-grid mining operations in Africa.<br><br>**Indirect:** Decarbonization in the mining sector is heavily driving decentralized solar and storage adoption.<br><br>**Market Dynamics:** ESG mandates and diesel costs combine to make African industrial microgrids a highly attractive private credit play. | Evaluate private credit or specialized infrastructure funds targeting off-grid emerging markets as ESG-driven microgrid demand from miners accelerates. | N/A (Private) |
+| **2026-04-27** | Researchers at the Chinese Academy of Sciences (CAS) announced a breakthrough in an all-iron flow battery, demonstrating over 6,000 cycles without capacity loss to dramatically lower large-scale energy storage costs. | **Sentiment:** Very Bullish <br><br>**Direct:** CAS's 6,000-cycle all-iron flow battery breakthrough drastically improves the commercial viability of long-duration grid storage.<br><br>**Indirect:** Lithium-ion alternatives gain serious traction for stationary storage, threatening incumbent lithium utility-scale systems.<br><br>**Market Dynamics:** Capital may rotate toward long-duration storage technologies as grid demands from AI data centers require cheap, stable baseloads. | Watch commercialization spin-offs in flow batteries; consider reallocating away from pure-play Li-ion stationary storage manufacturers due to emerging technology disruption risk. | N/A (Academic) |
+| **2026-04-27** | TotalEnergies approved a $1.2 billion investment to build a 1 GW wind farm paired with a 600 MWh battery energy storage system in Kazakhstan. | **Sentiment:** Bullish <br><br>**Direct:** TotalEnergies secures a massive renewable foothold in Central Asia, expanding its grid-scale storage operations.<br><br>**Indirect:** Co-locating massive wind and storage de-risks intermittent generation in emerging markets with weaker transmission grids.<br><br>**Market Dynamics:** Supermajors continue allocating billions to renewables, pressuring pure-play renewable developers on project acquisition costs. | Long TTE shares or short-term call spreads targeting $72 resistance, anticipating stable accumulation by yield-seeking institutional buyers. | TTE $68 pivot / $72 call wall; Analyst PT: $75 |
+| **2026-04-26** | Lyten acquired nearly $5 billion in Northvolt's former European manufacturing assets, securing 16 GWh of battery production capacity. | **Sentiment:** Bullish <br><br>**Direct:** Lyten's asset acquisition provides immediate scale for its battery manufacturing without the capital burn of greenfield facilities.<br><br>**Indirect:** European battery supply chain consolidation continues as well-capitalized new entrants replace distressed legacy startups.<br><br>**Market Dynamics:** Private energy storage valuations may bifurcate, rewarding hardware plays with de-risked physical footprints. | Monitor private energy storage capital rounds; hardware scale players like Lyten may emerge as prime acquisition targets or see accelerated IPO timelines. | N/A (Private) |
+| :--- | :--- | :--- | :--- | :--- |
+| Datetime | Finding | Sentiment & Takeaways | Guidance & Play | Market Data & Levels |
+### Power Generation and Energy Storage: Strategist Report
+[AGENT_RAW_BEGIN] Power_Energy_Scout_Strategist | key=Power_Energy_Scout_report | len=4327
+[TOKEN_USAGE] Power_Energy_Scout_Strategist | input=6136 | output=953 | total=7102
+[14]      INFO:     Response received from the model.
+[AGENT_RAW_END] Strategic_Minerals_Scout_Strategist
+| **2026-04-26** | Researchers at NC State University developed a non-destructive fluorescence spectroscopy method to track rare-earth metals in living plants, optimizing sustainable 'phytomining' extraction.<br>*(Source: [NC State News](https://news.ncsu.edu))* | **Sentiment: Bullish**<br>• **Direct:** Novel spectroscopy significantly accelerates the commercial viability of sustainable phytomining operations.<br>• **Indirect:** Biological extraction offers low-capex alternatives for low-grade rare earth mineral recovery.<br>• **Market Dynamics:** Ag-tech and mining convergence presents long-term disruption potential despite minimal near-term impact. | Track seed and Series A funding rounds for Ag-Tech/Biotech startups pivoting to phytomining. Minimal near-term public market impact; treat as a long-term watch item for ESG mining allocations. | N/A |
+| **2026-04-27** | The U.S. Department of Energy announced $24 million in new funding to prototype and test projects focused on retrieving rare earth elements from electronic scrap and industrial waste.<br>*(Source: [Forbes](https://www.forbes.com))* | **Sentiment: Bullish**<br>• **Direct:** US DOE capital injection accelerates commercialization of secondary rare earth extraction pathways.<br>• **Indirect:** Domestic recycling alleviates primary mining bottlenecks and reduces supply chain vulnerabilities.<br>• **Market Dynamics:** Subsidies support nascent e-waste players, though aggregate supply impacts remain years away. | Monitor early-stage e-waste recycling and secondary extraction startups for private valuation bumps. Potential momentum in publicly traded ESG-focused materials recovery firms on DOE subsidy tailwinds. | N/A |
+| **2026-04-26** | The United States and the European Union signed a memorandum of understanding to coordinate the supply, subsidies, and stockpiling of critical minerals for defense and clean energy technologies.<br>*(Source: [AAStocks](https://aastocks.com))* | **Sentiment: Bullish**<br>• **Direct:** Transatlantic coordination creates a unified bloc for critical mineral supply chain security.<br>• **Indirect:** Reduced reliance on dominant Asian suppliers drives a premium on Western-allied mining assets.<br>• **Market Dynamics:** Geopolitical risk premiums will persist in Western critical mineral commodity pricing. | Go long Western-allied rare earth producers (e.g., MP, LYSDY) or critical mineral ETFs like REMX for 1-5 day positioning, capitalizing on the geopolitical premium from the US-EU MoU. | N/A |
+| :--- | :--- | :--- | :--- | :--- |
+| Datetime | Finding | Sentiment & Takeaways | Guidance & Play | Market Data & Levels |
+### Strategic Minerals and Rare Earth Elements: Daily Market Sweep
+[AGENT_RAW_BEGIN] Strategic_Minerals_Scout_Strategist | key=Strategic_Minerals_Scout_report | len=2715
+[TOKEN_USAGE] Strategic_Minerals_Scout_Strategist | input=3832 | output=607 | total=4717
+[14]      INFO:     Response received from the model.
+[AGENT_RAW_END] Space_Defense_Scout_Strategist
+| **2026-04-27** | TSUNEISHI SOLUTIONS TOKYOBAY, in partnership with Mitsui O.S.K. Lines, received American Bureau of Shipping approval for the basic design of an autonomous offshore rocket recovery platform. | **Sentiment:** Bullish <br><br>**Direct:** ABS approval clears a major regulatory hurdle for TSUNEISHI and Mitsui's autonomous offshore rocket recovery operations. <br>**Indirect:** Offshore recovery automation reduces turnaround times and costs for reusable launch vehicles globally. <br>**Market Dynamics:** Shipping and logistics companies are increasingly capturing value in the space-launch supply chain via recovery infrastructure. | Investigate Mitsui (9104.T) for diversified space-infrastructure exposure or monitor US maritime partners for copycat autonomous recovery tech. | Traded primarily in Tokyo (9104.T); standard US options walls non-applicable. |
+| **2026-04-27** | SpaceX launched the ViaSat-3 F3 ultra-high-capacity communications satellite intended for the Asia-Pacific region aboard a Falcon Heavy rocket from the Kennedy Space Center. | **Sentiment:** Bullish <br><br>**Direct:** Successful ViaSat-3 F3 launch bolsters ViaSat's Asia-Pacific coverage and ultra-high-capacity communication capabilities. <br>**Indirect:** De-risks remaining capacity constraints in the region, paving the way for expanded commercial and defense telecom contracts. <br>**Market Dynamics:** Market cap expansion likely as telecom operators successfully deploy regional orbital infrastructure. | Go long VSAT near $48 pivot with a 1-3 month target of $58 to play the Asia-Pacific capacity expansion. | VSAT base support at $48 pivot; Needham maintains aggressive $58 PT heading into Q2. |
+| **2026-04-26** | South Korean launch provider Innospace and Canada's RSAT Space signed a Memorandum of Understanding to jointly develop and offer satellite launch services and defense space systems across North America. | **Sentiment:** Bullish <br><br>**Direct:** Innospace and RSAT's partnership expands their footprint into the lucrative North American satellite launch market. <br>**Indirect:** Increases competition for smaller-payload providers in the region as foreign entrants aggregate capabilities. <br>**Market Dynamics:** Consolidating launch infrastructure agreements signal heightened demand for cross-border space defense systems. | Monitor public small-lift competitors (e.g., RKLB) for market share pressure as cross-border JVs scale North American operations. | No US options chain available for Innospace/RSAT; private and regional market dynamics apply. |
+| **2026-04-26** | The U.S. Space Force awarded $3.2 billion in contracts to 12 companies, including SpaceX, Anduril, and Northrop Grumman, to develop space-based missile defense interceptors for the Golden Dome program. | **Sentiment:** Bullish <br><br>**Direct:** The massive Golden Dome contract directly boosts Northrop Grumman and Anduril's defense space backlogs significantly. <br>**Indirect:** Validates the Department of Defense's shift toward integrated commercial and prime contractor partnerships in space defense. <br>**Market Dynamics:** Defense primes face a structurally elevated spending environment despite near-term geopolitical fluctuations. | Buy NOC calls expiring in Q3 to capture defense space momentum; track Anduril secondary market valuation spikes. | NOC fundamentally supported by FY27 budget growth; call skew builds into Q3 space defense catalysts. |
+| :--- | :--- | :--- | :--- | :--- |
+| Datetime | Finding | Sentiment & Takeaways | Guidance & Play | Market Data & Levels |
+### Space Exploration and Defense Technology – Daily Market Sweep
+[AGENT_RAW_BEGIN] Space_Defense_Scout_Strategist | key=Space_Defense_Scout_report | len=3653
+[TOKEN_USAGE] Space_Defense_Scout_Strategist | input=5018 | output=795 | total=5824
+[14]      INFO:     Response received from the model.
+[14]      WARNING:  Tools at indices [0] are not compatible with automatic function calling (AFC). AFC is disabled. If AFC is intended, please include python callables in the tool list, and do not include function declaration and MCP server in the tool list.
+[14]      INFO:     Sending out request, model: gemini-3.1-pro-preview, backend: GoogleLLMVariant.VERTEX_AI, stream: False
+[PROGRESS] 11:20:22 | Strategist Power & Energy complete | Metrics: 5 topics
+[TOKEN_USAGE] Power_Energy_Scout_Strategist | input=6105 | output=16 | total=6138
+[14]      INFO:     Response received from the model.
+[14]      WARNING:  Tools at indices [0] are not compatible with automatic function calling (AFC). AFC is disabled. If AFC is intended, please include python callables in the tool list, and do not include function declaration and MCP server in the tool list.
+[14]      INFO:     Sending out request, model: gemini-3.1-pro-preview, backend: GoogleLLMVariant.VERTEX_AI, stream: False
+[ENRICH] Power & Energy: 5/5 findings enriched.
 ```
-
-[ENRICH] Robotics: 1/0 findings enriched.
-  PASS  Test 1: Single append creates shard with generation=0
-
-### [Saving to Memory] Category: Robotics | ID: ROB-041726-001
-```json
-{
-  "entry_id": "ROB-041726-001",
-  "timestamp": "2026-04-17",
-  "category": "Robotics",
-  "finding": "thread-4 finding \u2014 unique content about topic 4",
-  "insights_sentiment": "Direct: X. Indirect: Y. Market Dynamics: Z. Sentiment: Neutral",
-  "guidance_play": "play for topic 4",
-  "price_levels": "PL-4",
-  "source_url": "https://example.com/article-4"
 }
-```
-
-[APPEND] Robotics | generation-match miss on attempt 1/5 — retrying
-[APPEND] Robotics | generation-match miss on attempt 1/5 — retrying
-[ENRICH] Robotics: 1/0 findings enriched.
-[APPEND] Robotics | generation-match miss on attempt 1/5 — retrying
-[APPEND] Robotics | ROB-041726-002 landed after 2 attempts (contention resolved)
-
-### [Saving to Memory] Category: Robotics | ID: ROB-041726-002
-[APPEND] Robotics | ROB-041726-003 landed after 2 attempts (contention resolved)
-
-### [Saving to Memory] Category: Robotics | ID: ROB-041726-003
-[APPEND] Robotics | generation-match miss on attempt 1/5 — retrying
-```json
+  "source_url": "https://www.wsj.com/articles/ace-green-recycling-pipe-spac-merger"
+  "price_levels": "ATEK $9.00 pivot / $10.00 call wall",
+  "guidance_play": "Trade ATEK cautiously around the $9.00 pivot; consider writing $10.00 calls or deploying short-term neutral-to-bullish structures to capture pre-merger volatility premium.",
+  "sentiment_takeaways": "Sentiment: Bullish | Direct: The $32 million PIPE strongly derisks Ace Green Recycling's public market debut by ensuring baseline liquidity post-merger. | Indirect: Successful close of a recycling-focused SPAC signals rebounding investor appetite for circular economy technology. | Market Dynamics: SPACs targeting clean-tech must secure significant pre-merger capital to offset anticipated high redemption rates.",
+  "finding": "Ace Green Recycling secured a $32 million PIPE financing round to support its upcoming SPAC merger with Athena Technology Acquisition Corp. II.",
+  "category": "Power & Energy",
+  "timestamp": "2026-04-26",
+  "entry_id": "PWE-042626-004",
 {
-  "entry_id": "ROB-041726-002",
-  "timestamp": "2026-04-17",
-  "category": "Robotics",
-  "finding": "thread-3 finding \u2014 unique content about topic 3",
-  "insights_sentiment": "Direct: X. Indirect: Y. Market Dynamics: Z. Sentiment: Neutral",
-  "guidance_play": "play for topic 3",
-  "price_levels": "PL-3",
-  "source_url": "https://example.com/article-3"
-}
-```
-
-[ENRICH] Robotics: 2/0 findings enriched.
 ```json
-{
-  "entry_id": "ROB-041726-003",
-  "timestamp": "2026-04-17",
-  "category": "Robotics",
-  "finding": "thread-2 finding \u2014 unique content about topic 2",
-  "insights_sentiment": "Direct: X. Indirect: Y. Market Dynamics: Z. Sentiment: Neutral",
-  "guidance_play": "play for topic 2",
-  "price_levels": "PL-2",
-  "source_url": "https://example.com/article-2"
-}
+### [Saving to Memory] Category: Power & Energy | ID: PWE-042626-004
+[ENRICH] Power & Energy: 4/5 findings enriched.
 ```
-
-[APPEND] Robotics | ROB-041726-004 landed after 2 attempts (contention resolved)
-
-### [Saving to Memory] Category: Robotics | ID: ROB-041726-004
-[APPEND] Robotics | ROB-041726-005 landed after 2 attempts (contention resolved)
-[ENRICH] Robotics: 3/0 findings enriched.
+}
+  "source_url": "https://www.bloomberg.com/news/articles/2026-04-26/inspired-evolution-invests-40m-in-crossboundary-energy"
+  "price_levels": "N/A (Private)",
+  "guidance_play": "Evaluate private credit or specialized infrastructure funds targeting off-grid emerging markets as ESG-driven microgrid demand from miners accelerates.",
+  "sentiment_takeaways": "Sentiment: Bullish | Direct: CrossBoundary's capital injection directly accelerates the deployment of microgrids for off-grid mining operations in Africa. | Indirect: Decarbonization in the mining sector is heavily driving decentralized solar and storage adoption. | Market Dynamics: ESG mandates and diesel costs combine to make African industrial microgrids a highly attractive private credit play.",
+  "finding": "Inspired Evolution announced a $40 million investment into CrossBoundary Energy to fund solar and battery storage systems for mining operations in the DRC and Sierra Leone.",
+  "category": "Power & Energy",
+  "timestamp": "2026-04-26",
+  "entry_id": "PWE-042626-003",
+{
 ```json
-{
-  "entry_id": "ROB-041726-004",
-  "timestamp": "2026-04-17",
-  "category": "Robotics",
-  "finding": "thread-0 finding \u2014 unique content about topic 0",
-  "insights_sentiment": "Direct: X. Indirect: Y. Market Dynamics: Z. Sentiment: Neutral",
-  "guidance_play": "play for topic 0",
-  "price_levels": "PL-0",
-  "source_url": "https://example.com/article-0"
-}
+### [Saving to Memory] Category: Power & Energy | ID: PWE-042626-003
+[ENRICH] Power & Energy: 3/5 findings enriched.
 ```
-
-[ENRICH] Robotics: 4/0 findings enriched.
-
-### [Saving to Memory] Category: Robotics | ID: ROB-041726-005
+}
+  "source_url": "https://www.nature.com/articles/cas-iron-flow-battery-breakthrough"
+  "price_levels": "N/A (Academic)",
+  "guidance_play": "Watch commercialization spin-offs in flow batteries; consider reallocating away from pure-play Li-ion stationary storage manufacturers due to emerging technology disruption risk.",
+  "sentiment_takeaways": "Sentiment: Very Bullish | Direct: CAS's 6,000-cycle all-iron flow battery breakthrough drastically improves the commercial viability of long-duration grid storage. | Indirect: Lithium-ion alternatives gain serious traction for stationary storage, threatening incumbent lithium utility-scale systems. | Market Dynamics: Capital may rotate toward long-duration storage technologies as grid demands from AI data centers require cheap, stable baseloads.",
+  "finding": "Researchers at the Chinese Academy of Sciences (CAS) announced a breakthrough in an all-iron flow battery, demonstrating over 6,000 cycles without capacity loss to dramatically lower large-scale energy storage costs.",
+  "category": "Power & Energy",
+  "timestamp": "2026-04-27",
+  "entry_id": "PWE-042726-002",
+{
 ```json
-{
-  "entry_id": "ROB-041726-005",
-  "timestamp": "2026-04-17",
-  "category": "Robotics",
-  "finding": "thread-1 finding \u2014 unique content about topic 1",
-  "insights_sentiment": "Direct: X. Indirect: Y. Market Dynamics: Z. Sentiment: Neutral",
-  "guidance_play": "play for topic 1",
-  "price_levels": "PL-1",
-  "source_url": "https://example.com/article-1"
-}
+### [Saving to Memory] Category: Power & Energy | ID: PWE-042726-002
+[ENRICH] Power & Energy: 2/5 findings enriched.
 ```
-
-[ENRICH] Robotics: 5/0 findings enriched.
-  ✓ all 5 entries landed with unique sequential IDs: ['ROB-041726-001', 'ROB-041726-002', 'ROB-041726-003', 'ROB-041726-004', 'ROB-041726-005']
-  PASS  Test 2: 5 parallel appends all land, unique IDs, no data loss
-
-[test_append_race] Results: 2/2 passed
+}
+  "source_url": "https://finance.yahoo.com/news/totalenergies-greenlights-1-2b-wind-storage-project-kazakhstan"
+  "price_levels": "TTE $68 pivot / $72 call wall; Analyst PT: $75",
+  "guidance_play": "Long TTE shares or short-term call spreads targeting $72 resistance, anticipating stable accumulation by yield-seeking institutional buyers.",
+  "sentiment_takeaways": "Sentiment: Bullish | Direct: TotalEnergies secures a massive renewable foothold in Central Asia, expanding its grid-scale storage operations. | Indirect: Co-locating massive wind and storage de-risks intermittent generation in emerging markets with weaker transmission grids. | Market Dynamics: Supermajors continue allocating billions to renewables, pressuring pure-play renewable developers on project acquisition costs.",
+  "finding": "TotalEnergies approved a $1.2 billion investment to build a 1 GW wind farm paired with a 600 MWh battery energy storage system in Kazakhstan.",
+  "category": "Power & Energy",
+  "timestamp": "2026-04-27",
+  "entry_id": "PWE-042726-001",
+{
+```json
+### [Saving to Memory] Category: Power & Energy | ID: PWE-042726-001
+[ENRICH] Power & Energy: 1/5 findings enriched.
+```
+}
+  "source_url": "https://www.reuters.com/business/energy/lyten-acquires-northvolt-assets-2026-04-26/"
+  "price_levels": "N/A (Private)",
+  "guidance_play": "Monitor private energy storage capital rounds; hardware scale players like Lyten may emerge as prime acquisition targets or see accelerated IPO timelines.",
+  "sentiment_takeaways": "Sentiment: Bullish | Direct: Lyten's asset acquisition provides immediate scale for its battery manufacturing without the capital burn of greenfield facilities. | Indirect: European battery supply chain consolidation continues as well-capitalized new entrants replace distressed legacy startups. | Market Dynamics: Private energy storage valuations may bifurcate, rewarding hardware plays with de-risked physical footprints.",
+  "finding": "Lyten acquired nearly $5 billion in Northvolt's former European manufacturing assets, securing 16 GWh of battery production capacity.",
+  "category": "Power & Energy",
+  "timestamp": "2026-04-26",
+  "entry_id": "PWE-042626-002",
+{
+```json
+### [Saving to Memory] Category: Power & Energy | ID: PWE-042626-002
+[TOKEN_USAGE] Power_Energy_Scout_Strategist | input=4910 | output=1110 | total=6039
+[14]      INFO:     Response received from the model.
+[14]      WARNING:  Tools at indices [0] are not compatible with automatic function calling (AFC). AFC is disabled. If AFC is intended, please include python callables in the tool list, and do not include function declaration and MCP server in the tool list.
+[14]      INFO:     Sending out request, model: gemini-3.1-pro-preview, backend: GoogleLLMVariant.VERTEX_AI, stream: False
+[PROGRESS] 11:20:17 | Strategist Space & Defense complete | Metrics: 4 topics
+[TOKEN_USAGE] Space_Defense_Scout_Strategist | input=4984 | output=19 | total=5092
+[14]      INFO:     Response received from the model.
+[14]      WARNING:  Tools at indices [0] are not compatible with automatic function calling (AFC). AFC is disabled. If AFC is intended, please include python callables in the tool list, and do not include function declaration and MCP server in the tool list.
+[14]      INFO:     Sending out request, model: gemini-3.1-pro-preview, backend: GoogleLLMVariant.VERTEX_AI, stream: False
+[PROGRESS] 11:20:15 | Strategist Strategic Minerals complete | Metrics: 3 topics
+[ENRICH] Strategic Minerals: 3/3 findings enriched.
+```
+}
+  "source_url": "https://news.ncsu.edu"
+  "price_levels": "N/A",
+  "guidance_play": "Track seed and Series A funding rounds for Ag-Tech/Biotech startups pivoting to phytomining. Minimal near-term public market impact; treat as a long-term watch item for ESG mining allocations.",
+  "sentiment_takeaways": "Sentiment: Bullish | Direct: Novel spectroscopy significantly accelerates the commercial viability of sustainable phytomining operations. | Indirect: Biological extraction offers low-capex alternatives for low-grade rare earth mineral recovery. | Market Dynamics: Ag-tech and mining convergence presents long-term disruption potential despite minimal near-term impact.",
+  "finding": "Researchers at NC State University developed a non-destructive fluorescence spectroscopy method to track rare-earth metals in living plants, optimizing sustainable 'phytomining' extraction.",
+  "category": "Strategic Minerals",
+  "timestamp": "2026-04-26",
+  "entry_id": "STM-042626-002",
+{
+```json
+### [Saving to Memory] Category: Strategic Minerals | ID: STM-042626-002
+[ENRICH] Strategic Minerals: 2/3 findings enriched.
+```
+}
+  "source_url": "https://www.forbes.com"
+  "price_levels": "N/A",
+  "guidance_play": "Monitor early-stage e-waste recycling and secondary extraction startups for private valuation bumps. Potential momentum in publicly traded ESG-focused materials recovery firms on DOE subsidy tailwinds.",
+  "sentiment_takeaways": "Sentiment: Bullish | Direct: US DOE capital injection accelerates commercialization of secondary rare earth extraction pathways. | Indirect: Domestic recycling alleviates primary mining bottlenecks and reduces supply chain vulnerabilities. | Market Dynamics: Subsidies support nascent e-waste players, though aggregate supply impacts remain years away.",
+  "finding": "The U.S. Department of Energy announced $24 million in new funding to prototype and test projects focused on retrieving rare earth elements from electronic scrap and industrial waste.",
+  "category": "Strategic Minerals",
+  "timestamp": "2026-04-27",
+  "entry_id": "STM-042726-001",
+{
+```json
+### [Saving to Memory] Category: Strategic Minerals | ID: STM-042726-001
+[ENRICH] Strategic Minerals: 1/3 findings enriched.
+```
+}
+  "source_url": "https://aastocks.com"
+  "price_levels": "N/A",
+  "guidance_play": "Go long Western-allied rare earth producers (e.g., MP, LYSDY) or critical mineral ETFs like REMX for 1-5 day positioning, capitalizing on the geopolitical premium from the US-EU MoU.",
+  "sentiment_takeaways": "Sentiment: Bullish | Direct: Transatlantic coordination creates a unified bloc for critical mineral supply chain security. | Indirect: Reduced reliance on dominant Asian suppliers drives a premium on Western-allied mining assets. | Market Dynamics: Geopolitical risk premiums will persist in Western critical mineral commodity pricing.",
+  "finding": "The United States and the European Union signed a memorandum of understanding to coordinate the supply, subsidies, and stockpiling of critical minerals for defense and clean energy technologies.",
+  "category": "Strategic Minerals",
+  "timestamp": "2026-04-26",
+  "entry_id": "STM-042626-001",
+{
+```json
+### [Saving to Memory] Category: Strategic Minerals | ID: STM-042626-001
+[14]      WARNING:  Tools at indices [0] are not compatible with automatic function calling (AFC). AFC is disabled. If AFC is intended, please include python callables in the tool list, and do not include function declaration and MCP server in the tool list.
+[14]      INFO:     Sending out request, model: gemini-3.1-pro-preview, backend: GoogleLLMVariant.VERTEX_AI, stream: False
+[TOKEN_USAGE] Strategic_Minerals_Scout_Strategist | input=3200 | output=570 | total=3986
+[14]      INFO:     Response received from the model.
+[ENRICH] Space & Defense: 4/4 findings enriched.
+```
+}
+  "source_url": "https://www.tsuneishi.co.jp/"
+  "price_levels": "Traded primarily in Tokyo (9104.T); standard US options walls non-applicable.",
+  "guidance_play": "Investigate Mitsui (9104.T) for diversified space-infrastructure exposure or monitor US maritime partners for copycat autonomous recovery tech.",
+  "sentiment_takeaways": "Sentiment: Bullish | Direct: ABS approval clears a major regulatory hurdle for TSUNEISHI and Mitsui's autonomous offshore rocket recovery operations. | Indirect: Offshore recovery automation reduces turnaround times and costs for reusable launch vehicles globally. | Market Dynamics: Shipping and logistics companies are increasingly capturing value in the space-launch supply chain via recovery infrastructure.",
+  "finding": "TSUNEISHI SOLUTIONS TOKYOBAY, in partnership with Mitsui O.S.K. Lines, received American Bureau of Shipping approval for the basic design of an autonomous offshore rocket recovery platform.",
+  "category": "Space & Defense",
+  "timestamp": "2026-04-27",
+  "entry_id": "SPD-042726-002",
+{
+```json
+### [Saving to Memory] Category: Space & Defense | ID: SPD-042726-002
+[ENRICH] Space & Defense: 3/4 findings enriched.
+```
+}
+  "source_url": "https://www.space.com/spacex-falcon-heavy-viasat-3-f3-launch"
+  "price_levels": "VSAT base support at $48 pivot; Needham maintains aggressive $58 PT heading into Q2.",
+  "guidance_play": "Go long VSAT near $48 pivot with a 1-3 month target of $58 to play the Asia-Pacific capacity expansion.",
+  "sentiment_takeaways": "Sentiment: Bullish | Direct: Successful ViaSat-3 F3 launch bolsters ViaSat's Asia-Pacific coverage and ultra-high-capacity communication capabilities. | Indirect: De-risks remaining capacity constraints in the region, paving the way for expanded commercial and defense telecom contracts. | Market Dynamics: Market cap expansion likely as telecom operators successfully deploy regional orbital infrastructure.",
+  "finding": "SpaceX launched the ViaSat-3 F3 ultra-high-capacity communications satellite intended for the Asia-Pacific region aboard a Falcon Heavy rocket from the Kennedy Space Center.",
+  "category": "Space & Defense",
+  "timestamp": "2026-04-27",
+  "entry_id": "SPD-042726-001",
+{
+```json
+### [Saving to Memory] Category: Space & Defense | ID: SPD-042726-001
+[ENRICH] Space & Defense: 2/4 findings enriched.
+```
+}
+  "source_url": "https://spacenews.com/"
+  "price_levels": "No US options chain available for Innospace/RSAT; private and regional market dynamics apply.",
+  "guidance_play": "Monitor public small-lift competitors (e.g., RKLB) for market share pressure as cross-border JVs scale North American operations.",
+  "sentiment_takeaways": "Sentiment: Bullish | Direct: Innospace and RSAT's partnership expands their footprint into the lucrative North American satellite launch market. | Indirect: Increases competition for smaller-payload providers in the region as foreign entrants aggregate capabilities. | Market Dynamics: Consolidating launch infrastructure agreements signal heightened demand for cross-border space defense systems.",
+  "finding": "South Korean launch provider Innospace and Canada's RSAT Space signed a Memorandum of Understanding to jointly develop and offer satellite launch services and defense space systems across North America.",
+  "category": "Space & Defense",
+  "timestamp": "2026-04-26",
+  "entry_id": "SPD-042626-003",
+{
+```json
+### [Saving to Memory] Category: Space & Defense | ID: SPD-042626-003
+[ENRICH] Space & Defense: 1/4 findings enriched.
+```
+}
+  "source_url": "https://www.defenseone.com/"
+  "price_levels": "NOC fundamentally supported by FY27 budget growth; call skew builds into Q3 space defense catalysts.",
+  "guidance_play": "Buy NOC calls expiring in Q3 to capture defense space momentum; track Anduril secondary market valuation spikes.",
+  "sentiment_takeaways": "Sentiment: Bullish | Direct: The massive Golden Dome contract directly boosts Northrop Grumman and Anduril's defense space backlogs significantly. | Indirect: Validates the Department of Defense's shift toward integrated commercial and prime contractor partnerships in space defense. | Market Dynamics: Defense primes face a structurally elevated spending environment despite near-term geopolitical fluctuations.",
+  "finding": "The U.S. Space Force awarded $3.2 billion in contracts to 12 companies, including SpaceX, Anduril, and Northrop Grumman, to develop space-based missile defense interceptors for the Golden Dome program.",
+  "category": "Space & Defense",
+  "timestamp": "2026-04-26",
+  "entry_id": "SPD-042626-002",
+{
+```json
+### [Saving to Memory] Category: Space & Defense | ID: SPD-042626-002
+[TOKEN_USAGE] Space_Defense_Scout_Strategist | input=4065 | output=855 | total=5863
+[14]      INFO:     Response received from the model.
+[14]      WARNING:  Tools at indices [0] are not compatible with automatic function calling (AFC). AFC is disabled. If AFC is intended, please include python callables in the tool list, and do not include function declaration and MCP server in the tool list.
+[14]      INFO:     Sending out request, model: gemini-3.1-pro-preview, backend: GoogleLLMVariant.VERTEX_AI, stream: False
+[PROGRESS] 11:20:09 | Strategist starting Power & Energy
+[TOKEN_USAGE] Power_Energy_Scout_Strategist | input=4887 | output=14 | total=6641
+[14]      INFO:     Response received from the model.
+[14]      WARNING:  Tools at indices [0] are not compatible with automatic function calling (AFC). AFC is disabled. If AFC is intended, please include python callables in the tool list, and do not include function declaration and MCP server in the tool list.
+[14]      INFO:     Sending out request, model: gemini-3.1-pro-preview, backend: GoogleLLMVariant.VERTEX_AI, stream: False
+[PROGRESS] 11:20:00 | Strategist starting Strategic Minerals
+[TOKEN_USAGE] Strategic_Minerals_Scout_Strategist | input=3179 | output=13 | total=5305
+[14]      INFO:     Response received from the model.
+[14]      WARNING:  Tools at indices [0] are not compatible with automatic function calling (AFC). AFC is disabled. If AFC is intended, please include python callables in the tool list, and do not include function declaration and MCP server in the tool list.
+[14]      INFO:     Sending out request, model: gemini-3.1-pro-preview, backend: GoogleLLMVariant.VERTEX_AI, stream: False
+[PROGRESS] 11:19:59 | Strategist starting Space & Defense
+[TOKEN_USAGE] Space_Defense_Scout_Strategist | input=4042 | output=14 | total=5407
+[14]      INFO:     Response received from the model.
+[14]      WARNING:  Tools at indices [0] are not compatible with automatic function calling (AFC). AFC is disabled. If AFC is intended, please include python callables in the tool list, and do not include function declaration and MCP server in the tool list.
+[14]      INFO:     Sending out request, model: gemini-3.1-pro-preview, backend: GoogleLLMVariant.VERTEX_AI, stream: False
+[14]      WARNING:  Tools at indices [0] are not compatible with automatic function calling (AFC). AFC is disabled. If AFC is intended, please include python callables in the tool list, and do not include function declaration and MCP server in the tool list.
+[14]      INFO:     Sending out request, model: gemini-3.1-pro-preview, backend: GoogleLLMVariant.VERTEX_AI, stream: False
+[AGENT_RAW_END] Power_Energy_Scout_DE
+price_levels: ATEK $9.00 pivot / $10.00 call wall
+sentiment_takeaways: Sentiment: Bullish | Direct: The $32 million PIPE strongly derisks Ace Green Recycling's public market debut by ensuring baseline liquidity post-merger. | Indirect: Successful close of a recycling-focused SPAC signals rebounding investor appetite for circular economy technology. | Market Dynamics: SPACs targeting clean-tech must secure significant pre-merger capital to offset anticipated high redemption rates.
+source_url: https://www.wsj.com/articles/ace-green-recycling-pipe-spac-merger
+date: 2026-04-26
+finding: Ace Green Recycling secured a $32 million PIPE financing round to support its upcoming SPAC merger with Athena Technology Acquisition Corp. II.
+=== TOPIC 5 ===
+price_levels: N/A (Private)
+sentiment_takeaways: Sentiment: Bullish | Direct: CrossBoundary's capital injection directly accelerates the deployment of microgrids for off-grid mining operations in Africa. | Indirect: Decarbonization in the mining sector is heavily driving decentralized solar and storage adoption. | Market Dynamics: ESG mandates and diesel costs combine to make African industrial microgrids a highly attractive private credit play.
+source_url: https://www.bloomberg.com/news/articles/2026-04-26/inspired-evolution-invests-40m-in-crossboundary-energy
+date: 2026-04-26
+finding: Inspired Evolution announced a $40 million investment into CrossBoundary Energy to fund solar and battery storage systems for mining operations in the DRC and Sierra Leone.
+=== TOPIC 4 ===
+price_levels: N/A (Academic)
+sentiment_takeaways: Sentiment: Very Bullish | Direct: CAS's 6,000-cycle all-iron flow battery breakthrough drastically improves the commercial viability of long-duration grid storage. | Indirect: Lithium-ion alternatives gain serious traction for stationary storage, threatening incumbent lithium utility-scale systems. | Market Dynamics: Capital may rotate toward long-duration storage technologies as grid demands from AI data centers require cheap, stable baseloads.
+source_url: https://www.nature.com/articles/cas-iron-flow-battery-breakthrough
+date: 2026-04-27
+finding: Researchers at the Chinese Academy of Sciences (CAS) announced a breakthrough in an all-iron flow battery, demonstrating over 6,000 cycles without capacity loss to dramatically lower large-scale energy storage costs.
+=== TOPIC 3 ===
+price_levels: TTE $68 pivot / $72 call wall; Analyst PT: $75
+sentiment_takeaways: Sentiment: Bullish | Direct: TotalEnergies secures a massive renewable foothold in Central Asia, expanding its grid-scale storage operations. | Indirect: Co-locating massive wind and storage de-risks intermittent generation in emerging markets with weaker transmission grids. | Market Dynamics: Supermajors continue allocating billions to renewables, pressuring pure-play renewable developers on project acquisition costs.
+source_url: https://finance.yahoo.com/news/totalenergies-greenlights-1-2b-wind-storage-project-kazakhstan
+date: 2026-04-27
+finding: TotalEnergies approved a $1.2 billion investment to build a 1 GW wind farm paired with a 600 MWh battery energy storage system in Kazakhstan.
+=== TOPIC 2 ===
+price_levels: N/A (Private)
+sentiment_takeaways: Sentiment: Bullish | Direct: Lyten's asset acquisition provides immediate scale for its battery manufacturing without the capital burn of greenfield facilities. | Indirect: European battery supply chain consolidation continues as well-capitalized new entrants replace distressed legacy startups. | Market Dynamics: Private energy storage valuations may bifurcate, rewarding hardware plays with de-risked physical footprints.
+source_url: https://www.reuters.com/business/energy/lyten-acquires-northvolt-assets-2026-04-26/
+date: 2026-04-26
+finding: Lyten acquired nearly $5 billion in Northvolt's former European manufacturing assets, securing 16 GWh of battery production capacity.
+=== TOPIC 1 ===
+[AGENT_RAW_BEGIN] Power_Energy_Scout_DE | key=Power_Energy_Scout_analyzed | len=3914
+[DE_VALIDATE] Power_Energy_Scout_DE: parsed 5 topics → rendered 5 canonical blocks to state[Power_Energy_Scout_analyzed].
+[AGENT_RAW_END] Strategic_Minerals_Scout_DE
+price_levels: N/A
+sentiment_takeaways: Sentiment: Bullish | Direct: Novel spectroscopy significantly accelerates the commercial viability of sustainable phytomining operations. | Indirect: Biological extraction offers low-capex alternatives for low-grade rare earth mineral recovery. | Market Dynamics: Ag-tech and mining convergence presents long-term disruption potential despite minimal near-term impact.
+source_url: https://news.ncsu.edu
+date: 2026-04-26
+finding: Researchers at NC State University developed a non-destructive fluorescence spectroscopy method to track rare-earth metals in living plants, optimizing sustainable 'phytomining' extraction.
+=== TOPIC 3 ===
+price_levels: N/A
+sentiment_takeaways: Sentiment: Bullish | Direct: US DOE capital injection accelerates commercialization of secondary rare earth extraction pathways. | Indirect: Domestic recycling alleviates primary mining bottlenecks and reduces supply chain vulnerabilities. | Market Dynamics: Subsidies support nascent e-waste players, though aggregate supply impacts remain years away.
+source_url: https://www.forbes.com
+date: 2026-04-27
+finding: The U.S. Department of Energy announced $24 million in new funding to prototype and test projects focused on retrieving rare earth elements from electronic scrap and industrial waste.
+=== TOPIC 2 ===
+price_levels: N/A
+sentiment_takeaways: Sentiment: Bullish | Direct: Transatlantic coordination creates a unified bloc for critical mineral supply chain security. | Indirect: Reduced reliance on dominant Asian suppliers drives a premium on Western-allied mining assets. | Market Dynamics: Geopolitical risk premiums will persist in Western critical mineral commodity pricing.
+source_url: https://aastocks.com
+date: 2026-04-26
+finding: The United States and the European Union signed a memorandum of understanding to coordinate the supply, subsidies, and stockpiling of critical minerals for defense and clean energy technologies.
+=== TOPIC 1 ===
+[AGENT_RAW_BEGIN] Strategic_Minerals_Scout_DE | key=Strategic_Minerals_Scout_analyzed | len=1973
+[DE_VALIDATE] Strategic_Minerals_Scout_DE: parsed 3 topics → rendered 3 canonical blocks to state[Strategic_Minerals_Scout_analyzed].
+[TOKEN_USAGE] Power_Energy_Scout_DE | input=3626 | output=1065 | total=4942
+[14]      INFO:     Response received from the model.
+[TOKEN_USAGE] Strategic_Minerals_Scout_DE | input=2756 | output=501 | total=3272
+[14]      INFO:     Response received from the model.
+[14]      WARNING:  Tools at indices [0] are not compatible with automatic function calling (AFC). AFC is disabled. If AFC is intended, please include python callables in the tool list, and do not include function declaration and MCP server in the tool list.
+[14]      INFO:     Sending out request, model: gemini-3.1-pro-preview, backend: GoogleLLMVariant.VERTEX_AI, stream: False
+[AGENT_RAW_END] Space_Defense_Scout_DE
+price_levels: Traded primarily in Tokyo (9104.T); standard US options walls non-applicable.
+sentiment_takeaways: Sentiment: Bullish | Direct: ABS approval clears a major regulatory hurdle for TSUNEISHI and Mitsui's autonomous offshore rocket recovery operations. | Indirect: Offshore recovery automation reduces turnaround times and costs for reusable launch vehicles globally. | Market Dynamics: Shipping and logistics companies are increasingly capturing value in the space-launch supply chain via recovery infrastructure.
+source_url: https://www.tsuneishi.co.jp/
+date: 2026-04-27
+finding: TSUNEISHI SOLUTIONS TOKYOBAY, in partnership with Mitsui O.S.K. Lines, received American Bureau of Shipping approval for the basic design of an autonomous offshore rocket recovery platform.
+=== TOPIC 4 ===
+price_levels: VSAT base support at $48 pivot; Needham maintains aggressive $58 PT heading into Q2.
+sentiment_takeaways: Sentiment: Bullish | Direct: Successful ViaSat-3 F3 launch bolsters ViaSat's Asia-Pacific coverage and ultra-high-capacity communication capabilities. | Indirect: De-risks remaining capacity constraints in the region, paving the way for expanded commercial and defense telecom contracts. | Market Dynamics: Market cap expansion likely as telecom operators successfully deploy regional orbital infrastructure.
+source_url: https://www.space.com/spacex-falcon-heavy-viasat-3-f3-launch
+date: 2026-04-27
+finding: SpaceX launched the ViaSat-3 F3 ultra-high-capacity communications satellite intended for the Asia-Pacific region aboard a Falcon Heavy rocket from the Kennedy Space Center.
+=== TOPIC 3 ===
+price_levels: No US options chain available for Innospace/RSAT; private and regional market dynamics apply.
+sentiment_takeaways: Sentiment: Bullish | Direct: Innospace and RSAT's partnership expands their footprint into the lucrative North American satellite launch market. | Indirect: Increases competition for smaller-payload providers in the region as foreign entrants aggregate capabilities. | Market Dynamics: Consolidating launch infrastructure agreements signal heightened demand for cross-border space defense systems.
+source_url: https://spacenews.com/
+date: 2026-04-26
+finding: South Korean launch provider Innospace and Canada's RSAT Space signed a Memorandum of Understanding to jointly develop and offer satellite launch services and defense space systems across North America.
+=== TOPIC 2 ===
+price_levels: NOC fundamentally supported by FY27 budget growth; call skew builds into Q3 space defense catalysts.
+sentiment_takeaways: Sentiment: Bullish | Direct: The massive Golden Dome contract directly boosts Northrop Grumman and Anduril's defense space backlogs significantly. | Indirect: Validates the Department of Defense's shift toward integrated commercial and prime contractor partnerships in space defense. | Market Dynamics: Defense primes face a structurally elevated spending environment despite near-term geopolitical fluctuations.
+source_url: https://www.defenseone.com/
+date: 2026-04-26
+finding: The U.S. Space Force awarded $3.2 billion in contracts to 12 companies, including SpaceX, Anduril, and Northrop Grumman, to develop space-based missile defense interceptors for the Golden Dome program.
+=== TOPIC 1 ===
+[AGENT_RAW_BEGIN] Space_Defense_Scout_DE | key=Space_Defense_Scout_analyzed | len=3258
+[DE_VALIDATE] Space_Defense_Scout_DE: parsed 4 topics → rendered 4 canonical blocks to state[Space_Defense_Scout_analyzed].
+[TOKEN_USAGE] Space_Defense_Scout_DE | input=3112 | output=825 | total=3946
+[14]      INFO:     Response received from the model.
+[14]      WARNING:  Tools at indices [0] are not compatible with automatic function calling (AFC). AFC is disabled. If AFC is intended, please include python callables in the tool list, and do not include function declaration and MCP server in the tool list.
+[14]      INFO:     Sending out request, model: gemini-3.1-pro-preview, backend: GoogleLLMVariant.VERTEX_AI, stream: False
+[PROGRESS] 11:19:37 | DE Strategic Minerals complete | Metrics: 3 topics
+[TOKEN_USAGE] Strategic_Minerals_Scout_DE | input=2726 | output=17 | total=3143
+[14]      INFO:     Response received from the model.
+[14]      WARNING:  Tools at indices [0] are not compatible with automatic function calling (AFC). AFC is disabled. If AFC is intended, please include python callables in the tool list, and do not include function declaration and MCP server in the tool list.
+[14]      INFO:     Sending out request, model: gemini-3.1-pro-preview, backend: GoogleLLMVariant.VERTEX_AI, stream: False
+[PROGRESS] 11:19:33 | DE Power & Energy complete | Metrics: 2 searches, 5 topics
+[TOKEN_USAGE] Power_Energy_Scout_DE | input=3590 | output=18 | total=4884
+[14]      INFO:     Response received from the model.
+[14]      WARNING:  Tools at indices [0] are not compatible with automatic function calling (AFC). AFC is disabled. If AFC is intended, please include python callables in the tool list, and do not include function declaration and MCP server in the tool list.
+[14]      INFO:     Sending out request, model: gemini-3.1-pro-preview, backend: GoogleLLMVariant.VERTEX_AI, stream: False
+[PROGRESS] 11:19:32 | DE Space & Defense complete | Metrics: 1 searches, 4 topics
+[14]      WARNING:  Tools at indices [0] are not compatible with automatic function calling (AFC). AFC is disabled. If AFC is intended, please include python callables in the tool list, and do not include function declaration and MCP server in the tool list.
+[14]      INFO:     Sending out request, model: gemini-3.1-pro-preview, backend: GoogleLLMVariant.VERTEX_AI, stream: False
+[TOKEN_USAGE] Space_Defense_Scout_DE | input=3076 | output=18 | total=4064
+[14]      INFO:     Response received from the model.
+[DEDUP] Wrote 3 deduped findings to shard: gs://marketresearch-agents/market_findings_log_Strategic Minerals.json
+[DEDUP] Strategic Minerals: 3 unique, 0 duplicates removed (from 3 scout findings vs 10 baseline).
+[PROGRESS] 11:19:31 | DE starting Strategic Minerals
+[TOKEN_USAGE] Strategic_Minerals_Scout_DE | input=2329 | output=186 | total=3086
+[14]      INFO:     Response received from the model.
+[14]      WARNING:  Tools at indices [0] are not compatible with automatic function calling (AFC). AFC is disabled. If AFC is intended, please include python callables in the tool list, and do not include function declaration and MCP server in the tool list.
+[14]      INFO:     Sending out request, model: gemini-3.1-pro-preview, backend: GoogleLLMVariant.VERTEX_AI, stream: False
+[AGENT_RAW_END] Strategic_Minerals_Scout
+source_url: https://news.ncsu.edu
+date: 2026-04-26
+finding: Researchers at NC State University developed a non-destructive fluorescence spectroscopy method to track rare-earth metals in living plants, optimizing sustainable 'phytomining' extraction.
+=== FINDING 3 ===
+source_url: https://www.forbes.com
+date: 2026-04-27
+finding: The U.S. Department of Energy announced $24 million in new funding to prototype and test projects focused on retrieving rare earth elements from electronic scrap and industrial waste.
+=== FINDING 2 ===
+source_url: https://aastocks.com
+date: 2026-04-26
+finding: The United States and the European Union signed a memorandum of understanding to coordinate the supply, subsidies, and stockpiling of critical minerals for defense and clean energy technologies.
+=== FINDING 1 ===
+[AGENT_RAW_BEGIN] Strategic_Minerals_Scout | key=Strategic_Minerals_Scout_findings | len=804
+[SCOUT_VALIDATE] Strategic_Minerals_Scout: parsed 3 findings → rendered 3 canonical blocks to state[Strategic_Minerals_Scout_findings].
+[TOKEN_USAGE] Strategic_Minerals_Scout | input=809 | output=239 | total=1332
+[14]      INFO:     Response received from the model.
+[14]      WARNING:  Tools at indices [0] are not compatible with automatic function calling (AFC). AFC is disabled. If AFC is intended, please include python callables in the tool list, and do not include function declaration and MCP server in the tool list.
+[14]      INFO:     Sending out request, model: gemini-3.1-pro-preview, backend: GoogleLLMVariant.VERTEX_AI, stream: False
+[DEDUP] Wrote 4 deduped findings to shard: gs://marketresearch-agents/market_findings_log_Space & Defense.json
+[DEDUP] Space & Defense: 4 unique, 0 duplicates removed (from 4 scout findings vs 10 baseline).
+[PROGRESS] 11:19:19 | DE starting Space & Defense
+[TOKEN_USAGE] Space_Defense_Scout_DE | input=2468 | output=288 | total=3249
+[14]      INFO:     Response received from the model.
+[14]      WARNING:  Tools at indices [0] are not compatible with automatic function calling (AFC). AFC is disabled. If AFC is intended, please include python callables in the tool list, and do not include function declaration and MCP server in the tool list.
+[14]      INFO:     Sending out request, model: gemini-3.1-pro-preview, backend: GoogleLLMVariant.VERTEX_AI, stream: False
+[DEDUP] Wrote 5 deduped findings to shard: gs://marketresearch-agents/market_findings_log_Power & Energy.json
+[DEDUP] Power & Energy: 5 unique, 0 duplicates removed (from 5 scout findings vs 10 baseline).
+[PROGRESS] 11:19:18 | DE starting Power & Energy
+[TOKEN_USAGE] Power_Energy_Scout_DE | input=2734 | output=412 | total=3265
+[14]      INFO:     Response received from the model.
+[14]      WARNING:  Tools at indices [2] are not compatible with automatic function calling (AFC). AFC is disabled. If AFC is intended, please include python callables in the tool list, and do not include function declaration and MCP server in the tool list.
+[14]      INFO:     Sending out request, model: gemini-3.1-pro-preview, backend: GoogleLLMVariant.VERTEX_AI, stream: False
+[PROGRESS] 11:19:14 | Scout Strategic Minerals and Rare Earth Elements complete | Metrics: 2 searches, 3 topics
+[TOKEN_USAGE] Strategic_Minerals_Scout | input=766 | output=22 | total=3302
+[14]      INFO:     Response received from the model.
+[14]      WARNING:  Tools at indices [0] are not compatible with automatic function calling (AFC). AFC is disabled. If AFC is intended, please include python callables in the tool list, and do not include function declaration and MCP server in the tool list.
+[14]      INFO:     Sending out request, model: gemini-3.1-pro-preview, backend: GoogleLLMVariant.VERTEX_AI, stream: False
+[AGENT_RAW_END] Space_Defense_Scout
+source_url: https://www.tsuneishi.co.jp/
+date: 2026-04-27
+finding: TSUNEISHI SOLUTIONS TOKYOBAY, in partnership with Mitsui O.S.K. Lines, received American Bureau of Shipping approval for the basic design of an autonomous offshore rocket recovery platform.
+=== FINDING 4 ===
+source_url: https://www.space.com/spacex-falcon-heavy-viasat-3-f3-launch
+date: 2026-04-27
+finding: SpaceX launched the ViaSat-3 F3 ultra-high-capacity communications satellite intended for the Asia-Pacific region aboard a Falcon Heavy rocket from the Kennedy Space Center.
+=== FINDING 3 ===
+source_url: https://spacenews.com/
+date: 2026-04-26
+finding: South Korean launch provider Innospace and Canada's RSAT Space signed a Memorandum of Understanding to jointly develop and offer satellite launch services and defense space systems across North America.
+=== FINDING 2 ===
+source_url: https://www.defenseone.com/
+date: 2026-04-26
+finding: The U.S. Space Force awarded $3.2 billion in contracts to 12 companies, including SpaceX, Anduril, and Northrop Grumman, to develop space-based missile defense interceptors for the Golden Dome program.
+=== FINDING 1 ===
+[AGENT_RAW_BEGIN] Space_Defense_Scout | key=Space_Defense_Scout_findings | len=1136
+[SCOUT_VALIDATE] Space_Defense_Scout: parsed 4 findings → rendered 4 canonical blocks to state[Space_Defense_Scout_findings].
+[TOKEN_USAGE] Space_Defense_Scout | input=759 | output=364 | total=1130
+[14]      INFO:     Response received from the model.
+[14]      WARNING:  Tools at indices [0] are not compatible with automatic function calling (AFC). AFC is disabled. If AFC is intended, please include python callables in the tool list, and do not include function declaration and MCP server in the tool list.
+[14]      INFO:     Sending out request, model: gemini-3.1-pro-preview, backend: GoogleLLMVariant.VERTEX_AI, stream: False
+[AGENT_RAW_END] Power_Energy_Scout
+source_url: https://www.wsj.com/articles/ace-green-recycling-pipe-spac-merger
+date: 2026-04-26
+finding: Ace Green Recycling secured a $32 million PIPE financing round to support its upcoming SPAC merger with Athena Technology Acquisition Corp. II.
+=== FINDING 5 ===
+source_url: https://www.bloomberg.com/news/articles/2026-04-26/inspired-evolution-invests-40m-in-crossboundary-energy
+date: 2026-04-26
+finding: Inspired Evolution announced a $40 million investment into CrossBoundary Energy to fund solar and battery storage systems for mining operations in the DRC and Sierra Leone.
+=== FINDING 4 ===
+source_url: https://www.nature.com/articles/cas-iron-flow-battery-breakthrough
+date: 2026-04-27
+finding: Researchers at the Chinese Academy of Sciences (CAS) announced a breakthrough in an all-iron flow battery, demonstrating over 6,000 cycles without capacity loss to dramatically lower large-scale energy storage costs.
+=== FINDING 3 ===
+source_url: https://finance.yahoo.com/news/totalenergies-greenlights-1-2b-wind-storage-project-kazakhstan
+date: 2026-04-27
+finding: TotalEnergies approved a $1.2 billion investment to build a 1 GW wind farm paired with a 600 MWh battery energy storage system in Kazakhstan.
+=== FINDING 2 ===
+source_url: https://www.reuters.com/business/energy/lyten-acquires-northvolt-assets-2026-04-26/
+date: 2026-04-26
+finding: Lyten acquired nearly $5 billion in Northvolt's former European manufacturing assets, securing 16 GWh of battery production capacity.
+=== FINDING 1 ===
+[AGENT_RAW_BEGIN] Power_Energy_Scout | key=Power_Energy_Scout_findings | len=1510
+[SCOUT_VALIDATE] Power_Energy_Scout: parsed 5 findings → rendered 5 canonical blocks to state[Power_Energy_Scout_findings].
+[TOKEN_USAGE] Power_Energy_Scout | input=759 | output=505 | total=1264
+[14]      INFO:     Response received from the model.
+[14]      WARNING:  Tools at indices [2] are not compatible with automatic function calling (AFC). AFC is disabled. If AFC is intended, please include python callables in the tool list, and do not include function declaration and MCP server in the tool list.
+[14]      INFO:     Sending out request, model: gemini-3.1-pro-preview, backend: GoogleLLMVariant.VERTEX_AI, stream: False
+[PROGRESS] 11:19:07 | Scout Space Exploration and Defense Technology complete | Metrics: 2 searches, 4 topics
+[TOKEN_USAGE] Space_Defense_Scout | input=718 | output=21 | total=3566
+[14]      INFO:     Response received from the model.
+[14]      WARNING:  Tools at indices [2] are not compatible with automatic function calling (AFC). AFC is disabled. If AFC is intended, please include python callables in the tool list, and do not include function declaration and MCP server in the tool list.
+[14]      INFO:     Sending out request, model: gemini-3.1-pro-preview, backend: GoogleLLMVariant.VERTEX_AI, stream: False
+[PROGRESS] 11:19:00 | Scout Power Generation and Energy Storage complete | Metrics: 2 searches, 5 topics
+[PROGRESS] 11:19:00 | Scout starting Power Generation and Energy Storage
+[TOKEN_USAGE] Power_Energy_Scout | input=692 | output=37 | total=3383
+[14]      INFO:     Response received from the model.
+[14]      WARNING:  Tools at indices [2] are not compatible with automatic function calling (AFC). AFC is disabled. If AFC is intended, please include python callables in the tool list, and do not include function declaration and MCP server in the tool list.
+[14]      INFO:     Sending out request, model: gemini-3.1-pro-preview, backend: GoogleLLMVariant.VERTEX_AI, stream: False
+[PROGRESS] 11:18:43 | Scout Strategic Minerals and Rare Earth Elements complete | Metrics: 1 searches, 3 topics
+[TOKEN_USAGE] Strategic_Minerals_Scout | input=723 | output=22 | total=1135
+[14]      INFO:     Response received from the model.
+[14]      WARNING:  Tools at indices [2] are not compatible with automatic function calling (AFC). AFC is disabled. If AFC is intended, please include python callables in the tool list, and do not include function declaration and MCP server in the tool list.
+[14]      INFO:     Sending out request, model: gemini-3.1-pro-preview, backend: GoogleLLMVariant.VERTEX_AI, stream: False
+[PROGRESS] 11:18:34 | Scout starting Space Exploration and Defense Technology
+[TOKEN_USAGE] Space_Defense_Scout | input=692 | output=16 | total=1131
+[14]      INFO:     Response received from the model.
+[14]      WARNING:  Tools at indices [2] are not compatible with automatic function calling (AFC). AFC is disabled. If AFC is intended, please include python callables in the tool list, and do not include function declaration and MCP server in the tool list.
+[14]      INFO:     Sending out request, model: gemini-3.1-pro-preview, backend: GoogleLLMVariant.VERTEX_AI, stream: False
+[PROGRESS] 11:18:33 | Scout starting Strategic Minerals and Rare Earth Elements
+[TOKEN_USAGE] Strategic_Minerals_Scout | input=695 | output=17 | total=1021
+[14]      INFO:     Response received from the model.
+[14]      WARNING:  Tools at indices [2] are not compatible with automatic function calling (AFC). AFC is disabled. If AFC is intended, please include python callables in the tool list, and do not include function declaration and MCP server in the tool list.
+[14]      INFO:     Sending out request, model: gemini-3.1-pro-preview, backend: GoogleLLMVariant.VERTEX_AI, stream: False
+[14]      WARNING:  Tools at indices [2] are not compatible with automatic function calling (AFC). AFC is disabled. If AFC is intended, please include python callables in the tool list, and do not include function declaration and MCP server in the tool list.
+[14]      INFO:     Sending out request, model: gemini-3.1-pro-preview, backend: GoogleLLMVariant.VERTEX_AI, stream: False
+[14]      WARNING:  Tools at indices [2] are not compatible with automatic function calling (AFC). AFC is disabled. If AFC is intended, please include python callables in the tool list, and do not include function declaration and MCP server in the tool list.
+[14]      INFO:     Sending out request, model: gemini-3.1-pro-preview, backend: GoogleLLMVariant.VERTEX_AI, stream: False
+========================================
+  STARTING Batch_2
+========================================
+[COOLDOWN] Sleeping 60s between batches...
+[CHECK] AI_Stack_Scout_Pipeline (AI Stack) — shard OK.
+[SHARD] AI Stack: 3/3 enriched — complete.
+[CHECK] Crypto_Scout_Pipeline (Crypto) — shard OK.
+[SHARD] Crypto: 3/3 enriched — complete.
+[CHECK] Robotics_Scout_Pipeline (Robotics) — shard OK.
+[SHARD] Robotics: 3/3 enriched — complete.
+[AGENT_RAW_END] Crypto_Scout_Strategist
+| **2026-04-26** | A dormant whale wallet reactivated after 180 days to accumulate 2.62 billion $ASTEROID tokens for approximately $828,000, signaling a massive liquidity move. | **Sentiment:** Bullish<br><br>**Direct:** Large-scale accumulation by a dormant whale suggests high conviction or strategic positioning ahead of a major catalyst for ASTEROID.<br><br>**Indirect:** Reactivation of seasoned wallets often triggers retail momentum and heightens speculative volatility in narrative-driven tokens.<br><br>**Market Dynamics:** Massive centralized buys in meme coins underscore extreme market fragmentation and the disproportionate influence of whale liquidity. | Consider a speculative 1-5 day long on ASTEROID if price pushes above the $0.0085 pivot point on volume, utilizing $0.0079 support as a strict stop-loss. Expect high narrative-driven volatility. | **ASTEROID:**<br>Pivot: $0.0085<br>Support: $0.0079<br>Resistance: $0.0093 |
+| **2026-04-26** | Citi and Fidelity International launched a proof-of-concept tokenized money market fund at the Singapore FinTech Festival, embedding foreign exchange swaps directly within the blockchain. | **Sentiment:** Bullish<br><br>**Direct:** The integration of FX swaps into tokenized MMFs by TradFi giants validates blockchain utility for complex cross-border liquidity.<br><br>**Indirect:** Successful execution will likely catalyze further tokenization of traditional fixed-income products by competing tier-one institutions.<br><br>**Market Dynamics:** Institutional adoption shifts blockchain narratives from speculative tokens toward backend TradFi infrastructure efficiency and settlement speed. | Monitor Citi (C) for bullish momentum above its $114.95 50-DMA as backend efficiencies scale; target initial long plays toward the lower-bound analyst PT of $135.94 over the coming weeks. | **C:**<br>50-DMA: $114.95<br>Analyst PT: $135.94-$160.00 |
+| **2026-04-27** | South Korean Web3 research firm Four Pillars raised a $21.9 million Series A led by Pantera Capital and Further Ventures to fund product development and global expansion. | **Sentiment:** Bullish<br><br>**Direct:** Four Pillars' sizable Series A indicates sustained venture confidence in Web3 research and infrastructure despite market volatility.<br><br>**Indirect:** Global expansion by Asian Web3 firms could pressure Western incumbents to execute defensive M&A or geographic pivots.<br><br>**Market Dynamics:** Venture capital continues to rotate toward robust infrastructure and analytical tools over purely speculative consumer DApps. | Monitor established Western Web3 infrastructure and analytics firms for potential M&A activity or capital raises as Pantera-backed Four Pillars expands globally. | Private entities; no public tickers. |
+| :--- | :--- | :--- | :--- | :--- |
+| Datetime | Finding | Sentiment & Takeaways | Guidance & Play | Market Data & Levels |
+### Crypto and Blockchain Sector Report
+[AGENT_RAW_BEGIN] Crypto_Scout_Strategist | key=Crypto_Scout_report | len=2936
+[TOKEN_USAGE] Crypto_Scout_Strategist | input=4900 | output=689 | total=5684
+[14]      INFO:     Response received from the model.
+[14]      WARNING:  Tools at indices [0] are not compatible with automatic function calling (AFC). AFC is disabled. If AFC is intended, please include python callables in the tool list, and do not include function declaration and MCP server in the tool list.
+[14]      INFO:     Sending out request, model: gemini-3.1-pro-preview, backend: GoogleLLMVariant.VERTEX_AI, stream: False
+[PROGRESS] 11:17:21 | Strategist Crypto complete | Metrics: 3 topics
+[ENRICH] Crypto: 3/3 findings enriched.
+```
+}
+  "source_url": "https://blockchainreporter.net/whale-awakening-dormant-investor-accumulates-2-62b-asteroid-in-aggressive-liquidity-move/"
+  "price_levels": "ASTEROID: Pivot $0.0085 / Support $0.0079 / Resistance $0.0093",
+  "guidance_play": "Consider a speculative 1-5 day long on ASTEROID if price pushes above the $0.0085 pivot point on volume, utilizing $0.0079 support as a strict stop-loss. Expect high narrative-driven volatility.",
+  "sentiment_takeaways": "Sentiment: Bullish | Direct: Large-scale accumulation by a dormant whale suggests high conviction or strategic positioning ahead of a major catalyst for ASTEROID. | Indirect: Reactivation of seasoned wallets often triggers retail momentum and heightens speculative volatility in narrative-driven tokens. | Market Dynamics: Massive centralized buys in meme coins underscore extreme market fragmentation and the disproportionate influence of whale liquidity.",
+  "finding": "A dormant whale wallet reactivated after 180 days to accumulate 2.62 billion $ASTEROID tokens for approximately $828,000, signaling a massive liquidity move.",
+  "category": "Crypto",
+  "timestamp": "2026-04-26",
+  "entry_id": "CRY-042626-004",
+{
+```json
+### [Saving to Memory] Category: Crypto | ID: CRY-042626-004
+[ENRICH] Crypto: 2/3 findings enriched.
+```
+}
+  "source_url": "https://coinmarketcap.com/academy/article/citi-and-fidelity-announce-tokenized-money-market-fund-launch-at-singapore-fintech-festival"
+  "price_levels": "C: 50-DMA $114.95 / Analyst PT $135.94-$160.00",
+  "guidance_play": "Monitor Citi (C) for bullish momentum above its $114.95 50-DMA as backend efficiencies scale; target initial long plays toward the lower-bound analyst PT of $135.94 over the coming weeks.",
+  "sentiment_takeaways": "Sentiment: Bullish | Direct: The integration of FX swaps into tokenized MMFs by TradFi giants validates blockchain utility for complex cross-border liquidity. | Indirect: Successful execution will likely catalyze further tokenization of traditional fixed-income products by competing tier-one institutions. | Market Dynamics: Institutional adoption shifts blockchain narratives from speculative tokens toward backend TradFi infrastructure efficiency and settlement speed.",
+  "finding": "Citi and Fidelity International launched a proof-of-concept tokenized money market fund at the Singapore FinTech Festival, embedding foreign exchange swaps directly within the blockchain.",
+  "category": "Crypto",
+  "timestamp": "2026-04-26",
+  "entry_id": "CRY-042626-003",
+{
+```json
+### [Saving to Memory] Category: Crypto | ID: CRY-042626-003
+[ENRICH] Crypto: 1/3 findings enriched.
+```
+}
+  "source_url": "https://www.mexc.com/news/1055433"
+  "price_levels": "Private entities; no public tickers.",
+  "guidance_play": "Monitor established Western Web3 infrastructure and analytics firms for potential M&A activity or capital raises as Pantera-backed Four Pillars expands globally.",
+  "sentiment_takeaways": "Sentiment: Bullish | Direct: Four Pillars' sizable Series A indicates sustained venture confidence in Web3 research and infrastructure despite market volatility. | Indirect: Global expansion by Asian Web3 firms could pressure Western incumbents to execute defensive M&A or geographic pivots. | Market Dynamics: Venture capital continues to rotate toward robust infrastructure and analytical tools over purely speculative consumer DApps.",
+  "finding": "South Korean Web3 research firm Four Pillars raised a $21.9 million Series A led by Pantera Capital and Further Ventures to fund product development and global expansion.",
+  "category": "Crypto",
+  "timestamp": "2026-04-27",
+  "entry_id": "CRY-042726-001",
+{
+```json
+### [Saving to Memory] Category: Crypto | ID: CRY-042726-001
+[PROGRESS] 11:17:20 | Strategist starting Crypto
+[TOKEN_USAGE] Crypto_Scout_Strategist | input=4056 | output=776 | total=6772
+[14]      INFO:     Response received from the model.
+[AGENT_RAW_END] AI_Stack_Scout_Strategist
+| 2026-04-27 | Jury selection commenced in the high-stakes trial between Elon Musk and OpenAI CEO Sam Altman regarding OpenAI's founding mission and nonprofit transition. | Sentiment: Bearish \| Direct: Protracted litigation distracts key leadership at both OpenAI and xAI during a critical scaling phase. \| Indirect: Legal discovery exposes internal OpenAI governance and strategic pivots, inviting further global regulatory scrutiny. \| Market Dynamics: Litigation overhang introduces volatility for Microsoft while throttling private funding velocity for competing AI labs. | Hedge MSFT exposure given volatility from potential discovery leaks. Trade TSLA range ($350 support to $400 resistance). | TSLA: $376 close, $350 support, $400 resistance; MSFT: $423 close, $583 PT |
+| 2026-04-27 | Meta Platforms agreed to purchase up to a gigawatt of orbital solar power from space startup Overview Energy to fuel its AI data center infrastructure. | Sentiment: Bullish \| Direct: Meta secures a massive clean energy source to power continuous AI cluster operations independently of terrestrial grids. \| Indirect: Orbital solar validates experimental generation models as terrestrial grid capacity constraints severely limit hyperscaler expansions. \| Market Dynamics: Advanced energy startups will command higher valuations as big tech frantically secures off-grid power. | Long META on innovative infrastructure scaling. Look for sympathetic plays in advanced/orbital energy startups as big tech scrambles for power. | META: $675 close, Avg PT $838 |
+| 2026-04-27 | China's National Development and Reform Commission officially blocked Meta's $2 billion acquisition of AI agent startup Manus. | Sentiment: Bearish \| Direct: Meta loses a critical external injection of AI agent capabilities, delaying time-to-market against competitors. \| Indirect: Geopolitical regulatory bodies are increasingly treating AI agent architectures as sovereign critical infrastructure. \| Market Dynamics: Premium shifts toward domestic US AI startups as cross-border M&A viability evaporates for US hyperscalers. | Monitor META for short-term weakness due to M&A blockage; pivot focus to domestic US AI startups as prime M&A targets. | META: $675 close, Avg PT $838 |
+| :--- | :--- | :--- | :--- | :--- |
+| Datetime | Finding | Sentiment & Takeaways | Guidance & Play | Market Data & Levels |
+### AI Stack Sector Report
+[AGENT_RAW_BEGIN] AI_Stack_Scout_Strategist | key=AI_Stack_Scout_report | len=2404
+[TOKEN_USAGE] AI_Stack_Scout_Strategist | input=4472 | output=519 | total=5642
+[14]      INFO:     Response received from the model.
+[AGENT_RAW_END] Robotics_Scout_Strategist
+| **2026-04-27** | Pudu Robotics inaugurated its U.S. headquarters in Dallas to rapidly commercialize its embodied AI robotics throughout the Americas following a recent $150M raise. | **Sentiment:** Bullish<br><br>**Direct:** Pudu's new Dallas headquarters marks a strategic and well-capitalized push to capture the North American market.<br><br>**Indirect:** Asian robotics manufacturers are aggressively expanding Western footprints to diversify revenue and mitigate geopolitical risks.<br><br>**Market Dynamics:** Cross-border expansion in embodied AI increases immediate commercial competition for domestic U.S. robotics startups. | Track U.S. market-share disruption in the commercial service robotics space, which could create pricing headwinds for domestic competitors and public automation plays. | N/A |
+| **2026-04-26** | Smart Robotics completed a €10 million Series A led by Rotterdamse Havendraken and Innovation Industries to deploy AI-driven pick-and-place robots in Europe. | **Sentiment:** Bullish<br><br>**Direct:** Smart Robotics' Series A accelerates the deployment of intelligent pick-and-place systems across European logistics hubs.<br><br>**Indirect:** Continued regional investments highlight a maturing and localized European ecosystem for specialized warehouse automation.<br><br>**Market Dynamics:** Targeted raises remain viable for niche robotic applications despite broader market consolidation and mega-rounds. | Evaluate potential acquisition by larger European integrators or logistics titans seeking localized, AI-driven pick-and-place solutions. | N/A |
+| **2026-04-26** | Embodied AI startup Star Dynamics raised over $200 million in a round led by SF Express and Sequoia China, bringing its two-month funding total to nearly $366 million. | **Sentiment:** Very Bullish<br><br>**Direct:** Star Dynamics' massive capital influx confirms aggressive scaling capabilities for logistics-focused embodied AI.<br><br>**Indirect:** Incumbent warehouse automation firms will face intense pressure to rapidly integrate advanced AI systems.<br><br>**Market Dynamics:** Sustained private mega-rounds indicate high LP conviction in the near-term commercial viability of logistics robotics. | Monitor for accelerated M&A interest from e-commerce heavyweights or pressure on legacy integrators like Symbotic (SYM) as Star Dynamics scales its logistics AI footprint. Sustained private deployments will likely catalyze indirect capital flows into broad robotics ETFs (e.g., BOTZ, ROBO). | N/A |
+| :--- | :--- | :--- | :--- | :--- |
+| Datetime | Finding | Sentiment & Takeaways | Guidance & Play | Market Data & Levels |
+### Physical AI and Embodied Robotics: Daily Market Sweep
+[AGENT_RAW_BEGIN] Robotics_Scout_Strategist | key=Robotics_Scout_report | len=2699
+[TOKEN_USAGE] Robotics_Scout_Strategist | input=4058 | output=578 | total=5323
+[14]      INFO:     Response received from the model.
+[14]      WARNING:  Tools at indices [0] are not compatible with automatic function calling (AFC). AFC is disabled. If AFC is intended, please include python callables in the tool list, and do not include function declaration and MCP server in the tool list.
+[14]      INFO:     Sending out request, model: gemini-3.1-pro-preview, backend: GoogleLLMVariant.VERTEX_AI, stream: False
+[PROGRESS] 11:16:44 | Strategist AI Stack complete | Metrics: 3 topics
+[ENRICH] AI Stack: 3/3 findings enriched.
+```
+}
+  "source_url": "https://apnews.com/article/elon-musk-openai-sam-altman-trial-ai-236b281f6c77d4c8dbd"
+  "price_levels": "TSLA: $376 close, $350 support, $400 resistance; MSFT: $423 close, $583 PT",
+  "guidance_play": "Hedge MSFT exposure given volatility from potential discovery leaks. Trade TSLA range ($350 support to $400 resistance).",
+  "sentiment_takeaways": "Sentiment: Bearish | Direct: Protracted litigation distracts key leadership at both OpenAI and xAI during a critical scaling phase. | Indirect: Legal discovery exposes internal OpenAI governance and strategic pivots, inviting further global regulatory scrutiny. | Market Dynamics: Litigation overhang introduces volatility for Microsoft while throttling private funding velocity for competing AI labs.",
+  "finding": "Jury selection commenced in the high-stakes trial between Elon Musk and OpenAI CEO Sam Altman regarding OpenAI's founding mission and nonprofit transition.",
+  "category": "AI Stack",
+  "timestamp": "2026-04-27",
+  "entry_id": "AIS-042726-003",
+{
+```json
+### [Saving to Memory] Category: AI Stack | ID: AIS-042726-003
+[ENRICH] AI Stack: 2/3 findings enriched.
+```
+}
+  "source_url": "https://www.morningstar.com/news/dow-jones/202604273574/meta-platforms-enters-solar-power-pact-with-space-startup-overview-energy"
+  "price_levels": "META: $675 close, Avg PT $838",
+  "guidance_play": "Long META on innovative infrastructure scaling. Look for sympathetic plays in advanced/orbital energy startups as big tech scrambles for power.",
+  "sentiment_takeaways": "Sentiment: Bullish | Direct: Meta secures a massive clean energy source to power continuous AI cluster operations independently of terrestrial grids. | Indirect: Orbital solar validates experimental generation models as terrestrial grid capacity constraints severely limit hyperscaler expansions. | Market Dynamics: Advanced energy startups will command higher valuations as big tech frantically secures off-grid power.",
+  "finding": "Meta Platforms agreed to purchase up to a gigawatt of orbital solar power from space startup Overview Energy to fuel its AI data center infrastructure.",
+  "category": "AI Stack",
+  "timestamp": "2026-04-27",
+  "entry_id": "AIS-042726-002",
+{
+```json
+### [Saving to Memory] Category: AI Stack | ID: AIS-042726-002
+[ENRICH] AI Stack: 1/3 findings enriched.
+```
+}
+  "source_url": "https://www.reuters.com/markets/deals/beijing-blocks-meta-acquisition-chinese-ai-startup-manus-2026-04-27/"
+  "price_levels": "META: $675 close, Avg PT $838",
+  "guidance_play": "Monitor META for short-term weakness due to M&A blockage; pivot focus to domestic US AI startups as prime M&A targets.",
+  "sentiment_takeaways": "Sentiment: Bearish | Direct: Meta loses a critical external injection of AI agent capabilities, delaying time-to-market against competitors. | Indirect: Geopolitical regulatory bodies are increasingly treating AI agent architectures as sovereign critical infrastructure. | Market Dynamics: Premium shifts toward domestic US AI startups as cross-border M&A viability evaporates for US hyperscalers.",
+  "finding": "China's National Development and Reform Commission officially blocked Meta's $2 billion acquisition of AI agent startup Manus.",
+  "category": "AI Stack",
+  "timestamp": "2026-04-27",
+  "entry_id": "AIS-042726-001",
+{
+```json
+### [Saving to Memory] Category: AI Stack | ID: AIS-042726-001
+[PROGRESS] 11:16:43 | Strategist starting AI Stack
+[TOKEN_USAGE] AI_Stack_Scout_Strategist | input=3695 | output=707 | total=6283
+[14]      INFO:     Response received from the model.
+[14]      WARNING:  Tools at indices [0] are not compatible with automatic function calling (AFC). AFC is disabled. If AFC is intended, please include python callables in the tool list, and do not include function declaration and MCP server in the tool list.
+[14]      INFO:     Sending out request, model: gemini-3.1-pro-preview, backend: GoogleLLMVariant.VERTEX_AI, stream: False
+[AGENT_RAW_END] Crypto_Scout_DE
+price_levels: ASTEROID: Pivot $0.0085 / Support $0.0079 / Resistance $0.0093
+sentiment_takeaways: Sentiment: Bullish | Direct: Large-scale accumulation by a dormant whale suggests high conviction or strategic positioning ahead of a major catalyst for ASTEROID. | Indirect: Reactivation of seasoned wallets often triggers retail momentum and heightens speculative volatility in narrative-driven tokens. | Market Dynamics: Massive centralized buys in meme coins underscore extreme market fragmentation and the disproportionate influence of whale liquidity.
+source_url: https://blockchainreporter.net/whale-awakening-dormant-investor-accumulates-2-62b-asteroid-in-aggressive-liquidity-move/
+date: 2026-04-26
+finding: A dormant whale wallet reactivated after 180 days to accumulate 2.62 billion $ASTEROID tokens for approximately $828,000, signaling a massive liquidity move.
+=== TOPIC 3 ===
+price_levels: C: 50-DMA $114.95 / Analyst PT $135.94-$160.00
+sentiment_takeaways: Sentiment: Bullish | Direct: The integration of FX swaps into tokenized MMFs by TradFi giants validates blockchain utility for complex cross-border liquidity. | Indirect: Successful execution will likely catalyze further tokenization of traditional fixed-income products by competing tier-one institutions. | Market Dynamics: Institutional adoption shifts blockchain narratives from speculative tokens toward backend TradFi infrastructure efficiency and settlement speed.
+source_url: https://coinmarketcap.com/academy/article/citi-and-fidelity-announce-tokenized-money-market-fund-launch-at-singapore-fintech-festival
+date: 2026-04-26
+finding: Citi and Fidelity International launched a proof-of-concept tokenized money market fund at the Singapore FinTech Festival, embedding foreign exchange swaps directly within the blockchain.
+=== TOPIC 2 ===
+price_levels: Private entities; no public tickers.
+sentiment_takeaways: Sentiment: Bullish | Direct: Four Pillars' sizable Series A indicates sustained venture confidence in Web3 research and infrastructure despite market volatility. | Indirect: Global expansion by Asian Web3 firms could pressure Western incumbents to execute defensive M&A or geographic pivots. | Market Dynamics: Venture capital continues to rotate toward robust infrastructure and analytical tools over purely speculative consumer DApps.
+source_url: https://www.mexc.com/news/1055433
+date: 2026-04-27
+finding: South Korean Web3 research firm Four Pillars raised a $21.9 million Series A led by Pantera Capital and Further Ventures to fund product development and global expansion.
+=== TOPIC 1 ===
+[AGENT_RAW_BEGIN] Crypto_Scout_DE | key=Crypto_Scout_analyzed | len=2587
+[DE_VALIDATE] Crypto_Scout_DE: parsed 3 topics → rendered 3 canonical blocks to state[Crypto_Scout_analyzed].
+[TOKEN_USAGE] Crypto_Scout_DE | input=3361 | output=690 | total=4062
+[14]      INFO:     Response received from the model.
+[14]      WARNING:  Tools at indices [0] are not compatible with automatic function calling (AFC). AFC is disabled. If AFC is intended, please include python callables in the tool list, and do not include function declaration and MCP server in the tool list.
+[14]      INFO:     Sending out request, model: gemini-3.1-pro-preview, backend: GoogleLLMVariant.VERTEX_AI, stream: False
+[PROGRESS] 11:16:38 | Strategist Robotics complete | Metrics: 3 topics
+[ENRICH] Robotics: 3/3 findings enriched.
+```
+}
+  "source_url": "https://www.prnewswire.com"
+  "price_levels": "N/A",
+  "guidance_play": "Track U.S. market-share disruption in the commercial service robotics space, which could create pricing headwinds for domestic competitors and public automation plays.",
+  "sentiment_takeaways": "Sentiment: Bullish | Direct: Pudu's new Dallas headquarters marks a strategic and well-capitalized push to capture the North American market. | Indirect: Asian robotics manufacturers are aggressively expanding Western footprints to diversify revenue and mitigate geopolitical risks. | Market Dynamics: Cross-border expansion in embodied AI increases immediate commercial competition for domestic U.S. robotics startups.",
+  "finding": "Pudu Robotics inaugurated its U.S. headquarters in Dallas to rapidly commercialize its embodied AI robotics throughout the Americas following a recent $150M raise.",
+  "category": "Robotics",
+  "timestamp": "2026-04-27",
+  "entry_id": "ROB-042726-001",
+{
+```json
+### [Saving to Memory] Category: Robotics | ID: ROB-042726-001
+[ENRICH] Robotics: 2/3 findings enriched.
+```
+}
+  "source_url": "https://pulse2.com"
+  "price_levels": "N/A",
+  "guidance_play": "Evaluate potential acquisition by larger European integrators or logistics titans seeking localized, AI-driven pick-and-place solutions.",
+  "sentiment_takeaways": "Sentiment: Bullish | Direct: Smart Robotics' Series A accelerates the deployment of intelligent pick-and-place systems across European logistics hubs. | Indirect: Continued regional investments highlight a maturing and localized European ecosystem for specialized warehouse automation. | Market Dynamics: Targeted raises remain viable for niche robotic applications despite broader market consolidation and mega-rounds.",
+  "finding": "Smart Robotics completed a \u20ac10 million Series A led by Rotterdamse Havendraken and Innovation Industries to deploy AI-driven pick-and-place robots in Europe.",
+  "category": "Robotics",
+  "timestamp": "2026-04-26",
+  "entry_id": "ROB-042626-003",
+{
+```json
+### [Saving to Memory] Category: Robotics | ID: ROB-042626-003
+[ENRICH] Robotics: 1/3 findings enriched.
+```
+}
+  "source_url": "https://www.biggofinance.com"
+  "price_levels": "N/A",
+  "guidance_play": "Monitor for accelerated M&A interest from e-commerce heavyweights or pressure on legacy integrators like Symbotic (SYM) as Star Dynamics scales its logistics AI footprint.",
+  "sentiment_takeaways": "Sentiment: Very Bullish | Direct: Star Dynamics' massive capital influx confirms aggressive scaling capabilities for logistics-focused embodied AI. | Indirect: Incumbent warehouse automation firms will face intense pressure to rapidly integrate advanced AI systems. | Market Dynamics: Sustained private mega-rounds indicate high LP conviction in the near-term commercial viability of logistics robotics.",
+  "finding": "Embodied AI startup Star Dynamics raised over $200 million in a round led by SF Express and Sequoia China, bringing its two-month funding total to nearly $366 million.",
+  "category": "Robotics",
+  "timestamp": "2026-04-26",
+  "entry_id": "ROB-042626-002",
+{
+```json
+### [Saving to Memory] Category: Robotics | ID: ROB-042626-002
+[PROGRESS] 11:16:37 | Strategist starting Robotics
+[TOKEN_USAGE] Robotics_Scout_Strategist | input=3406 | output=581 | total=5677
+[14]      INFO:     Response received from the model.
+[14]      WARNING:  Tools at indices [0] are not compatible with automatic function calling (AFC). AFC is disabled. If AFC is intended, please include python callables in the tool list, and do not include function declaration and MCP server in the tool list.
+[14]      INFO:     Sending out request, model: gemini-3.1-pro-preview, backend: GoogleLLMVariant.VERTEX_AI, stream: False
+[PROGRESS] 11:16:31 | DE Crypto complete | Metrics: 1 searches, 3 topics
+[TOKEN_USAGE] Crypto_Scout_DE | input=3329 | output=16 | total=5427
+[14]      INFO:     Response received from the model.
+[14]      WARNING:  Tools at indices [0] are not compatible with automatic function calling (AFC). AFC is disabled. If AFC is intended, please include python callables in the tool list, and do not include function declaration and MCP server in the tool list.
+[14]      INFO:     Sending out request, model: gemini-3.1-pro-preview, backend: GoogleLLMVariant.VERTEX_AI, stream: False
+[AGENT_RAW_END] AI_Stack_Scout_DE
+price_levels: TSLA: $376 close, $350 support, $400 resistance; MSFT: $423 close, $583 PT
+sentiment_takeaways: Sentiment: Bearish | Direct: Protracted litigation distracts key leadership at both OpenAI and xAI during a critical scaling phase. | Indirect: Legal discovery exposes internal OpenAI governance and strategic pivots, inviting further global regulatory scrutiny. | Market Dynamics: Litigation overhang introduces volatility for Microsoft while throttling private funding velocity for competing AI labs.
+source_url: https://apnews.com/article/elon-musk-openai-sam-altman-trial-ai-236b281f6c77d4c8dbd
+date: 2026-04-27
+finding: Jury selection commenced in the high-stakes trial between Elon Musk and OpenAI CEO Sam Altman regarding OpenAI's founding mission and nonprofit transition.
+=== TOPIC 3 ===
+price_levels: META: $675 close, Avg PT $838
+sentiment_takeaways: Sentiment: Bullish | Direct: Meta secures a massive clean energy source to power continuous AI cluster operations independently of terrestrial grids. | Indirect: Orbital solar validates experimental generation models as terrestrial grid capacity constraints severely limit hyperscaler expansions. | Market Dynamics: Advanced energy startups will command higher valuations as big tech frantically secures off-grid power.
+source_url: https://www.morningstar.com/news/dow-jones/202604273574/meta-platforms-enters-solar-power-pact-with-space-startup-overview-energy
+date: 2026-04-27
+finding: Meta Platforms agreed to purchase up to a gigawatt of orbital solar power from space startup Overview Energy to fuel its AI data center infrastructure.
+=== TOPIC 2 ===
+price_levels: META: $675 close, Avg PT $838
+sentiment_takeaways: Sentiment: Bearish | Direct: Meta loses a critical external injection of AI agent capabilities, delaying time-to-market against competitors. | Indirect: Geopolitical regulatory bodies are increasingly treating AI agent architectures as sovereign critical infrastructure. | Market Dynamics: Premium shifts toward domestic US AI startups as cross-border M&A viability evaporates for US hyperscalers.
+source_url: https://www.reuters.com/markets/deals/beijing-blocks-meta-acquisition-chinese-ai-startup-manus-2026-04-27/
+date: 2026-04-27
+finding: China's National Development and Reform Commission officially blocked Meta's $2 billion acquisition of AI agent startup Manus.
+=== TOPIC 1 ===
+[AGENT_RAW_BEGIN] AI_Stack_Scout_DE | key=AI_Stack_Scout_analyzed | len=2379
+[DE_VALIDATE] AI_Stack_Scout_DE: parsed 3 topics → rendered 3 canonical blocks to state[AI_Stack_Scout_analyzed].
+[TOKEN_USAGE] AI_Stack_Scout_DE | input=3029 | output=668 | total=3703
+[14]      INFO:     Response received from the model.
+[14]      WARNING:  Tools at indices [0] are not compatible with automatic function calling (AFC). AFC is disabled. If AFC is intended, please include python callables in the tool list, and do not include function declaration and MCP server in the tool list.
+[14]      INFO:     Sending out request, model: gemini-3.1-pro-preview, backend: GoogleLLMVariant.VERTEX_AI, stream: False
+[PROGRESS] 11:16:17 | DE AI Stack complete | Metrics: 3 searches, 3 topics
+[TOKEN_USAGE] AI_Stack_Scout_DE | input=2995 | output=17 | total=5203
+[14]      INFO:     Response received from the model.
+[14]      WARNING:  Tools at indices [0] are not compatible with automatic function calling (AFC). AFC is disabled. If AFC is intended, please include python callables in the tool list, and do not include function declaration and MCP server in the tool list.
+[14]      INFO:     Sending out request, model: gemini-3.1-pro-preview, backend: GoogleLLMVariant.VERTEX_AI, stream: False
+[DEDUP] Wrote 3 deduped findings to shard: gs://marketresearch-agents/market_findings_log_Crypto.json
+[DEDUP] Crypto: 3 unique, 0 duplicates removed (from 3 scout findings vs 10 baseline).
+[PROGRESS] 11:16:13 | DE starting Crypto
+[TOKEN_USAGE] Crypto_Scout_DE | input=2771 | output=266 | total=3672
+[14]      INFO:     Response received from the model.
+[14]      WARNING:  Tools at indices [0] are not compatible with automatic function calling (AFC). AFC is disabled. If AFC is intended, please include python callables in the tool list, and do not include function declaration and MCP server in the tool list.
+[14]      INFO:     Sending out request, model: gemini-3.1-pro-preview, backend: GoogleLLMVariant.VERTEX_AI, stream: False
+[AGENT_RAW_END] Robotics_Scout_DE
+price_levels: N/A
+sentiment_takeaways: Sentiment: Bullish | Direct: Pudu's new Dallas headquarters marks a strategic and well-capitalized push to capture the North American market. | Indirect: Asian robotics manufacturers are aggressively expanding Western footprints to diversify revenue and mitigate geopolitical risks. | Market Dynamics: Cross-border expansion in embodied AI increases immediate commercial competition for domestic U.S. robotics startups.
+source_url: https://www.prnewswire.com
+date: 2026-04-27
+finding: Pudu Robotics inaugurated its U.S. headquarters in Dallas to rapidly commercialize its embodied AI robotics throughout the Americas following a recent $150M raise.
+=== TOPIC 3 ===
+price_levels: N/A
+sentiment_takeaways: Sentiment: Bullish | Direct: Smart Robotics' Series A accelerates the deployment of intelligent pick-and-place systems across European logistics hubs. | Indirect: Continued regional investments highlight a maturing and localized European ecosystem for specialized warehouse automation. | Market Dynamics: Targeted raises remain viable for niche robotic applications despite broader market consolidation and mega-rounds.
+source_url: https://pulse2.com
+date: 2026-04-26
+finding: Smart Robotics completed a €10 million Series A led by Rotterdamse Havendraken and Innovation Industries to deploy AI-driven pick-and-place robots in Europe.
+=== TOPIC 2 ===
+price_levels: N/A
+sentiment_takeaways: Sentiment: Very Bullish | Direct: Star Dynamics' massive capital influx confirms aggressive scaling capabilities for logistics-focused embodied AI. | Indirect: Incumbent warehouse automation firms will face intense pressure to rapidly integrate advanced AI systems. | Market Dynamics: Sustained private mega-rounds indicate high LP conviction in the near-term commercial viability of logistics robotics.
+source_url: https://www.biggofinance.com
+date: 2026-04-26
+finding: Embodied AI startup Star Dynamics raised over $200 million in a round led by SF Express and Sequoia China, bringing its two-month funding total to nearly $366 million.
+=== TOPIC 1 ===
+[AGENT_RAW_BEGIN] Robotics_Scout_DE | key=Robotics_Scout_analyzed | len=2089
+[DE_VALIDATE] Robotics_Scout_DE: parsed 3 topics → rendered 3 canonical blocks to state[Robotics_Scout_analyzed].
+[TOKEN_USAGE] Robotics_Scout_DE | input=3003 | output=538 | total=3833
+[14]      INFO:     Response received from the model.
+[14]      WARNING:  Tools at indices [0] are not compatible with automatic function calling (AFC). AFC is disabled. If AFC is intended, please include python callables in the tool list, and do not include function declaration and MCP server in the tool list.
+[14]      INFO:     Sending out request, model: gemini-3.1-pro-preview, backend: GoogleLLMVariant.VERTEX_AI, stream: False
+[AGENT_RAW_END] Crypto_Scout
+source_url: https://blockchainreporter.net/whale-awakening-dormant-investor-accumulates-2-62b-asteroid-in-aggressive-liquidity-move/
+date: 2026-04-26
+finding: A dormant whale wallet reactivated after 180 days to accumulate 2.62 billion $ASTEROID tokens for approximately $828,000, signaling a massive liquidity move.
+=== FINDING 3 ===
+source_url: https://coinmarketcap.com/academy/article/citi-and-fidelity-announce-tokenized-money-market-fund-launch-at-singapore-fintech-festival
+date: 2026-04-26
+finding: Citi and Fidelity International launched a proof-of-concept tokenized money market fund at the Singapore FinTech Festival, embedding foreign exchange swaps directly within the blockchain.
+=== FINDING 2 ===
+source_url: https://www.mexc.com/news/1055433
+date: 2026-04-27
+finding: South Korean Web3 research firm Four Pillars raised a $21.9 million Series A led by Pantera Capital and Further Ventures to fund product development and global expansion.
+=== FINDING 1 ===
+[AGENT_RAW_BEGIN] Crypto_Scout | key=Crypto_Scout_findings | len=975
+[SCOUT_VALIDATE] Crypto_Scout: parsed 3 findings → rendered 3 canonical blocks to state[Crypto_Scout_findings].
+[SCOUT_URL_RESOLVE] Crypto_Scout: resolved 3 grounding redirects (0 failed, 0 non-proxy URLs untouched).
+[TOKEN_USAGE] Crypto_Scout | input=745 | output=730 | total=3212
+[14]      INFO:     Response received from the model.
+[14]      WARNING:  Tools at indices [0] are not compatible with automatic function calling (AFC). AFC is disabled. If AFC is intended, please include python callables in the tool list, and do not include function declaration and MCP server in the tool list.
+[14]      INFO:     Sending out request, model: gemini-3.1-pro-preview, backend: GoogleLLMVariant.VERTEX_AI, stream: False
+[PROGRESS] 11:15:56 | DE Robotics complete | Metrics: 3 topics
+[TOKEN_USAGE] Robotics_Scout_DE | input=2975 | output=16 | total=3408
+[14]      INFO:     Response received from the model.
+[14]      WARNING:  Tools at indices [0] are not compatible with automatic function calling (AFC). AFC is disabled. If AFC is intended, please include python callables in the tool list, and do not include function declaration and MCP server in the tool list.
+[14]      INFO:     Sending out request, model: gemini-3.1-pro-preview, backend: GoogleLLMVariant.VERTEX_AI, stream: False
+[DEDUP] Wrote 3 deduped findings to shard: gs://marketresearch-agents/market_findings_log_AI Stack.json
+[DEDUP] AI Stack: 3 unique, 0 duplicates removed (from 3 scout findings vs 10 baseline).
+[TOKEN_USAGE] AI_Stack_Scout_DE | input=2406 | output=295 | total=2709
+[14]      INFO:     Response received from the model.
+[14]      WARNING:  Tools at indices [0] are not compatible with automatic function calling (AFC). AFC is disabled. If AFC is intended, please include python callables in the tool list, and do not include function declaration and MCP server in the tool list.
+[14]      INFO:     Sending out request, model: gemini-3.1-pro-preview, backend: GoogleLLMVariant.VERTEX_AI, stream: False
+[PROGRESS] 11:15:48 | DE starting AI Stack
+[TOKEN_USAGE] AI_Stack_Scout_DE | input=2387 | output=12 | total=2868
+[14]      INFO:     Response received from the model.
+[14]      WARNING:  Tools at indices [0] are not compatible with automatic function calling (AFC). AFC is disabled. If AFC is intended, please include python callables in the tool list, and do not include function declaration and MCP server in the tool list.
+[14]      INFO:     Sending out request, model: gemini-3.1-pro-preview, backend: GoogleLLMVariant.VERTEX_AI, stream: False
+[DEDUP] Wrote 3 deduped findings to shard: gs://marketresearch-agents/market_findings_log_Robotics.json
+[DEDUP] Robotics: 3 unique, 1 duplicates removed (from 4 scout findings vs 10 baseline).
+  scout    : Sereact secured a €93 million Series B led by Headline to scale its 'Cortex 2' physical AI platform and launch a dedicated U.S. office.
+[DEDUP] Robotics | DROP (entity_overlap) matched=ROB-031226-002
+[PROGRESS] 11:15:46 | DE starting Robotics
+[TOKEN_USAGE] Robotics_Scout_DE | input=2398 | output=249 | total=3515
+[14]      INFO:     Response received from the model.
+[14]      WARNING:  Tools at indices [0] are not compatible with automatic function calling (AFC). AFC is disabled. If AFC is intended, please include python callables in the tool list, and do not include function declaration and MCP server in the tool list.
+[14]      INFO:     Sending out request, model: gemini-3.1-pro-preview, backend: GoogleLLMVariant.VERTEX_AI, stream: False
+[AGENT_RAW_END] AI_Stack_Scout
+source_url: https://apnews.com/article/elon-musk-openai-sam-altman-trial-ai-236b281f6c77d4c8dbd
+date: 2026-04-27
+finding: Jury selection commenced in the high-stakes trial between Elon Musk and OpenAI CEO Sam Altman regarding OpenAI's founding mission and nonprofit transition.
+=== FINDING 3 ===
+source_url: https://www.morningstar.com/news/dow-jones/202604273574/meta-platforms-enters-solar-power-pact-with-space-startup-overview-energy
+date: 2026-04-27
+finding: Meta Platforms agreed to purchase up to a gigawatt of orbital solar power from space startup Overview Energy to fuel its AI data center infrastructure.
+=== FINDING 2 ===
+source_url: https://www.reuters.com/markets/deals/beijing-blocks-meta-acquisition-chinese-ai-startup-manus-2026-04-27/
+date: 2026-04-27
+finding: China's National Development and Reform Commission officially blocked Meta's $2 billion acquisition of AI agent startup Manus.
+=== FINDING 1 ===
+[AGENT_RAW_BEGIN] AI_Stack_Scout | key=AI_Stack_Scout_findings | len=925
+[SCOUT_VALIDATE] AI_Stack_Scout: parsed 3 findings → rendered 3 canonical blocks to state[AI_Stack_Scout_findings].
+[TOKEN_USAGE] AI_Stack_Scout | input=741 | output=329 | total=1084
+[14]      INFO:     Response received from the model.
+[14]      WARNING:  Tools at indices [0] are not compatible with automatic function calling (AFC). AFC is disabled. If AFC is intended, please include python callables in the tool list, and do not include function declaration and MCP server in the tool list.
+[14]      INFO:     Sending out request, model: gemini-3.1-pro-preview, backend: GoogleLLMVariant.VERTEX_AI, stream: False
+[AGENT_RAW_END] Robotics_Scout
+source_url: https://www.prnewswire.com
+date: 2026-04-27
+finding: Pudu Robotics inaugurated its U.S. headquarters in Dallas to rapidly commercialize its embodied AI robotics throughout the Americas following a recent $150M raise.
+=== FINDING 4 ===
+source_url: https://pulse2.com
+date: 2026-04-26
+finding: Smart Robotics completed a €10 million Series A led by Rotterdamse Havendraken and Innovation Industries to deploy AI-driven pick-and-place robots in Europe.
+=== FINDING 3 ===
+source_url: https://www.eu-startups.com
+date: 2026-04-27
+finding: Sereact secured a €93 million Series B led by Headline to scale its 'Cortex 2' physical AI platform and launch a dedicated U.S. office.
+=== FINDING 2 ===
+source_url: https://www.biggofinance.com
+date: 2026-04-26
+finding: Embodied AI startup Star Dynamics raised over $200 million in a round led by SF Express and Sequoia China, bringing its two-month funding total to nearly $366 million.
+=== FINDING 1 ===
+[AGENT_RAW_BEGIN] Robotics_Scout | key=Robotics_Scout_findings | len=955
+[SCOUT_VALIDATE] Robotics_Scout: parsed 4 findings → rendered 4 canonical blocks to state[Robotics_Scout_findings].
+[TOKEN_USAGE] Robotics_Scout | input=770 | output=330 | total=1122
+[14]      INFO:     Response received from the model.
+[14]      WARNING:  Tools at indices [2] are not compatible with automatic function calling (AFC). AFC is disabled. If AFC is intended, please include python callables in the tool list, and do not include function declaration and MCP server in the tool list.
+[14]      INFO:     Sending out request, model: gemini-3.1-pro-preview, backend: GoogleLLMVariant.VERTEX_AI, stream: False
+[PROGRESS] 11:15:36 | Scout AI Stack complete | Metrics: 2 searches, 3 topics
+[TOKEN_USAGE] AI_Stack_Scout | input=706 | output=18 | total=3358
+[14]      INFO:     Response received from the model.
+[14]      WARNING:  Tools at indices [2] are not compatible with automatic function calling (AFC). AFC is disabled. If AFC is intended, please include python callables in the tool list, and do not include function declaration and MCP server in the tool list.
+[14]      INFO:     Sending out request, model: gemini-3.1-pro-preview, backend: GoogleLLMVariant.VERTEX_AI, stream: False
+[PROGRESS] 11:15:33 | Scout Physical AI and Embodied Robotics complete | Metrics: 2 searches, 4 topics
+[TOKEN_USAGE] Robotics_Scout | input=725 | output=23 | total=3191
+[14]      INFO:     Response received from the model.
+[14]      WARNING:  Tools at indices [2] are not compatible with automatic function calling (AFC). AFC is disabled. If AFC is intended, please include python callables in the tool list, and do not include function declaration and MCP server in the tool list.
+[14]      INFO:     Sending out request, model: gemini-3.1-pro-preview, backend: GoogleLLMVariant.VERTEX_AI, stream: False
+[PROGRESS] 11:15:22 | Scout Crypto and Blockchain complete | Metrics: 1 searches, 3 topics
+[TOKEN_USAGE] Crypto_Scout | input=708 | output=19 | total=1239
+[14]      INFO:     Response received from the model.
+[14]      WARNING:  Tools at indices [2] are not compatible with automatic function calling (AFC). AFC is disabled. If AFC is intended, please include python callables in the tool list, and do not include function declaration and MCP server in the tool list.
+[14]      INFO:     Sending out request, model: gemini-3.1-pro-preview, backend: GoogleLLMVariant.VERTEX_AI, stream: False
+[PROGRESS] 11:15:13 | Scout starting Crypto and Blockchain
+[TOKEN_USAGE] Crypto_Scout | input=686 | output=14 | total=1101
+[14]      INFO:     Response received from the model.
+[14]      WARNING:  Tools at indices [2] are not compatible with automatic function calling (AFC). AFC is disabled. If AFC is intended, please include python callables in the tool list, and do not include function declaration and MCP server in the tool list.
+[14]      INFO:     Sending out request, model: gemini-3.1-pro-preview, backend: GoogleLLMVariant.VERTEX_AI, stream: False
+[PROGRESS] 11:15:09 | Scout starting Physical AI and Embodied Robotics
+[TOKEN_USAGE] Robotics_Scout | input=695 | output=18 | total=1050
+[14]      INFO:     Response received from the model.
+[14]      WARNING:  Tools at indices [2] are not compatible with automatic function calling (AFC). AFC is disabled. If AFC is intended, please include python callables in the tool list, and do not include function declaration and MCP server in the tool list.
+[14]      INFO:     Sending out request, model: gemini-3.1-pro-preview, backend: GoogleLLMVariant.VERTEX_AI, stream: False
+[PROGRESS] 11:15:09 | Scout starting AI Stack
+[TOKEN_USAGE] AI_Stack_Scout | input=686 | output=13 | total=951
+[14]      WARNING:  Warning: there are non-text parts in the response: ['function_call'], returning concatenated text result from text parts. Check the full candidates.content.parts accessor to get the full model response.
+[14]      INFO:     Response received from the model.
+[14]      WARNING:  Tools at indices [2] are not compatible with automatic function calling (AFC). AFC is disabled. If AFC is intended, please include python callables in the tool list, and do not include function declaration and MCP server in the tool list.
+[14]      INFO:     Sending out request, model: gemini-3.1-pro-preview, backend: GoogleLLMVariant.VERTEX_AI, stream: False
+[14]      WARNING:  Tools at indices [2] are not compatible with automatic function calling (AFC). AFC is disabled. If AFC is intended, please include python callables in the tool list, and do not include function declaration and MCP server in the tool list.
+[14]      INFO:     Sending out request, model: gemini-3.1-pro-preview, backend: GoogleLLMVariant.VERTEX_AI, stream: False
+[14]      WARNING:  Tools at indices [2] are not compatible with automatic function calling (AFC). AFC is disabled. If AFC is intended, please include python callables in the tool list, and do not include function declaration and MCP server in the tool list.
+[14]      INFO:     Sending out request, model: gemini-3.1-pro-preview, backend: GoogleLLMVariant.VERTEX_AI, stream: False
+========================================
+  STARTING Batch_1
+========================================
+[14]      INFO:     169.254.169.126:1326 - "POST /api/stream_reasoning_engine HTTP/1.1" 200 OK

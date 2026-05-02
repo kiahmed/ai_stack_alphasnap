@@ -164,7 +164,7 @@ Run: `dev-utils/run-logs/live_phase2_20260417_195852.log` (Robotics scout, local
 - GCS master log untouched throughout (`USE_GCS=False` meant local-only writes).
 
 ### Phase 2 — DONE
-Implementation validated via 9/9 unit tests + live pipeline run. Proposal annotated with `[Proposed and enhanced by alphasnap]`. Ready to deploy when you give the word — `python3 deploy_agent.py`.
+Implementation validated via 9/9 unit tests + live pipeline run. Proposal annotated with `[Proposed and enhanced by alphasnap]`. Ready to deploy when you give the word — `python3 deploy_arboryx.ai_engine.py`.
 
 ---
 
@@ -409,4 +409,33 @@ Pipeline clean. Auth ok (project `marketresearch-agents`). Duration ~3min (23:20
 
 ### verify() limitation exposed
 `verify()` in `test_single_scout.py` assumes all enriched entries share `run_date = enriched[0].get("timestamp")` and that counter continues `start..start+N-1` from a single baseline. The 2-date-split real-world output trips ❌ spam on all entries whose timestamp ≠ enriched[0]. Pipeline is unaffected; fix is to group by (category, timestamp) and compute per-group counter continuity before comparing. Parked — not load-bearing for the actual run.
+
+---
+
+## 2026-04-27 — Backlog: dedup-primitive drift between engine and `cloud_function_dedup`
+
+### What
+
+`cloud_function_dedup/main.py` carries a hand-copied port of the dedup primitives from `market_team.py` — `_extract_entities`, `_tfidf_similarity`, `_entity_overlap`, `_merge_substring_entities`, `_tokenize`, `_build_idf`, `_cosine_sim`, the `_STOP_UPPER` / `_CAP_STOP` sets, and the four thresholds (`TFIDF_THRESHOLD`, `ENTITY_THRESHOLD`, `NOVELTY_MIN`, `TFIDF_FLOOR_FOR_ENTITY`). The cloud function and the engine each have their own copy.
+
+### Why duplicated rather than imported
+
+`market_team.py` imports the full ADK / Vertex / google-genai stack at module top level. Bundling that into the dedup function would multiply the deploy package size and slow cold starts on a function that runs twice a month. Worth it for now.
+
+### The drift risk
+
+A change to the matching algorithm in `market_team.py` (regex tweak in `_extract_entities`, threshold change in `values.yaml`/dedup constants, novelty rule revision) does NOT propagate to the cloud function until someone re-runs `bash cloud_function_dedup/deploy.sh`. The two paths can silently diverge — pipeline keeps catching real-time dups against the new rules, the bi-weekly sweep keeps applying the old rules. Last time this kind of drift (the `[-mem_limit:]` slice) shipped, it cost us 32 leaked dups before we noticed.
+
+### Fix (parked)
+
+Extract the primitives into a standalone `dedup_lib.py`:
+- Pure stdlib + `re` + `math` + `Counter`. No ADK/Vertex.
+- Sits at repo root next to `market_team.py`.
+- `market_team.py` imports from it (replaces the inline copies).
+- `cloud_function_dedup/deploy.sh` adds it to the function source dir at deploy time (cp into `cloud_function_dedup/` or via `--source` glob).
+- Add `dedup_lib.py` to `EXTRA_PACKAGES` in `ae_config.config` so the engine deploy bundle picks it up.
+
+### Trigger to actually do this
+
+Next time the dedup algorithm changes (any of: extractor regexes, thresholds, novelty rule, slice direction, IDF logic). Don't refactor preemptively — until the algorithm shifts again, two copies are cheaper than the refactor + deploy-pipeline change. Comment at top of `cloud_function_dedup/main.py` already flags the drift risk for whoever touches the algorithm.
 
